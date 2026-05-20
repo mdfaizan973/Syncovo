@@ -1,7 +1,7 @@
-import Logo from "../../components/widgets/Logo";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { GoogleIcon } from "../../components/ui/icons";
+import Logo from "../../../components/widgets/Logo";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
+import { GoogleIcon } from "../../../components/ui/icons";
 import { UserIcon, MailIcon, LockIcon, CheckIcon, ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 

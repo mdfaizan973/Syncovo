@@ -6,8 +6,8 @@ import {
     SparklesIcon,
   } from "lucide-react";
   
-  import { Card, CardContent } from "../../components/ui/card";
-  import Logo from "../../components/widgets/Logo";
+  import { Card, CardContent } from "../../../components/ui/card";
+  import Logo from "../../../components/widgets/Logo";
   
   const highlights = [
     {

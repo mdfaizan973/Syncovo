@@ -1,8 +1,8 @@
-// import Login from "./Pages/auth/Login";
-// import SignUp from "./Pages/auth/SignUp";
-// import Showcase from "./Pages/showcase/Showcase";
-import UnderConstruction from "./Pages/showcase/UnderConstruction";
-import Language from "./Pages/components/widgets/Language";
+import Login from "./Pages/auth/Login";
+import SignUp from "./Pages/auth/SignUp";
+import UnderConstruction from "./components/showcase/UnderConstruction";
+import Showcase from "./components/showcase/Showcase";
+import Language from "./components/widgets/Language";
 
 function App() {
   // const underConstruction = false;

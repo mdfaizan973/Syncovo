@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Section, Row } from "../components/ui/layout";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/input";
-import { Checkbox } from "../components/ui/input";
-import { Radio } from "../components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardBadge } from "../components/ui/card";
-import { PlusIcon, MailIcon, SearchIcon, ArrowIcon, ChartIcon, UserIcon, CartIcon } from "../components/ui/icons";
+
+import {Section, Row} from "../../components/ui/layout"; 
+import {Button} from "../../components/ui/button";
+import {Input} from "../../components/ui/input";
+import {Textarea} from "../../components/ui/input";
+import {Checkbox} from "../../components/ui/input";
+import {Radio} from "../../components/ui/input";
+import {Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardBadge} from "../../components/ui/card";
+import {PlusIcon, MailIcon, SearchIcon, ArrowIcon, ChartIcon, UserIcon, CartIcon} from "../../components/ui/icons";
+
 const TABS = ["Buttons", "Inputs", "Cards"];
 
 export default function Showcase() {

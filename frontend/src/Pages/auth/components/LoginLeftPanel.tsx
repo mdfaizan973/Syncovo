@@ -2,8 +2,8 @@ import {
     LayoutDashboardIcon,
     DatabaseIcon,
 } from "lucide-react";
-import { CardContent, Card } from "../../components/ui/card";
-import Logo from "../../components/widgets/Logo";
+import { CardContent, Card } from "../../../components/ui/card";
+import Logo from "../../../components/widgets/Logo";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 
