@@ -2,13 +2,13 @@ import {
     LayoutDashboardIcon,
     DatabaseIcon,
 } from "lucide-react";
-import { CardContent, Card } from "../ui/card";
-import Logo from "./Logo";
+import { CardContent, Card } from "../../components/ui/card";
+import Logo from "../../components/widgets/Logo";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 
 
-export default function BrandPanel() {
+export default function LoginLeftPanel() {
     const { t } = useTranslation();
 
     const features = [
