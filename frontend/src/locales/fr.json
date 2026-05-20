@@ -81,5 +81,67 @@
             "es": "Español",
             "hi": "हिन्दी"
         }
+    },
+    "navbar": {
+        "search": "Rechercher...",
+        "profile": {
+            "workspaceOwner": "Propriétaire de l'espace de travail"
+        },
+        "logoTag": "Gestion des espaces de travail",
+        "links": {
+            "home": "Accueil",
+            "features": "Fonctionnalités",
+            "workspaces": "Espaces",
+            "pricing": "Tarifs",
+            "contact": "Contact"
+        },
+        "buttons": {
+            "login": "Se connecter",
+            "signup": "Commencer"
+        },
+        "mobile": {
+            "menu": "Menu"
+        }
+    },
+    "footer": {
+        "description": "Syncovo est une plateforme collaborative moderne pour gérer les projets, les tâches, les équipes et les flux de travail dynamiques.",
+        "sections": {
+            "product": "Produit",
+            "company": "Entreprise",
+            "resources": "Ressources"
+        },
+        "links": {
+            "features": "Fonctionnalités",
+            "pricing": "Tarifs",
+            "integrations": "Intégrations",
+            "about": "À propos",
+            "careers": "Carrières",
+            "contact": "Contact",
+            "support": "Support",
+            "privacy": "Politique de confidentialité",
+            "terms": "Conditions d’utilisation"
+        },
+        "bottom": {
+            "copyright": "© 2026 Syncovo. Tous droits réservés.",
+            "built": "Conçu pour les équipes collaboratives modernes."
+        }
+    },
+    "notFound": {
+        "badge": "Page introuvable",
+        "title": "La page que vous recherchez n’existe pas.",
+        "description": "Le lien est peut-être incorrect, déplacé ou la page n’existe plus. Essayez de revenir en arrière ou retournez à votre espace de travail.",
+        "buttons": {
+            "home": "Retour à l’accueil",
+            "back": "Retour"
+        },
+        "help": {
+            "badge": "Besoin d’aide ?",
+            "title": "Si vous pensez qu’il s’agit d’un problème technique, contactez votre administrateur ou l’équipe de support."
+        },
+        "links": {
+            "privacy": "Politique de confidentialité",
+            "terms": "Conditions d'utilisation",
+            "support": "Support"
+        }
     }
 }

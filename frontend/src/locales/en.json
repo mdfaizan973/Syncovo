@@ -4,7 +4,6 @@
       "badge": "Workspace • Tasks • Collaboration",
       "title": "Sign in to Syncovo",
       "description": "Enter your credentials to access your workspace.",
-
       "fields": {
         "email": {
           "label": "Email address",
@@ -16,81 +15,64 @@
           "placeholder": "••••••••"
         }
       },
-
       "forgotPassword": "Forgot password?",
       "keepSignedIn": "Keep me signed in",
-
       "buttons": {
         "continue": "Continue",
         "google": "Continue with Google",
         "requestAccess": "Request access"
       },
-
       "divider": "or",
-
       "footer": {
         "text": "No account?"
       }
     },
-
     "otp": {
       "title": "Two-step verification",
       "description": "We sent a 6-digit code to",
       "enterCode": "Enter your code",
-
       "buttons": {
         "verify": "Verify & Sign in",
         "resend": "Resend code",
         "back": "Back to sign in"
       },
-
       "countdown": {
         "prefix": "Resend code in",
         "suffix": "s"
       }
     },
-
     "bottomLinks": {
       "privacy": "Privacy Policy",
       "terms": "Terms of Use",
       "support": "Support"
     }
   },
-
   "brandPanel": {
     "hero": {
       "title": {
         "line1": "Manage projects",
         "line2": "with clarity."
       },
-
       "description": "Syncovo is a modern multi-user task management platform inspired by tools like Notion, Trello, and NocoDB — built for flexible workflows, dynamic tables, and real-time collaboration."
     },
-
     "features": {
       "dynamicWorkspaces": {
         "title": "Dynamic Workspaces",
         "description": "Flexible workflows and boards tailored for every team."
       },
-
       "customTables": {
         "title": "Custom Tables",
         "description": "Create tables, forms, and fields without fixed schemas."
       }
     },
-
     "bottomCard": {
       "badge": "Built for modern teams",
-
       "title": "Create custom workflows, manage teams, and organise projects seamlessly from a single collaborative workspace.",
-
       "description": "Trusted by growing startups and collaborative teams."
     }
   },
-
   "languages": {
     "title": "Language",
-
     "items": {
       "en": "English",
       "ja": "日本語",
@@ -98,6 +80,68 @@
       "de": "Deutsch",
       "es": "Español",
       "hi": "हिन्दी"
+    }
+  },
+  "navbar": {
+    "search": "Search...",
+    "profile": {
+      "workspaceOwner": "Workspace Owner"
+    },
+    "logoTag": "Workspace Management",
+    "links": {
+      "home": "Home",
+      "features": "Features",
+      "workspaces": "Workspaces",
+      "pricing": "Pricing",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "login": "Sign in",
+      "signup": "Get Started"
+    },
+    "mobile": {
+      "menu": "Menu"
+    }
+  },
+  "footer": {
+    "description": "Syncovo is a modern collaborative workspace platform for managing projects, tasks, teams, and dynamic workflows.",
+    "sections": {
+      "product": "Product",
+      "company": "Company",
+      "resources": "Resources"
+    },
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "integrations": "Integrations",
+      "about": "About",
+      "careers": "Careers",
+      "contact": "Contact",
+      "support": "Support",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use"
+    },
+    "bottom": {
+      "copyright": "All rights reserved.",
+      "built": "Built for modern collaborative teams."
+    }
+  },
+  "notFound": {
+    "badge": "Page Not Found",
+    "title": "The page you’re looking for doesn’t exist.",
+    "description": "The link may be broken, moved, or the page may no longer exist. Try navigating back or return to your workspace dashboard.",
+    "buttons": {
+      "home": "Go to Home",
+      "back": "Go Back"
+    },
+    "help": {
+      "badge": "Need help?",
+      "title": "If you believe this is a technical issue, contact your workspace administrator or support team."
+    },
+    "links": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "support": "Support"
     }
   }
 }
