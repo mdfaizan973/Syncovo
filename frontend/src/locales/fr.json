@@ -1,0 +1,85 @@
+{
+    "auth": {
+        "login": {
+            "badge": "Espace de travail • Tâches • Collaboration",
+            "title": "Se connecter à Syncovo",
+            "description": "Entrez vos identifiants pour accéder à votre espace de travail.",
+            "fields": {
+                "email": {
+                    "label": "Adresse e-mail",
+                    "placeholder": "you@company.com",
+                    "error": "Veuillez entrer une adresse e-mail valide."
+                },
+                "password": {
+                    "label": "Mot de passe",
+                    "placeholder": "••••••••"
+                }
+            },
+            "forgotPassword": "Mot de passe oublié ?",
+            "keepSignedIn": "Rester connecté",
+            "buttons": {
+                "continue": "Continuer",
+                "google": "Continuer avec Google",
+                "requestAccess": "Demander l'accès"
+            },
+            "divider": "ou",
+            "footer": {
+                "text": "Vous n'avez pas de compte ?"
+            }
+        },
+        "otp": {
+            "title": "Vérification en deux étapes",
+            "description": "Nous avons envoyé un code à 6 chiffres à",
+            "enterCode": "Entrez votre code",
+            "buttons": {
+                "verify": "Vérifier et se connecter",
+                "resend": "Renvoyer le code",
+                "back": "Retour à la connexion"
+            },
+            "countdown": {
+                "prefix": "Renvoyer le code dans",
+                "suffix": "s"
+            }
+        },
+        "bottomLinks": {
+            "privacy": "Politique de confidentialité",
+            "terms": "Conditions d'utilisation",
+            "support": "Support"
+        }
+    },
+    "brandPanel": {
+        "hero": {
+            "title": {
+                "line1": "Gérez vos projets",
+                "line2": "avec clarté."
+            },
+            "description": "Syncovo est une plateforme moderne de gestion de tâches multi-utilisateurs inspirée par des outils comme Notion, Trello et NocoDB — conçue pour des workflows flexibles, des tableaux dynamiques et une collaboration en temps réel."
+        },
+        "features": {
+            "dynamicWorkspaces": {
+                "title": "Espaces de travail dynamiques",
+                "description": "Des workflows et tableaux flexibles adaptés à chaque équipe."
+            },
+            "customTables": {
+                "title": "Tableaux personnalisés",
+                "description": "Créez des tableaux, formulaires et champs sans schémas fixes."
+            }
+        },
+        "bottomCard": {
+            "badge": "Conçu pour les équipes modernes",
+            "title": "Créez des workflows personnalisés, gérez vos équipes et organisez vos projets facilement depuis un espace de travail collaboratif unique.",
+            "description": "Adopté par des startups en croissance et des équipes collaboratives."
+        }
+    },
+    "languages": {
+        "title": "Langue",
+        "items": {
+            "en": "English",
+            "ja": "日本語",
+            "fr": "Français",
+            "de": "Deutsch",
+            "es": "Español",
+            "hi": "हिन्दी"
+        }
+    }
+}

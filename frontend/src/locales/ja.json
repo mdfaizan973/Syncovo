@@ -1,0 +1,103 @@
+{
+  "auth": {
+    "login": {
+      "badge": "ワークスペース • タスク • コラボレーション",
+      "title": "Syncovo にサインイン",
+      "description": "ワークスペースにアクセスするための認証情報を入力してください。",
+
+      "fields": {
+        "email": {
+          "label": "メールアドレス",
+          "placeholder": "you@company.com",
+          "error": "有効なメールアドレスを入力してください。"
+        },
+        "password": {
+          "label": "パスワード",
+          "placeholder": "••••••••"
+        }
+      },
+
+      "forgotPassword": "パスワードをお忘れですか？",
+      "keepSignedIn": "ログイン状態を保持する",
+
+      "buttons": {
+        "continue": "続行",
+        "google": "Googleで続行",
+        "requestAccess": "アクセスをリクエスト"
+      },
+
+      "divider": "または",
+
+      "footer": {
+        "text": "アカウントをお持ちではありませんか？"
+      }
+    },
+
+    "otp": {
+      "title": "二段階認証",
+      "description": "6桁のコードを送信しました：",
+      "enterCode": "コードを入力してください",
+
+      "buttons": {
+        "verify": "確認してサインイン",
+        "resend": "コードを再送信",
+        "back": "サインインに戻る"
+      },
+
+      "countdown": {
+        "prefix": "コードを再送信するまで",
+        "suffix": "秒"
+      }
+    },
+
+    "bottomLinks": {
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "support": "サポート"
+    }
+  },
+
+  "brandPanel": {
+    "hero": {
+      "title": {
+        "line1": "プロジェクトを管理",
+        "line2": "より明確に。"
+      },
+
+      "description": "Syncovo は、Notion、Trello、NocoDB にインスパイアされた最新のマルチユーザータスク管理プラットフォームです。柔軟なワークフロー、動的テーブル、リアルタイムコラボレーションのために構築されています。"
+    },
+
+    "features": {
+      "dynamicWorkspaces": {
+        "title": "ダイナミックワークスペース",
+        "description": "すべてのチームに合わせた柔軟なワークフローとボード。"
+      },
+
+      "customTables": {
+        "title": "カスタムテーブル",
+        "description": "固定スキーマなしでテーブル、フォーム、フィールドを作成。"
+      }
+    },
+
+    "bottomCard": {
+      "badge": "モダンチーム向け",
+
+      "title": "カスタムワークフローを作成し、チームを管理し、単一のコラボレーションワークスペースからプロジェクトをシームレスに整理します。",
+
+      "description": "成長中のスタートアップやコラボレーティブチームに信頼されています。"
+    }
+  },
+
+  "languages": {
+    "title": "言語",
+
+    "items": {
+      "en": "English",
+      "ja": "日本語",
+      "fr": "Français",
+      "de": "Deutsch",
+      "es": "Español",
+      "hi": "हिन्दी"
+    }
+  }
+}

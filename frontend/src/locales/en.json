@@ -1,0 +1,103 @@
+{
+  "auth": {
+    "login": {
+      "badge": "Workspace • Tasks • Collaboration",
+      "title": "Sign in to Syncovo",
+      "description": "Enter your credentials to access your workspace.",
+
+      "fields": {
+        "email": {
+          "label": "Email address",
+          "placeholder": "you@company.com",
+          "error": "Please enter a valid email address."
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "••••••••"
+        }
+      },
+
+      "forgotPassword": "Forgot password?",
+      "keepSignedIn": "Keep me signed in",
+
+      "buttons": {
+        "continue": "Continue",
+        "google": "Continue with Google",
+        "requestAccess": "Request access"
+      },
+
+      "divider": "or",
+
+      "footer": {
+        "text": "No account?"
+      }
+    },
+
+    "otp": {
+      "title": "Two-step verification",
+      "description": "We sent a 6-digit code to",
+      "enterCode": "Enter your code",
+
+      "buttons": {
+        "verify": "Verify & Sign in",
+        "resend": "Resend code",
+        "back": "Back to sign in"
+      },
+
+      "countdown": {
+        "prefix": "Resend code in",
+        "suffix": "s"
+      }
+    },
+
+    "bottomLinks": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "support": "Support"
+    }
+  },
+
+  "brandPanel": {
+    "hero": {
+      "title": {
+        "line1": "Manage projects",
+        "line2": "with clarity."
+      },
+
+      "description": "Syncovo is a modern multi-user task management platform inspired by tools like Notion, Trello, and NocoDB — built for flexible workflows, dynamic tables, and real-time collaboration."
+    },
+
+    "features": {
+      "dynamicWorkspaces": {
+        "title": "Dynamic Workspaces",
+        "description": "Flexible workflows and boards tailored for every team."
+      },
+
+      "customTables": {
+        "title": "Custom Tables",
+        "description": "Create tables, forms, and fields without fixed schemas."
+      }
+    },
+
+    "bottomCard": {
+      "badge": "Built for modern teams",
+
+      "title": "Create custom workflows, manage teams, and organise projects seamlessly from a single collaborative workspace.",
+
+      "description": "Trusted by growing startups and collaborative teams."
+    }
+  },
+
+  "languages": {
+    "title": "Language",
+
+    "items": {
+      "en": "English",
+      "ja": "日本語",
+      "fr": "Français",
+      "de": "Deutsch",
+      "es": "Español",
+      "hi": "हिन्दी"
+    }
+  }
+}
