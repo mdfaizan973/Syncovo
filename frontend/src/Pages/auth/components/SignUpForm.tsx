@@ -1,4 +1,4 @@
-import Logo from "../../../components/widgets/Logo";
+import Logo from "../../../shared/Logo";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { GoogleIcon } from "../../../components/ui/icons";

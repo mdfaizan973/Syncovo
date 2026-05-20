@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowRightIcon, CheckIcon, LockIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
-import Logo from "../../../components/widgets/Logo";
 import { Input, OtpInput } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { BackIcon, GoogleIcon } from "../../../components/ui/icons";
 import { useTranslation } from "../../../hooks/useTranslation";
+import Logo from "../../../shared/Logo";
 
 type Step = "credentials" | "otp";
 

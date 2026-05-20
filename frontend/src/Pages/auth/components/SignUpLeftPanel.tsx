@@ -7,7 +7,7 @@ import {
   } from "lucide-react";
   
   import { Card, CardContent } from "../../../components/ui/card";
-  import Logo from "../../../components/widgets/Logo";
+  import Logo from "../../../shared/Logo";
   
   const highlights = [
     {

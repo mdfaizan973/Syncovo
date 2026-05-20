@@ -3,7 +3,7 @@ import {
     DatabaseIcon,
 } from "lucide-react";
 import { CardContent, Card } from "../../../components/ui/card";
-import Logo from "../../../components/widgets/Logo";
+import Logo from "../../../shared/Logo";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 

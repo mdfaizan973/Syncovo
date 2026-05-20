@@ -1,8 +1,9 @@
 import { CheckIcon, ChevronDownIcon, LanguagesIcon } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "../hooks/useTranslation";
+import type { Language } from "../i18n";
 
-import { useTranslation } from "../../hooks/useTranslation";
-import type { Language } from "../../i18n";
+
 
 type Position =
     | "top-left"
