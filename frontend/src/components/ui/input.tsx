@@ -1,11 +1,76 @@
 import { useRef, useState } from "react";
+import type {
+    ChangeEvent,
+    InputHTMLAttributes,
+    KeyboardEvent,
+    ReactNode,
+    TextareaHTMLAttributes,
+} from "react";
 
-function Input({ label, helperText, state = "", variant = "default", size = "md", type = "text", placeholder = "", leftIcon, rightIcon, clearable = false, maxLength, required = false, disabled = false, value, onChange, className = "" }: any) {
+const inputSizes = {
+    sm: "h-8 text-xs px-3",
+    md: "h-10 text-sm px-3.5",
+    lg: "h-12 text-base px-4",
+};
+
+const inputLeftPadding = {
+    sm: "pl-8",
+    md: "pl-10",
+    lg: "pl-11",
+};
+
+const inputRightPadding = {
+    sm: "pr-8",
+    md: "pr-10",
+    lg: "pr-11",
+};
+
+type InputState = "" | "error" | "success";
+type InputVariant = "default" | "filled";
+type InputSize = keyof typeof inputSizes;
+
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "value" | "onChange"> {
+    label?: ReactNode;
+    helperText?: ReactNode;
+    state?: InputState;
+    variant?: InputVariant;
+    size?: InputSize;
+    leftIcon?: ReactNode;
+    rightIcon?: ReactNode;
+    clearable?: boolean;
+    value?: string;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange"> {
+    label?: ReactNode;
+    helperText?: ReactNode;
+    state?: InputState;
+    value?: string;
+    onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
+    label?: ReactNode;
+    checked?: boolean;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
+    label?: ReactNode;
+    checked?: boolean;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+function Input({ label, helperText, state = "", variant = "default", size = "md", type = "text", placeholder = "", leftIcon, rightIcon, clearable = false, maxLength, required = false, disabled = false, value, onChange, className = "" }: InputProps) {
     const [internal, setInternal] = useState("");
     const isControlled = value !== undefined;
     const val = isControlled ? value : internal;
-    const handleChange = (e) => { if (!isControlled) setInternal(e.target.value); onChange?.(e); };
-    const handleClear = () => { if (!isControlled) setInternal(""); onChange?.({ target: { value: "" } }); };
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => { if (!isControlled) setInternal(e.target.value); onChange?.(e); };
+    const handleClear = () => {
+        if (!isControlled) setInternal("");
+        onChange?.({ target: { value: "" } } as ChangeEvent<HTMLInputElement>);
+    };
     const showClear = clearable && val && !disabled;
 
     const wrapBase = variant === "filled" ? "bg-orange-50 border border-transparent" : "bg-white border border-gray-200";
@@ -14,9 +79,9 @@ function Input({ label, helperText, state = "", variant = "default", size = "md"
         : state === "success"
             ? "border-green-400 focus-within:border-green-400 focus-within:ring-2 focus-within:ring-green-100"
             : "focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-100";
-    const sizeH = { sm: "h-8 text-xs px-3", md: "h-10 text-sm px-3.5", lg: "h-12 text-base px-4" }[size];
-    const iLP = { sm: "pl-8", md: "pl-10", lg: "pl-11" }[size];
-    const iRP = { sm: "pr-8", md: "pr-10", lg: "pr-11" }[size];
+    const sizeH = inputSizes[size];
+    const iLP = inputLeftPadding[size];
+    const iRP = inputRightPadding[size];
     const helperColor = state === "error" ? "text-red-500" : state === "success" ? "text-green-600" : "text-gray-400";
 
     return (
@@ -58,7 +123,7 @@ function Input({ label, helperText, state = "", variant = "default", size = "md"
 function OtpInput({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
     const refs = useRef<(HTMLInputElement | null)[]>([]);
   
-    const handleKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKey = (i: number, e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Backspace") {
         if (value[i]) {
           const next = [...value];
@@ -74,7 +139,7 @@ function OtpInput({ value, onChange }: { value: string[]; onChange: (v: string[]
       }
     };
   
-    const handleChange = (i: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (i: number, e: ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value.replace(/\D/g, "");
       if (!raw) return;
       // Handle paste of multiple digits
@@ -119,11 +184,11 @@ function OtpInput({ value, onChange }: { value: string[]; onChange: (v: string[]
   }
 
   
-function Textarea({ label, helperText, state = "", placeholder = "", required = false, disabled = false, rows = 4, maxLength, value, onChange }: any) {
+function Textarea({ label, helperText, state = "", placeholder = "", required = false, disabled = false, rows = 4, maxLength, value, onChange }: TextareaProps) {
     const [internal, setInternal] = useState("");
     const isControlled = value !== undefined;
     const val = isControlled ? value : internal;
-    const handleChange = (e) => { if (!isControlled) setInternal(e.target.value); onChange?.(e); };
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => { if (!isControlled) setInternal(e.target.value); onChange?.(e); };
     const borderClass = state === "error"
         ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100"
         : state === "success"
@@ -145,7 +210,7 @@ function Textarea({ label, helperText, state = "", placeholder = "", required = 
     );
 }
 
-function Checkbox({ label, checked = false, onChange, disabled = false }: any) {
+function Checkbox({ label, checked = false, onChange, disabled = false }: CheckboxProps) {
     return (
         <label className={["inline-flex items-center gap-2.5 cursor-pointer select-none", disabled ? "opacity-50 cursor-not-allowed" : ""].filter(Boolean).join(" ")}>
             <div className="relative flex-shrink-0">
@@ -159,7 +224,7 @@ function Checkbox({ label, checked = false, onChange, disabled = false }: any) {
     );
 }
 
-function Radio({ label, checked = false, onChange, name, value, disabled = false }) {
+function Radio({ label, checked = false, onChange, name, value, disabled = false }: RadioProps) {
     return (
         <label className={["inline-flex items-center gap-2.5 cursor-pointer select-none", disabled ? "opacity-50 cursor-not-allowed" : ""].filter(Boolean).join(" ")}>
             <div className="relative flex-shrink-0">

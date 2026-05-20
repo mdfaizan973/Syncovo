@@ -1,3 +1,5 @@
+import type { ButtonHTMLAttributes, ReactNode } from "react";
+
 import { Spinner } from "./small-elements";
 
 const btnVariants = {
@@ -23,13 +25,39 @@ const btnIconOnly = {
   xl: "h-14 w-14 rounded-2xl",
 };
 
-function Button({ children, variant = "primary", size = "md", loading = false, disabled = false, fullWidth = false, iconOnly = false, leftIcon, rightIcon, className = "", onClick }: any) {
+type ButtonVariant = keyof typeof btnVariants;
+type ButtonSize = keyof typeof btnSizes;
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: ReactNode;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  loading?: boolean;
+  fullWidth?: boolean;
+  iconOnly?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+}
+
+function Button({
+  children,
+  variant = "primary",
+  size = "md",
+  loading = false,
+  disabled = false,
+  fullWidth = false,
+  iconOnly = false,
+  leftIcon,
+  rightIcon,
+  className = "",
+  ...props
+}: ButtonProps) {
   const off = disabled || loading;
   return (
     <button
       type="button"
       disabled={off}
-      onClick={onClick}
+      {...props}
       className={[
         "inline-flex items-center justify-center font-semibold",
         "transition-all duration-200 ease-out cursor-pointer select-none",
