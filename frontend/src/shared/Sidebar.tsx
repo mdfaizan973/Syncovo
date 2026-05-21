@@ -14,67 +14,54 @@ const NAV_SECTIONS: Section[] = [
     title: "Overview",
     items: [
       { id: "dashboard", label: "Dashboard", icon: Icons.dashboard },
-      { id: "analytics", label: "Analytics", icon: Icons.analytics,
+      {
+        id: "analytics", label: "Analytics", icon: Icons.analytics,
         children: [
-          { id: "traffic",    label: "Traffic overview" },
+          { id: "traffic", label: "Traffic overview" },
           { id: "engagement", label: "Engagement" },
           { id: "conversion", label: "Conversion funnel" },
-          { id: "reports",    label: "Custom reports", badge: "New", badgeType: "live" },
+          { id: "reports", label: "Custom reports", badge: "New", badgeType: "live" },
         ],
       },
     ],
   },
   {
-    title: "Content",
+    title: "Databse",
     items: [
-      { id: "content", label: "All Content", icon: Icons.content, badge: 142,
+      {
+        id: "content", label: "Finalyca Tech", icon: Icons.content, badge: 142,
         children: [
-          { id: "posts",     label: "Blog posts",  badge: "84", badgeType: "count" },
-          { id: "articles",  label: "Articles",    badge: "31", badgeType: "count" },
-          { id: "changelog", label: "Changelog",   badge: "12", badgeType: "count" },
-          { id: "drafts",    label: "Drafts",      badge: "15", badgeType: "draft" },
+          { id: "posts", label: "Blog Tasks", badge: "84", badgeType: "count" },
+          { id: "articles", label: "Articles Tasks", badge: "31", badgeType: "count" },
+          { id: "drafts", label: "Linkedin Tasks", badge: "15", badgeType: "draft" },
         ],
       },
-      { id: "pages", label: "Pages", icon: Icons.pages, badge: 24,
+      {
+        id: "pages", label: "Finalyca Sales", icon: Icons.pages, badge: 7,
+        // add the sales realted tasks here
         children: [
-          { id: "published",   label: "Published pages", badge: "19", badgeType: "count" },
-          { id: "unpublished", label: "Unpublished",     badge: "5",  badgeType: "draft" },
-          { id: "templates",   label: "Templates",       badge: "8",  badgeType: "count" },
+          { id: "quotes", label: "Quotes Tasks", badge: "4", badgeType: "count" },
+          { id: "invoices", label: "Invoices Tasks", badge: "2", badgeType: "draft" },
+          { id: "payments", label: "Payments Tasks", badge: "1", badgeType: "live" },
+          { id: "returns", label: "Returns Tasks", badge: "0", badgeType: "count" },
         ],
       },
-      { id: "media", label: "Media Library", icon: Icons.media, badge: 3, badgeType: "count" },
-      { id: "forms", label: "Forms",         icon: Icons.forms, badge: 7, badgeType: "count" },
     ],
   },
   {
-    title: "Publishing",
+    title: "Settings",
     items: [
-      { id: "publish", label: "Publish Queue", icon: Icons.publish, badge: 5, badgeType: "count",
-        children: [
-          { id: "scheduled", label: "Scheduled", badge: "5", badgeType: "count" },
-          { id: "review",    label: "In review",  badge: "3", badgeType: "draft" },
-          { id: "approved",  label: "Approved",   badge: "2", badgeType: "live" },
-        ],
-      },
-      { id: "seo",       label: "SEO & Meta",   icon: Icons.seo },
-      { id: "domains",   label: "Domains",       icon: Icons.domains },
-      { id: "workflows", label: "Workflows",     icon: Icons.workflows, badge: "New", badgeType: "status" },
-    ],
-  },
-  {
-    title: "Workspace",
-    items: [
-      { id: "team",     label: "Team & Roles",   icon: Icons.team },
-      { id: "api",      label: "API & Webhooks", icon: Icons.api },
-      { id: "settings", label: "Settings",       icon: Icons.settings },
+      { id: "forms", label: "Forms", icon: Icons.forms, badge: 7, badgeType: "count" },
+      { id: "tables", label: "Tables", icon: Icons.content, badge: 7, badgeType: "count" },
+      { id: "settings", label: "Settings", icon: Icons.settings },
     ],
   },
 ];
 
 const SITES = [
-  { id: "main", name: "Syncovo Main", status: "live",  url: "syncovo.io" },
-  { id: "docs", name: "Docs Site",    status: "live",  url: "docs.syncovo.io" },
-  { id: "blog", name: "Blog",         status: "draft", url: "blog.syncovo.io" },
+  { id: "main", name: "Syncovo Main", status: "live", url: "syncovo.io" },
+  { id: "docs", name: "Docs Site", status: "live", url: "docs.syncovo.io" },
+  { id: "blog", name: "Blog", status: "draft", url: "blog.syncovo.io" },
 ];
 
 /* ── Badge ── */
@@ -332,10 +319,10 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
    MAIN EXPORT
 ══════════════════════════════════════════════ */
 export default function Sidebar() {
-  const [collapsed,    setCollapsed]    = useState(false);
-  const [activeId,     setActiveId]     = useState("dashboard");
-  const [expandedIds,  setExpandedIds]  = useState<Set<string>>(new Set(["content"]));
-  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [activeId, setActiveId] = useState("dashboard");
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["content"]));
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const toggleExpand = (id: string) => {
     setExpandedIds(prev => {
@@ -363,7 +350,7 @@ export default function Sidebar() {
       >
         <SidebarContent
           collapsed={false}
-          setCollapsed={() => {}}
+          setCollapsed={() => { }}
           activeId={activeId}
           setActiveId={setActiveId}
           expandedIds={expandedIds}
@@ -424,10 +411,10 @@ export default function Sidebar() {
           {/* Stat cards */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
             {[
-              { label: "Total Content", value: "142", change: "+12 this week",     pos: true },
-              { label: "Published",     value: "103", change: "72% of total",      pos: true },
-              { label: "Drafts",        value: "28",  change: "5 added today",     pos: false },
-              { label: "Scheduled",     value: "11",  change: "Next: 2h from now", pos: true },
+              { label: "Total Content", value: "142", change: "+12 this week", pos: true },
+              { label: "Published", value: "103", change: "72% of total", pos: true },
+              { label: "Drafts", value: "28", change: "5 added today", pos: false },
+              { label: "Scheduled", value: "11", change: "Next: 2h from now", pos: true },
             ].map(s => (
               <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
                 <p className="text-xs font-semibold text-gray-400">{s.label}</p>
@@ -445,11 +432,11 @@ export default function Sidebar() {
             </div>
             <div className="divide-y divide-gray-50">
               {[
-                { title: "Q4 Product Roadmap Announcement",  type: "Article",  status: "Published", date: "2h ago",    author: "Arjun M." },
-                { title: "Getting Started with Syncovo API", type: "Blog",     status: "Draft",     date: "5h ago",    author: "Priya S." },
-                { title: "November Changelog — v2.4",        type: "Changelog",status: "Review",    date: "Yesterday", author: "Rohan D." },
-                { title: "Pricing Page Refresh",             type: "Page",     status: "Scheduled", date: "2 days ago",author: "Meera K." },
-                { title: "Case Study: Team Velocity",        type: "Article",  status: "Published", date: "3 days ago",author: "Arjun M." },
+                { title: "Q4 Product Roadmap Announcement", type: "Article", status: "Published", date: "2h ago", author: "Arjun M." },
+                { title: "Getting Started with Syncovo API", type: "Blog", status: "Draft", date: "5h ago", author: "Priya S." },
+                { title: "November Changelog — v2.4", type: "Changelog", status: "Review", date: "Yesterday", author: "Rohan D." },
+                { title: "Pricing Page Refresh", type: "Page", status: "Scheduled", date: "2 days ago", author: "Meera K." },
+                { title: "Case Study: Team Velocity", type: "Article", status: "Published", date: "3 days ago", author: "Arjun M." },
               ].map((row, i) => (
                 <div key={i} className="flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 hover:bg-gray-50/60 transition-colors cursor-pointer">
                   <div className="flex-1 min-w-0">
@@ -461,9 +448,9 @@ export default function Sidebar() {
                   <span className={[
                     "text-[10px] font-bold px-2 md:px-2.5 py-1 rounded-lg flex-shrink-0",
                     row.status === "Published" ? "bg-green-50 text-green-600 border border-green-100" :
-                    row.status === "Draft"     ? "bg-amber-50 text-amber-600 border border-amber-100" :
-                    row.status === "Review"    ? "bg-orange-50 text-orange-500 border border-orange-100" :
-                    "bg-blue-50 text-blue-500 border border-blue-100"
+                      row.status === "Draft" ? "bg-amber-50 text-amber-600 border border-amber-100" :
+                        row.status === "Review" ? "bg-orange-50 text-orange-500 border border-orange-100" :
+                          "bg-blue-50 text-blue-500 border border-blue-100"
                   ].join(" ")}>
                     {row.status}
                   </span>
