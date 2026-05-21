@@ -37,8 +37,6 @@ export function useTranslation() {
     const t = useMemo(() => {
         return messages[lang];
     }, [lang]);
-    console.log(t);
-    console.log(lang);
 
     return {
         lang,

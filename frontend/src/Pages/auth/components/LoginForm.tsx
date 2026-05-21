@@ -5,11 +5,13 @@ import { Button } from "../../../components/ui/button";
 import { BackIcon, GoogleIcon } from "../../../components/ui/icons";
 import { useTranslation } from "../../../hooks/useTranslation";
 import Logo from "../../../shared/Logo";
+import { useNavigate } from "react-router-dom";
 
 type Step = "credentials" | "otp";
 
 export default function AuthPanel() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const [step, setStep] = useState<Step>("credentials");
     const [email, setEmail] = useState("");
@@ -45,6 +47,10 @@ export default function AuthPanel() {
     const backToLogin = () => { setStep("credentials"); setOtp(["", "", "", "", "", ""]); };
 
     const otpComplete = otp.join("").length === 6;
+
+    const handleNavigateToSignUpPage = () => {
+        navigate("/signup");
+    };
 
     return (
         <div className="flex flex-col justify-center min-h-screen lg:min-h-0 h-full px-6 py-10 sm:px-10 lg:px-12 xl:px-16 bg-white">
@@ -118,8 +124,8 @@ export default function AuthPanel() {
 
                         <p className="text-sm text-center text-gray-400 mt-6">
                             {t.auth.login?.footer?.text || "No account?"} {" "}
-                            <button type="button" className="text-orange-500 font-semibold hover:text-orange-600 transition-colors">
-                                {t.auth.login?.buttons?.requestAccess || "Request access"}
+                            <button onClick={handleNavigateToSignUpPage} type="button" className="cursor-pointer text-orange-500 font-semibold hover:text-orange-600 transition-colors">
+                                {t.auth.login?.buttons?.requestAccess || "Register"}
                             </button>
                         </p>
                     </div>

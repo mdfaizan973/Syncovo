@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/button";
 import { GoogleIcon } from "../../../components/ui/icons";
 import { UserIcon, MailIcon, LockIcon, CheckIcon, ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type SignupPayload = {
     name: string;
@@ -19,6 +20,7 @@ export default function SignUpForm() {
 
     const [loading, setLoading] = useState(false);
     const [gLoading, setGLoading] = useState(false);
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         name: "",
@@ -114,6 +116,10 @@ export default function SignUpForm() {
         setTimeout(() => {
             setGLoading(false);
         }, 1500);
+    };
+
+    const handleNavigateToLoginPage = () => {
+        navigate("/login");
     };
 
 
@@ -268,8 +274,9 @@ export default function SignUpForm() {
                         Already have an account?{" "}
 
                         <button
+                            onClick={handleNavigateToLoginPage}
                             type="button"
-                            className="text-orange-500 font-semibold hover:text-orange-600 transition-colors"
+                            className="cursor-pointer text-orange-500 font-semibold hover:text-orange-600 transition-colors"
                         >
                             Sign in
                         </button>

@@ -4,6 +4,7 @@ import UnderConstruction from "../components/showcase/UnderConstruction";
 import SignUp from "../Pages/auth/SignUp";
 import Login from "../Pages/auth/Login";
 import NotFound from "../shared/NotFound";
+import Dashboard from "../Pages/MainContent/Dashboard";
 
 export default function MainRoutes() {
     return (
@@ -12,6 +13,8 @@ export default function MainRoutes() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
+
+            <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
     );
 }

@@ -2,16 +2,18 @@ import { useState } from "react";
 
 import {
     BellIcon,
-    ChevronDownIcon,
+    // ChevronDownIcon,
     MenuIcon,
     SearchIcon,
     SettingsIcon,
+    UserIcon,
     XIcon,
 } from "lucide-react";
 
 import Logo from "./Logo";
 import { Button } from "../components/ui/button";
 import { useTranslation } from "../hooks/useTranslation";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Navbar() {
@@ -22,6 +24,14 @@ export default function Navbar() {
         { label: t.navbar.links.features || "Features", href: "#" },
         { label: t.navbar.links.workspaces || "Workspaces", href: "#" },
     ];
+
+    const navigate = useNavigate();
+
+    const handleNavigateToAuthPage = () => {
+        navigate("/login");
+        setMobileOpen(false);
+    };
+
     return (
         <>
             <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-xl">
@@ -81,29 +91,27 @@ export default function Navbar() {
                         </button>
 
                         {/* Settings */}
-                        <button className="hidden sm:flex h-11 w-11 rounded-2xl border border-gray-100 bg-white hover:bg-orange-50 hover:border-orange-100 transition-all duration-200 items-center justify-center">
+                        <button
+                            className="hidden sm:flex h-11 w-11 rounded-2xl border border-gray-100 bg-white hover:bg-orange-50 hover:border-orange-100 transition-all duration-200 items-center justify-center"
+                            >
 
                             <SettingsIcon className="w-5 h-5 text-slate-500" />
 
                         </button>
 
                         {/* Profile */}
-                        <button className="hidden sm:flex items-center gap-3 h-11 pl-2.5 pr-3 rounded-2xl border border-gray-100 bg-white hover:border-orange-100 hover:bg-orange-50/40 transition-all duration-200">
+                        {/* <button className="hidden sm:flex items-center gap-3 h-11 pl-2.5 pr-3 rounded-2xl border border-gray-100 bg-white hover:border-orange-100 hover:bg-orange-50/40 transition-all duration-200">
 
                             <div className="w-8 h-8 rounded-xl bg-[#0f172a] flex items-center justify-center text-white text-xs font-bold">
                                 F
                             </div>
 
-                            <div className="text-left">
-                                <p className="text-sm font-semibold text-[#0f172a] leading-none">
-                                    Faizan
-                                </p>
-
-                                <p className="text-[11px] text-slate-400 mt-1 leading-none">
-                                    User                </p>
-                            </div>
-
                             <ChevronDownIcon className="w-4 h-4 text-slate-400" />
+
+                        </button> */}
+                        <button onClick={handleNavigateToAuthPage} className="hidden sm:flex h-11 cursor-pointer w-11 rounded-2xl border border-gray-100 bg-white hover:bg-orange-50 hover:border-orange-100 transition-all duration-200 items-center justify-center">
+
+                            <UserIcon className="w-5 h-5 text-slate-500" />
 
                         </button>
 
@@ -159,7 +167,7 @@ export default function Navbar() {
 
                             {/* Mobile Profile */}
                             <div className="pt-4 mt-4 border-t border-gray-100">
-
+                                {/* 
                                 <div className="flex items-center gap-3 px-2">
 
                                     <div className="w-10 h-10 rounded-2xl bg-[#0f172a] flex items-center justify-center text-white text-sm font-bold">
@@ -176,7 +184,8 @@ export default function Navbar() {
                                         </p>
                                     </div>
 
-                                </div>
+                                </div> */}
+
 
                                 <div className="flex gap-2 mt-4">
 
@@ -185,14 +194,22 @@ export default function Navbar() {
                                         variant="secondary"
                                         leftIcon={<SettingsIcon />}
                                     >
-                                        Settings
                                     </Button>
 
                                     <Button
                                         fullWidth
+                                        variant="secondary"
                                         leftIcon={<BellIcon />}
                                     >
-                                        Notifications
+                                    </Button>
+
+
+                                    <Button
+                                        fullWidth
+                                        variant="secondary"
+                                        leftIcon={<UserIcon />}
+                                        onClick={handleNavigateToAuthPage}
+                                    >
                                     </Button>
 
                                 </div>

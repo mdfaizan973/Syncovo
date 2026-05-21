@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronDownIcon, LanguagesIcon } from "lucide-react";
+import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../hooks/useTranslation";
 import type { Language } from "../i18n";
@@ -36,8 +36,8 @@ export default function Language({
 
     const { lang, changeLanguage } = useTranslation();
 
-    const selectedLanguage =
-        languages.find((item) => item.code === lang);
+    // const selectedLanguage =
+    //     languages.find((item) => item.code === lang);
 
     return (
         <div
@@ -49,17 +49,17 @@ export default function Language({
 
             <div className="relative">
 
-                {/* Trigger */}
                 <button
+                    title="Language"
                     onClick={() => setOpen((prev) => !prev)}
-                    className="h-11 px-4 cursor-pointer rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-xl shadow-lg shadow-black/[0.03] flex items-center gap-3 hover:border-orange-200 hover:bg-white transition-all duration-200"
+                    className="h-11 border px-4 cursor-pointer rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-xl shadow-lg shadow-black/[0.03] flex items-center hover:border-orange-200 hover:bg-white transition-all duration-200"
                 >
 
                     <div className="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
                         <LanguagesIcon className="w-4 h-4" />
                     </div>
 
-                    <div className="flex flex-col items-start">
+                    {/* <div className="flex flex-col items-start">
 
                         <span className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold leading-none">
                             Language
@@ -69,11 +69,11 @@ export default function Language({
                             {selectedLanguage?.label}
                         </span>
 
-                    </div>
+                    </div> */}
 
-                    <ChevronDownIcon
+                    {/* <ChevronDownIcon
                         className={["w-4 h-4 text-gray-400 transition-transform duration-200",open ? "rotate-180" : "",].join(" ")}
-                    />
+                    /> */}
 
                 </button>
 
@@ -83,7 +83,7 @@ export default function Language({
                         className={[
                             "absolute w-56 rounded-2xl border border-gray-200 bg-white/95 backdrop-blur-xl shadow-2xl shadow-black/[0.06] overflow-hidden animate-[fadeUp_0.2s_ease]",
                             position.includes("bottom") ? "bottom-[56px]" : "top-[56px]",
-                            position.includes("right") ? "right-0" : "left-0", ].join(" ")}
+                            position.includes("right") ? "right-0" : "left-0",].join(" ")}
                     >
 
                         <div className="p-2">
@@ -101,7 +101,7 @@ export default function Language({
                                         }}
                                         className={[
                                             "w-full cursor-pointer flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-150",
-                                            active ? "bg-orange-50 text-orange-600": "text-gray-600 hover:bg-gray-50",].join(" ")}
+                                            active ? "bg-orange-50 text-orange-600" : "text-gray-600 hover:bg-gray-50",].join(" ")}
                                     >
 
                                         <div className="flex items-center gap-3">
