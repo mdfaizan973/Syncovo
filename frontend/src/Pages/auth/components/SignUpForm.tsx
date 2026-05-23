@@ -1,37 +1,33 @@
 import Logo from "../../../shared/Logo";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import { GoogleIcon } from "../../../components/ui/icons";
 import { UserIcon, MailIcon, LockIcon, CheckIcon, ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 
 type SignupPayload = {
-    name: string;
+    full_name: string;
     email: string;
-    password: string;
-    avatar_url: string;
-    bio: string;
-    auth_provider: "local" | "google";
-    plan: "free" | "pro" | "enterprise";
+    phone_number: string;
   };
 
 export default function SignUpForm() {
 
-    const [loading, setLoading] = useState(false);
-    const [gLoading, setGLoading] = useState(false);
     const navigate = useNavigate();
 
+    const { register, loading } = useAuth();
+
     const [form, setForm] = useState({
-        name: "",
+        full_name: "",
         email: "",
-        password: "",
+        phone_number: "",
     });
 
     const [errors, setErrors] = useState({
-        name: "",
+        full_name: "",
         email: "",
-        password: "",
+        phone_number: "",
     });
 
     /* ─────────────────────────────
@@ -54,28 +50,22 @@ export default function SignUpForm() {
     ───────────────────────────── */
     const validate = () => {
         const nextErrors = {
-            name: "",
+            full_name: "",
             email: "",
-            password: "",
+            phone_number: "",
         };
 
-        if (!form.name.trim()) {
-            nextErrors.name = "Please enter your full name.";
+        if (!form.full_name.trim()) {
+            nextErrors.full_name = "Please enter your full full name.";
         }
 
         if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             nextErrors.email = "Please enter a valid email address.";
         }
 
-        if (form.password.length < 6) {
-            nextErrors.password = "Password must be at least 6 characters.";
-        }
-
         setErrors(nextErrors);
 
-        return !nextErrors.name &&
-            !nextErrors.email &&
-            !nextErrors.password;
+        return !nextErrors.full_name && !nextErrors.email
     };
 
     /* ─────────────────────────────
@@ -89,33 +79,20 @@ export default function SignUpForm() {
         setLoading(true);
 
         const payload: SignupPayload = {
-            name: form.name,
+            full_name: form.full_name,
             email: form.email,
-            password: form.password,
-
-            avatar_url: "",
-            bio: "",
-
-            auth_provider: "local",
-            plan: "free",
+            phone_number: form.phone_number,
         };
 
-        console.log(payload);
+        const response = await register(payload);
+
+        if (response.success) {
+            navigate("/login");
+        }
 
         setTimeout(() => {
             setLoading(false);
-        }, 1500);
-    };
-
-    /* ─────────────────────────────
-        Google Auth
-    ───────────────────────────── */
-    const handleGoogleSignup = () => {
-        setGLoading(true);
-
-        setTimeout(() => {
-            setGLoading(false);
-        }, 1500);
+        }, 500);
     };
 
     const handleNavigateToLoginPage = () => {
@@ -161,10 +138,10 @@ export default function SignUpForm() {
                             type="text"
                             placeholder="John Doe"
                             leftIcon={<UserIcon />}
-                            value={form.name}
-                            onChange={(e: any) => handleChange("name", e.target.value)}
-                            state={errors.name ? "error" : ""}
-                            helperText={errors.name}
+                            value={form.full_name}
+                            onChange={(e: any) => handleChange("full_name", e.target.value)}
+                            state={errors.full_name ? "error" : ""}
+                            helperText={errors.full_name}
                             required
                         />
 
@@ -183,15 +160,14 @@ export default function SignUpForm() {
 
                         {/* Password */}
                         <Input
-                            label="Password"
-                            type="password"
-                            placeholder="••••••••"
+                            label="Phone number"
+                            type="number"
+                            placeholder="+91 9876543210"
                             leftIcon={<LockIcon />}
-                            value={form.password}
-                            onChange={(e: any) => handleChange("password", e.target.value)}
-                            state={errors.password ? "error" : ""}
-                            helperText={errors.password}
-                            required
+                            value={form.phone_number}
+                            onChange={(e: any) => handleChange("phone_number", e.target.value)}
+                            state={errors.phone_number ? "error" : ""}
+                            helperText={errors.phone_number}
                         />
 
                         {/* Terms */}
@@ -243,7 +219,7 @@ export default function SignUpForm() {
                                 Create account
                             </Button>
 
-                            <div className="flex items-center gap-3">
+                            {/* <div className="flex items-center gap-3">
                                 <div className="flex-1 h-px bg-gray-100" />
 
                                 <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
@@ -251,9 +227,9 @@ export default function SignUpForm() {
                                 </span>
 
                                 <div className="flex-1 h-px bg-gray-100" />
-                            </div>
+                            </div> */}
 
-                            <Button
+                            {/* <Button
                                 fullWidth
                                 variant="secondary"
                                 size="lg"
@@ -263,7 +239,7 @@ export default function SignUpForm() {
                                 className="text-sm"
                             >
                                 Continue with Google
-                            </Button>
+                            </Button> */}
 
                         </div>
                     </div>
