@@ -4,6 +4,7 @@ const createUsersTableQuery = `
   CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
+    phone_number VARCHAR(20),
     email VARCHAR(255) UNIQUE NOT NULL,
     otp VARCHAR(6),
     otp_expiry TIMESTAMP,
@@ -14,12 +15,20 @@ const createUsersTableQuery = `
 
 const createUsersTable = async () => {
   await query(createUsersTableQuery);
+  await query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20)
+  `);
+  await query(`
+    ALTER TABLE users
+    ALTER COLUMN phone_number DROP NOT NULL
+  `);
 };
 
 const findUserByEmail = async (email) => {
   const result = await query(
     `
-      SELECT id, full_name, email, otp, otp_expiry, is_verified, created_at
+      SELECT id, full_name, phone_number, email, otp, otp_expiry, is_verified, created_at
       FROM users
       WHERE email = $1
       LIMIT 1
@@ -30,28 +39,47 @@ const findUserByEmail = async (email) => {
   return result.rows[0] || null;
 };
 
-const createOrUpdatePendingUser = async ({
+const createUser = async ({
   id,
   fullName,
+  phoneNumber,
   email,
-  otp,
-  otpExpiry,
 }) => {
   const result = await query(
     `
-      INSERT INTO users (id, full_name, email, otp, otp_expiry, is_verified)
-      VALUES ($1, $2, $3, $4, $5, FALSE)
-      ON CONFLICT (email)
-      DO UPDATE SET
-        full_name = EXCLUDED.full_name,
-        otp = EXCLUDED.otp,
-        otp_expiry = EXCLUDED.otp_expiry
-      RETURNING id, full_name, email, otp, otp_expiry, is_verified, created_at
+      INSERT INTO users (id, full_name, phone_number, email, otp, otp_expiry, is_verified)
+      VALUES ($1, $2, $3, $4, NULL, NULL, FALSE)
+      RETURNING id, full_name, phone_number, email, otp, otp_expiry, is_verified, created_at
     `,
-    [id, fullName, email, otp, otpExpiry]
+    [id, fullName, phoneNumber, email]
   );
 
   return result.rows[0];
+};
+
+const getAllUsers = async () => {
+  const result = await query(`
+    SELECT id, full_name, phone_number, email, is_verified, created_at
+    FROM users
+    ORDER BY created_at DESC
+  `);
+
+  return result.rows;
+};
+
+const storeUserOtp = async ({ email, otp, otpExpiry }) => {
+  const result = await query(
+    `
+      UPDATE users
+      SET otp = $2,
+          otp_expiry = $3
+      WHERE email = $1
+      RETURNING id, full_name, phone_number, email, otp, otp_expiry, is_verified, created_at
+    `,
+    [email, otp, otpExpiry]
+  );
+
+  return result.rows[0] || null;
 };
 
 const markUserAsVerified = async (id) => {
@@ -62,7 +90,7 @@ const markUserAsVerified = async (id) => {
           otp = NULL,
           otp_expiry = NULL
       WHERE id = $1
-      RETURNING id, full_name, email, is_verified, created_at
+      RETURNING id, full_name, phone_number, email, is_verified, created_at
     `,
     [id]
   );
@@ -74,6 +102,8 @@ module.exports = {
   createUsersTableQuery,
   createUsersTable,
   findUserByEmail,
-  createOrUpdatePendingUser,
+  createUser,
+  getAllUsers,
+  storeUserOtp,
   markUserAsVerified,
 };

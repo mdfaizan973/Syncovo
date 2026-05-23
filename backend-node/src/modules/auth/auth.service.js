@@ -4,7 +4,9 @@ const generateToken = require('../../utils/generateToken');
 const sendEmail = require('../../utils/sendEmail');
 const {
   findUserByEmail,
-  createOrUpdatePendingUser,
+  createUser,
+  getAllUsers,
+  storeUserOtp,
   markUserAsVerified,
 } = require('./auth.query');
 
@@ -18,8 +20,13 @@ const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-const registerUser = async ({ full_name: fullName, email }) => {
+const registerUser = async (payload) => {
+  const fullName = payload.full_name || payload.fullName;
+  const email = payload.email;
+  const phoneNumber =
+    payload.phone_number || payload.phoneNumber || payload.phone;
   const trimmedFullName = fullName ? fullName.trim() : '';
+  const trimmedPhoneNumber = phoneNumber ? phoneNumber.trim() : '';
 
   if (!trimmedFullName || !email) {
     const error = new Error('full_name and email are required');
@@ -36,18 +43,66 @@ const registerUser = async ({ full_name: fullName, email }) => {
   const normalizedEmail = email.trim().toLowerCase();
   const existingUser = await findUserByEmail(normalizedEmail);
 
-  if (existingUser && existingUser.is_verified) {
-    const error = new Error('User is already verified');
+  if (existingUser) {
+    const error = new Error('User already exists');
     error.statusCode = 409;
+    throw error;
+  }
+
+  const user = await createUser({
+    id: crypto.randomUUID(),
+    fullName: trimmedFullName,
+    phoneNumber: trimmedPhoneNumber || null,
+    email: normalizedEmail,
+  });
+
+  return {
+    message: 'User registered successfully',
+    user: {
+      id: user.id,
+      full_name: user.full_name,
+      phone_number: user.phone_number,
+      email: user.email,
+      is_verified: user.is_verified,
+      created_at: user.created_at,
+    },
+  };
+};
+
+const getUsers = async () => {
+  const users = await getAllUsers();
+
+  return {
+    message: 'Users fetched successfully',
+    users,
+  };
+};
+
+const loginUser = async ({ email }) => {
+  if (!email) {
+    const error = new Error('email is required');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!isValidEmail(email)) {
+    const error = new Error('Please provide a valid email address');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const existingUser = await findUserByEmail(normalizedEmail);
+
+  if (!existingUser) {
+    const error = new Error("User Doesn't exist");
+    error.statusCode = 404;
     throw error;
   }
 
   const otp = createOtp();
   const otpExpiry = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
-
-  const user = await createOrUpdatePendingUser({
-    id: crypto.randomUUID(),
-    fullName: trimmedFullName,
+  const user = await storeUserOtp({
     email: normalizedEmail,
     otp,
     otpExpiry,
@@ -55,13 +110,13 @@ const registerUser = async ({ full_name: fullName, email }) => {
 
   await sendEmail({
     to: normalizedEmail,
-    subject: 'Syncovo OTP Verification',
+    subject: 'Syncovo Login OTP',
     text: `Your Syncovo OTP is ${otp}. It will expire in ${OTP_EXPIRY_MINUTES} minutes.`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2>Syncovo Email Verification</h2>
+        <h2>Syncovo Login Verification</h2>
         <p>Hello ${user.full_name},</p>
-        <p>Your OTP for verification is:</p>
+        <p>Your login OTP is:</p>
         <h1 style="letter-spacing: 4px;">${otp}</h1>
         <p>This OTP will expire in ${OTP_EXPIRY_MINUTES} minutes.</p>
       </div>
@@ -73,6 +128,7 @@ const registerUser = async ({ full_name: fullName, email }) => {
     user: {
       id: user.id,
       full_name: user.full_name,
+      phone_number: user.phone_number,
       email: user.email,
       is_verified: user.is_verified,
       created_at: user.created_at,
@@ -91,14 +147,8 @@ const verifyOtp = async ({ email, otp }) => {
   const user = await findUserByEmail(normalizedEmail);
 
   if (!user) {
-    const error = new Error('User not found');
+    const error = new Error("User Doesn't exist");
     error.statusCode = 404;
-    throw error;
-  }
-
-  if (user.is_verified) {
-    const error = new Error('User is already verified');
-    error.statusCode = 400;
     throw error;
   }
 
@@ -133,5 +183,7 @@ const verifyOtp = async ({ email, otp }) => {
 
 module.exports = {
   registerUser,
+  getUsers,
+  loginUser,
   verifyOtp,
 };
