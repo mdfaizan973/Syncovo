@@ -28,6 +28,20 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const updateUser = async (req, res, next) => {
+  try {
+    const result = await authService.updateUser(req.params.id, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result.user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const login = async (req, res, next) => {
   try {
     const result = await authService.loginUser(req.body);
@@ -63,6 +77,7 @@ const verifyOtp = async (req, res, next) => {
 module.exports = {
   register,
   getUsers,
+  updateUser,
   login,
   verifyOtp,
 };
