@@ -64,7 +64,7 @@ const verifyOtp = async (req, res, next) => {
       success: true,
       message: result.message,
       data: {
-        user: result.user,
+        // user: result.user,
         token: result.token,
       },
     });
