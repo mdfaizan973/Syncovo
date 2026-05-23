@@ -76,8 +76,6 @@ export default function SignUpForm() {
 
         if (!isValid) return;
 
-        setLoading(true);
-
         const payload: SignupPayload = {
             full_name: form.full_name,
             email: form.email,
@@ -90,9 +88,6 @@ export default function SignUpForm() {
             navigate("/login");
         }
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
     };
 
     const handleNavigateToLoginPage = () => {
