@@ -35,10 +35,10 @@ export const useAuth = () => {
     }
 
     // verify otp function
-    const verifyOtp = async (otp: string) => {
+    const verifyOtp = async (otp: any) => {
         setAuthLoading(true);
         try {
-            const response = await authService.verifyOtp({ otp });
+            const response = await authService.verifyOtp( otp );
             return response;
         } catch (error) {
             setError(error.message);

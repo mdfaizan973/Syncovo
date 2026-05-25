@@ -2,23 +2,23 @@ import { useEffect, useState } from "react";
 import { ArrowRightIcon, CheckIcon, LockIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import { Input, OtpInput } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import { BackIcon, GoogleIcon } from "../../../components/ui/icons";
+import { BackIcon } from "../../../components/ui/icons";
 import { useTranslation } from "../../../hooks/useTranslation";
 import Logo from "../../../shared/Logo";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 
 type Step = "credentials" | "otp";
 
 export default function AuthPanel() {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { authLoading, login, verifyOtp } = useAuth();
 
     const [step, setStep] = useState<Step>("credentials");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-    const [loading, setLoading] = useState(false);
-    const [gLoading, setGLoading] = useState(false);
+    // const [gLoading, setGLoading] = useState(false);
     const [emailErr, setEmailErr] = useState("");
     const [countdown, setCd] = useState(0);
 
@@ -28,23 +28,27 @@ export default function AuthPanel() {
         return () => clearTimeout(t);
     }, [countdown]);
 
-    const goToOtp = () => {
-        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { setEmailErr("Please enter a valid email address."); return; }
-        if (!password) return;
+    const goToOtp = async () => {
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            setEmailErr("Please enter a valid email address.");
+            return;
+        }
+        await login({ email });
         setEmailErr("");
-        setLoading(true);
-        setTimeout(() => { setLoading(false); setStep("otp"); setCd(30); }, 1500);
+        setStep("otp");
     };
 
-    const verifyOtp = () => {
+    const handleVerifyOtp = async () => {
         if (otp.join("").length < 6) return;
-        setLoading(true);
-        setTimeout(() => setLoading(false), 1500);
+        await verifyOtp({"email": email, "otp": otp.join("")});
     };
 
-    const handleGoogle = () => { setGLoading(true); setTimeout(() => setGLoading(false), 1500); };
+    // const handleGoogle = () => { setGLoading(true); setTimeout(() => setGLoading(false), 1500); };
 
-    const backToLogin = () => { setStep("credentials"); setOtp(["", "", "", "", "", ""]); };
+    const backToLogin = () => {
+        setStep("credentials");
+        setOtp(["", "", "", "", "", ""]);
+    };
 
     const otpComplete = otp.join("").length === 6;
 
@@ -82,16 +86,6 @@ export default function AuthPanel() {
                                 onChange={(e: any) => { setEmail(e.target.value); setEmailErr(""); }}
                                 state={emailErr ? "error" : ""} helperText={emailErr} />
 
-                            <div>
-                                <Input label={t.auth.login?.fields?.password?.label || "Password"} type="password" placeholder={t.auth.login?.fields?.password?.placeholder || "••••••••"}
-                                    leftIcon={<LockIcon />} required value={password}
-                                    onChange={(e: any) => setPassword(e.target.value)} />
-                                <div className="flex justify-end mt-1.5">
-                                    <button type="button" className="text-xs font-semibold text-orange-500 hover:text-orange-600 transition-colors">
-                                        {t.auth.login?.forgotPassword || "Forgot password?"}
-                                    </button>
-                                </div>
-                            </div>
 
                             <label className="inline-flex items-center gap-2.5 cursor-pointer select-none mt-1">
                                 <div className="relative">
@@ -104,21 +98,21 @@ export default function AuthPanel() {
                             </label>
 
                             <div className="pt-1 space-y-3">
-                                <Button fullWidth size="lg" loading={loading} onClick={goToOtp}
+                                <Button fullWidth size="lg" loading={authLoading} onClick={goToOtp}
                                     rightIcon={<ArrowRightIcon />} className="font-bold tracking-wide text-base">
                                     {t.auth.login?.buttons?.continue || "Continue"}
                                 </Button>
 
-                                <div className="flex items-center gap-3">
+                                {/* <div className="flex items-center gap-3">
                                     <div className="flex-1 h-px bg-gray-100" />
                                     <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">or</span>
                                     <div className="flex-1 h-px bg-gray-100" />
-                                </div>
+                                </div> */}
 
-                                <Button fullWidth variant="secondary" size="lg" loading={gLoading} onClick={handleGoogle}
+                                {/* <Button fullWidth variant="secondary" size="lg" loading={gLoading} onClick={handleGoogle}
                                     leftIcon={<GoogleIcon />} className="text-sm">
                                     {t.auth.login?.buttons?.google || "Continue with Google"}
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
 
@@ -155,8 +149,8 @@ export default function AuthPanel() {
                                 <OtpInput value={otp} onChange={setOtp} />
                             </div>
 
-                            <Button fullWidth size="lg" loading={loading} disabled={!otpComplete}
-                                onClick={verifyOtp} rightIcon={<ArrowRightIcon />}
+                            <Button fullWidth size="lg" loading={authLoading} disabled={!otpComplete}
+                                onClick={handleVerifyOtp} rightIcon={<ArrowRightIcon />}
                                 className="font-bold tracking-wide text-base">
                                 {t.auth.otp?.buttons?.verify || "Verify & Sign in"}
                             </Button>
@@ -167,8 +161,12 @@ export default function AuthPanel() {
                                         {t.auth.otp?.countdown?.prefix || "Resend code in"} <span className="font-bold text-orange-500 tabular-nums">{countdown}s</span>
                                     </p>
                                 ) : (
-                                    <button type="button" onClick={() => { setOtp(["", "", "", "", "", ""]); setCd(30); }}
-                                        className="text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+                                    <button type="button" onClick={() => {
+                                        setOtp(["", "", "", "", "", ""]);
+                                        setCd(30);
+                                        goToOtp();
+                                    }}
+                                        className="text-sm cursor-pointer font-semibold text-orange-500 hover:text-orange-600 transition-colors">
                                         {t.auth.otp?.buttons?.resend || "Resend code"}
                                     </button>
                                 )}
@@ -176,7 +174,7 @@ export default function AuthPanel() {
 
                             <div className="pt-3 border-t border-gray-100">
                                 <button type="button" onClick={backToLogin}
-                                    className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors py-1">
+                                    className="w-full cursor-pointer flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 transition-colors py-1">
                                     <span className="w-3.5 h-3.5 block"><BackIcon /></span>
                                     {t.auth.otp?.buttons?.back || "Back to sign in"}
                                 </button>

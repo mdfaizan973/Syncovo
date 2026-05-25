@@ -4,7 +4,7 @@ import * as apiClient from "../utils/apiClient";
 export const login = async (requestData: any) => {
     // try catch block
     try {
-        const response = await apiClient.postRequest("/auth/login", requestData);
+        const response = await apiClient.postRequest("/api/auth/login", requestData);
         return response;
     } catch (error) {
         console.error("Error in login:", error);
@@ -66,7 +66,7 @@ export const getUserById = async (id: string) => {
 // verify otp function
 export const verifyOtp = async (requestData: any) => {
     try {
-        const response = await apiClient.postRequest("/auth/verify-otp", requestData);
+        const response = await apiClient.postRequest("/api/auth/verify-otp", requestData);
         return response.data;
     } catch (error) {
         console.error("Error in verifyOtp:", error);
