@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
-import { useNavigate } from "react-router-dom";
-import DashboardInfo from "../Pages/MainContent/components/DashboardInfo";
-import QuickNote from "../Pages/MainContent/components/QuickNote";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -68,6 +66,35 @@ const SITES = [
   { id: "docs", name: "Docs Site", status: "live", url: "docs.syncovo.io" },
   { id: "blog", name: "Blog", status: "draft", url: "blog.syncovo.io" },
 ];
+
+const NAVIGATION_ROUTE_MAP: Record<string, string> = {
+  dashboard: "/dashboard",
+  quicknote: "/dashboard/quicknote",
+};
+
+const getActiveNavId = (pathname: string) => {
+  if (pathname === "/dashboard" || pathname === "/dashboard/") {
+    return "dashboard";
+  }
+
+  if (pathname.startsWith("/dashboard/quicknote")) {
+    return "quicknote";
+  }
+
+  return "dashboard";
+};
+
+const getPageTitle = (pathname: string) => {
+  if (pathname === "/dashboard" || pathname === "/dashboard/") {
+    return "Dashboard";
+  }
+
+  if (pathname.startsWith("/dashboard/quicknote")) {
+    return "Quick Note";
+  }
+
+  return getActiveNavId(pathname).replace(/-/g, " ");
+};
 
 /* ── Badge ── */
 function Badge({ value, type }: { value?: string | number; type?: string }) {
@@ -234,7 +261,18 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
   onNavSelect?: (id: string) => void;
   userInfo: any;
 }) {
-  const handleSelect = (id: string) => { setActiveId(id); onNavSelect?.(id); };
+  const navigate = useNavigate();
+
+  const handleSelect = (id: string) => {
+    setActiveId(id);
+
+    const nextRoute = NAVIGATION_ROUTE_MAP[id];
+    if (nextRoute) {
+      navigate(nextRoute);
+    }
+
+    onNavSelect?.(id);
+  };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: "none" }}>
@@ -269,12 +307,19 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
       {/* New Notion */}
       <div className="px-2.5 pb-3 flex-shrink-0">
         {!collapsed ? (
-          <button className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]">
+          <button
+            onClick={() => handleSelect("quicknote")}
+            className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]"
+          >
             <span className="w-3.5 h-3.5"><Icons.plus /></span>
             New Notion
           </button>
         ) : (
-          <button className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600" title="New Notion">
+          <button
+            onClick={() => handleSelect("quicknote")}
+            className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600"
+            title="New Notion"
+          >
             <span className="w-4 h-4"><Icons.plus /></span>
           </button>
         )}
@@ -334,9 +379,10 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
 export default function Sidebar() {
 
   const userInfo = getUserInfoStorage();
+  const location = useLocation();
+  const activeId = getActiveNavId(location.pathname);
 
   const [collapsed, setCollapsed] = useState(false);
-  const [activeId, setActiveId] = useState("dashboard");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["content"]));
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -368,7 +414,7 @@ export default function Sidebar() {
           collapsed={false}
           setCollapsed={() => { }}
           activeId={activeId}
-          setActiveId={setActiveId}
+          setActiveId={() => { }}
           expandedIds={expandedIds}
           toggleExpand={toggleExpand}
           onNavSelect={() => setMobileOpen(false)}
@@ -385,7 +431,7 @@ export default function Sidebar() {
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           activeId={activeId}
-          setActiveId={setActiveId}
+          setActiveId={() => { }}
           expandedIds={expandedIds}
           toggleExpand={toggleExpand}
           userInfo={userInfo}
@@ -407,7 +453,7 @@ export default function Sidebar() {
             </button>
             <div>
               <h1 className="text-base font-extrabold text-gray-900 tracking-tight leading-none capitalize">
-                {activeId.replace(/-/g, " ")}
+                {getPageTitle(location.pathname)}
               </h1>
               <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Syncovo CMS · {SITES[0].url}</p>
             </div>
@@ -420,7 +466,7 @@ export default function Sidebar() {
         </div>
 
         {/* Page body */}
-        <DashboardInfo />
+        <Outlet />
       </div>
     </div>
   );

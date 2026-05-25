@@ -1,7 +1,4 @@
 import {
-    Plus,
-    FolderKanban,
-    Users,
     FileText,
     Bell,
     Clock3,

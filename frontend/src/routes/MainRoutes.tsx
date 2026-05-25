@@ -7,6 +7,7 @@ import NotFound from "../shared/NotFound";
 import Dashboard from "../Pages/MainContent/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import QuickNote from "../Pages/MainContent/components/QuickNote";
+import DashboardInfo from "../Pages/MainContent/components/DashboardInfo";
 
 export default function MainRoutes() {
     return (
@@ -20,12 +21,10 @@ export default function MainRoutes() {
                 <ProtectedRoute>
                     <Dashboard />
                 </ProtectedRoute>
-            } />
-            <Route path="/dashboard/quicknote" element={
-                <ProtectedRoute>
-                    <QuickNote />
-                </ProtectedRoute>
-            } />
+            }>
+                <Route index element={<DashboardInfo />} />
+                <Route path="quicknote" element={<QuickNote />} />
+            </Route>
 
         </Routes>
     );
