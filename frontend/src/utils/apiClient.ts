@@ -1,4 +1,6 @@
 import axios from "axios";
+import { toast } from "sonner";
+import { errorResponse, getResponseMessage, successResponse } from "./toasUtils";
 
 const apiClient = axios.create({
     baseURL: "http://localhost:5000",
@@ -6,6 +8,7 @@ const apiClient = axios.create({
         "Content-Type": "application/json",
     },
 });
+
 
 /* =========================
    REQUEST INTERCEPTOR
@@ -33,6 +36,16 @@ apiClient.interceptors.request.use(
 ========================= */
 
 const handleResponse = (response: any) => {
+    console.log(response);
+    // EXISTING SUCCESS FUNCTION
+    if (response?.data?.success === true) {
+        successResponse(response);
+    }
+
+    // EXISTING ERROR FUNCTION
+    if (response?.data?.success === false) {
+        errorResponse(response);
+    }
 
     return {
         success: true,
@@ -49,14 +62,12 @@ const handleResponse = (response: any) => {
 const handleError = (error: any) => {
 
     console.error("API ERROR:", error);
+    errorResponse(error);
 
     return {
         success: false,
         data: null,
-        message:
-            error?.response?.data?.message ||
-            error?.message ||
-            "Something went wrong",
+        message: getResponseMessage(error, "Something went wrong"),
         status: error?.response?.status || 500,
     };
 };
@@ -93,7 +104,6 @@ export const postRequest = async (url: string, data = {}) => {
         return handleResponse(response);
 
     } catch (error) {
-
         return handleError(error);
     }
 };
@@ -133,3 +143,4 @@ export const deleteRequest = async (url: string) => {
         return handleError(error);
     }
 };
+

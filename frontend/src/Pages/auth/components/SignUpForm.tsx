@@ -206,7 +206,6 @@ export default function SignUpForm() {
                             <Button
                                 fullWidth
                                 size="lg"
-                                loading={loading}
                                 onClick={handleSignup}
                                 rightIcon={<ArrowRightIcon />}
                                 className="font-bold tracking-wide text-base"

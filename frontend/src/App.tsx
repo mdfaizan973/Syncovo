@@ -4,6 +4,7 @@ import Footer from "./shared/Footer";
 import Language from "./shared/Language";
 // import Navbar from "./shared/Navbar";
 import { useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
 
 function App() {
 
@@ -20,7 +21,7 @@ function App() {
     <>
       {/* Navbar */}
       {/* {!isLoginOrSignupPage && <Navbar />} */}
-
+      <Toaster position="top-right" richColors />
       <div>
         <MainRoutes />
       </div>
