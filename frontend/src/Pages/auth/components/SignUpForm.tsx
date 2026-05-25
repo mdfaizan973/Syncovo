@@ -16,7 +16,9 @@ export default function SignUpForm() {
 
     const navigate = useNavigate();
 
-    const { register, loading } = useAuth();
+    const { register, authLoading } = useAuth();
+
+    console.log(authLoading);
 
     const [form, setForm] = useState({
         full_name: "",
@@ -207,6 +209,7 @@ export default function SignUpForm() {
                                 fullWidth
                                 size="lg"
                                 onClick={handleSignup}
+                                loading={authLoading}
                                 rightIcon={<ArrowRightIcon />}
                                 className="font-bold tracking-wide text-base"
                             >
