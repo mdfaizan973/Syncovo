@@ -7,6 +7,8 @@ import { useTranslation } from "../../../hooks/useTranslation";
 import Logo from "../../../shared/Logo";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { unpackToken } from "../../../utils/commonUtils";
+import { setUserInfoStorage } from "../../../utils/storage";
 
 type Step = "credentials" | "otp";
 
@@ -40,7 +42,21 @@ export default function AuthPanel() {
 
     const handleVerifyOtp = async () => {
         if (otp.join("").length < 6) return;
-        await verifyOtp({"email": email, "otp": otp.join("")});
+
+        const obj = { 
+            "email": email,
+            "otp": otp.join("")
+        }
+        const response = await verifyOtp(obj);
+
+        if (response) {
+            const userData = await unpackToken(response.token);
+            setUserInfoStorage(userData);
+            setCd(5)
+            navigate("/dashboard");
+        }
+
+
     };
 
     // const handleGoogle = () => { setGLoading(true); setTimeout(() => setGLoading(false), 1500); };

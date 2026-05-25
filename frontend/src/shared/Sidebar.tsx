@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Icons } from "../Pages/MainContent/components/DashboardIcons";
+import { getUserInfoStorage } from "../utils/storage";
+import { getUserInitials, logOutUser } from "../utils/commonUtils";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -195,31 +197,39 @@ function SiteSwitcher({ collapsed }: { collapsed: boolean }) {
 }
 
 /* ── UserCard ── */
-function UserCard({ collapsed }: { collapsed: boolean }) {
+function UserCard({ collapsed, userInfo }: any) {
+
   return (
-    <div className="flex items-center gap-2.5 rounded-xl p-2 cursor-pointer group hover:bg-gray-50 transition-colors duration-150">
-      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500 font-black text-white text-[11px]">A</div>
-      {!collapsed && (
-        <>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-gray-900 truncate leading-none">Arjun Mehta</p>
-            <p className="text-[10px] mt-0.5 truncate text-gray-400">Admin</p>
-          </div>
-          <span className="w-4 h-4 flex-shrink-0 text-gray-300 group-hover:text-gray-400 transition-colors">
-            <Icons.settings />
-          </span>
-        </>
-      )}
+    <div className="flex items-center justify-between gap-2.5 rounded-xl p-2">
+      <div className="flex items-center gap-2.5 rounded-xl p-2 cursor-pointer group hover:bg-gray-50 transition-colors duration-150">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500 font-black text-white text-[11px]">
+          {userInfo ? getUserInitials(userInfo?.full_name ?? "") : "-"}
+        </div>
+        {!collapsed && (
+          <>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-gray-900 truncate leading-none">{userInfo?.full_name ?? "-"}</p>
+              <p className="text-[10px] mt-0.5 truncate text-gray-400">{userInfo?.role_type ?? "-"}</p>
+            </div>
+          </>
+        )}
+      </div>
+      <span
+        onClick={() => logOutUser()}
+        className="w-4 h-4 cursor-pointer hover:text-red-500 flex-shrink-0 text-gray-300 group-hover:text-gray-400 transition-colors">
+        <Icons.logout />
+      </span>
     </div>
   );
 }
 
 /* ── SidebarContent (reused for desktop + mobile drawer) ── */
-function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expandedIds, toggleExpand, onNavSelect }: {
+function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expandedIds, toggleExpand, onNavSelect, userInfo }: {
   collapsed: boolean; setCollapsed: (v: boolean) => void;
   activeId: string; setActiveId: (id: string) => void;
   expandedIds: Set<string>; toggleExpand: (id: string) => void;
   onNavSelect?: (id: string) => void;
+  userInfo: any;
 }) {
   const handleSelect = (id: string) => { setActiveId(id); onNavSelect?.(id); };
 
@@ -309,7 +319,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
             </>
           )}
         </button>
-        <UserCard collapsed={collapsed} />
+        <UserCard collapsed={collapsed} userInfo={userInfo} />
       </div>
     </div>
   );
@@ -319,6 +329,9 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
    MAIN EXPORT
 ══════════════════════════════════════════════ */
 export default function Sidebar() {
+
+  const userInfo = getUserInfoStorage();
+
   const [collapsed, setCollapsed] = useState(false);
   const [activeId, setActiveId] = useState("dashboard");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["content"]));
@@ -356,6 +369,7 @@ export default function Sidebar() {
           expandedIds={expandedIds}
           toggleExpand={toggleExpand}
           onNavSelect={() => setMobileOpen(false)}
+          userInfo={userInfo}
         />
       </div>
 
@@ -371,6 +385,7 @@ export default function Sidebar() {
           setActiveId={setActiveId}
           expandedIds={expandedIds}
           toggleExpand={toggleExpand}
+          userInfo={userInfo}
         />
       </div>
 
@@ -395,12 +410,8 @@ export default function Sidebar() {
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse inline-block" />
-              Live
-            </div>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-white text-xs bg-orange-500">
-              A
+              {userInfo ? getUserInitials(userInfo?.full_name ?? "") : "-"}
             </div>
           </div>
         </div>
