@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
+import { useNavigate } from "react-router-dom";
+import DashboardInfo from "../Pages/MainContent/components/DashboardInfo";
+import QuickNote from "../Pages/MainContent/components/QuickNote";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -198,7 +201,7 @@ function SiteSwitcher({ collapsed }: { collapsed: boolean }) {
 
 /* ── UserCard ── */
 function UserCard({ collapsed, userInfo }: any) {
-
+  const navigate = useNavigate();
   return (
     <div className="flex items-center justify-between gap-2.5 rounded-xl p-2">
       <div className="flex items-center gap-2.5 rounded-xl p-2 cursor-pointer group hover:bg-gray-50 transition-colors duration-150">
@@ -215,7 +218,7 @@ function UserCard({ collapsed, userInfo }: any) {
         )}
       </div>
       <span
-        onClick={() => logOutUser()}
+        onClick={() => { logOutUser(); navigate("/login"); }}
         className="w-4 h-4 cursor-pointer hover:text-red-500 flex-shrink-0 text-gray-300 group-hover:text-gray-400 transition-colors">
         <Icons.logout />
       </span>
@@ -263,15 +266,15 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
         <SiteSwitcher collapsed={collapsed} />
       </div>
 
-      {/* New Content */}
+      {/* New Notion */}
       <div className="px-2.5 pb-3 flex-shrink-0">
         {!collapsed ? (
-          <button className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]">
+          <button className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]">
             <span className="w-3.5 h-3.5"><Icons.plus /></span>
-            New Content
+            New Notion
           </button>
         ) : (
-          <button className="w-full flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600" title="New Content">
+          <button className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600" title="New Notion">
             <span className="w-4 h-4"><Icons.plus /></span>
           </button>
         )}
@@ -417,60 +420,7 @@ export default function Sidebar() {
         </div>
 
         {/* Page body */}
-        <div className="flex-1 p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6">
-
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
-            {[
-              { label: "Total Content", value: "142", change: "+12 this week", pos: true },
-              { label: "Published", value: "103", change: "72% of total", pos: true },
-              { label: "Drafts", value: "28", change: "5 added today", pos: false },
-              { label: "Scheduled", value: "11", change: "Next: 2h from now", pos: true },
-            ].map(s => (
-              <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
-                <p className="text-xs font-semibold text-gray-400">{s.label}</p>
-                <p className="text-2xl font-black text-gray-900 mt-1 tracking-tight">{s.value}</p>
-                <p className={`text-xs font-semibold mt-1.5 ${s.pos ? "text-green-500" : "text-orange-400"}`}>{s.change}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Recent content */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100">
-            <div className="flex items-center justify-between px-4 md:px-5 py-4 border-b border-gray-50">
-              <h2 className="text-sm font-extrabold text-gray-900">Recent Content</h2>
-              <button className="text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors">View all</button>
-            </div>
-            <div className="divide-y divide-gray-50">
-              {[
-                { title: "Q4 Product Roadmap Announcement", type: "Article", status: "Published", date: "2h ago", author: "Arjun M." },
-                { title: "Getting Started with Syncovo API", type: "Blog", status: "Draft", date: "5h ago", author: "Priya S." },
-                { title: "November Changelog — v2.4", type: "Changelog", status: "Review", date: "Yesterday", author: "Rohan D." },
-                { title: "Pricing Page Refresh", type: "Page", status: "Scheduled", date: "2 days ago", author: "Meera K." },
-                { title: "Case Study: Team Velocity", type: "Article", status: "Published", date: "3 days ago", author: "Arjun M." },
-              ].map((row, i) => (
-                <div key={i} className="flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 hover:bg-gray-50/60 transition-colors cursor-pointer">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{row.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5 truncate">
-                      {row.type} · <span className="hidden sm:inline">{row.author} · </span>{row.date}
-                    </p>
-                  </div>
-                  <span className={[
-                    "text-[10px] font-bold px-2 md:px-2.5 py-1 rounded-lg flex-shrink-0",
-                    row.status === "Published" ? "bg-green-50 text-green-600 border border-green-100" :
-                      row.status === "Draft" ? "bg-amber-50 text-amber-600 border border-amber-100" :
-                        row.status === "Review" ? "bg-orange-50 text-orange-500 border border-orange-100" :
-                          "bg-blue-50 text-blue-500 border border-blue-100"
-                  ].join(" ")}>
-                    {row.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
+        <DashboardInfo />
       </div>
     </div>
   );
