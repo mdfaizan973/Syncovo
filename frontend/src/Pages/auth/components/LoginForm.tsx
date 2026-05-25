@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRightIcon, CheckIcon, LockIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
+import { ArrowRightIcon, CheckIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import { Input, OtpInput } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { BackIcon } from "../../../components/ui/icons";
