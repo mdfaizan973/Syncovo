@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const authRoutes = require('./modules/auth/auth.routes');
+const notesRoutes = require('./modules/notes/notes.routes');
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-
+app.use('/api/notes', notesRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({
