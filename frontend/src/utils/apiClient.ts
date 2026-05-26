@@ -1,5 +1,6 @@
 import axios from "axios";
 import { errorResponse, getResponseMessage, successResponse } from "./toasUtils";
+import { getUserInfoByKey } from "./storage";
 
 const apiClient = axios.create({
     baseURL: "http://localhost:5000",
@@ -16,7 +17,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
 
-        const token = localStorage.getItem("token");
+        const token = getUserInfoByKey("token");
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -35,7 +36,6 @@ apiClient.interceptors.request.use(
 ========================= */
 
 const handleResponse = (response: any) => {
-    console.log(response);
     // EXISTING SUCCESS FUNCTION
     if (response?.data?.success === true) {
         successResponse(response);

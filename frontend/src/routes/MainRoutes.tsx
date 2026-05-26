@@ -26,6 +26,7 @@ export default function MainRoutes() {
                 <Route index element={<DashboardInfo />} />
                 <Route path="quicknote" element={<QuickNotesDashboard />} />
                 <Route path="create-note" element={<CreateQuickNote />} />
+                <Route path="view-note/:id" element={<CreateQuickNote />} />
             </Route>
 
         </Routes>

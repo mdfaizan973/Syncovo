@@ -18,8 +18,6 @@ export default function SignUpForm() {
 
     const { register, authLoading } = useAuth();
 
-    console.log(authLoading);
-
     const [form, setForm] = useState({
         full_name: "",
         email: "",
