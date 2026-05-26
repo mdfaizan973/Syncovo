@@ -3,6 +3,7 @@ import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -70,6 +71,14 @@ const SITES = [
 const NAVIGATION_ROUTE_MAP: Record<string, string> = {
   dashboard: "/dashboard",
   quicknote: "/dashboard/quicknote",
+  createNote: "/dashboard/create-note",
+  // createForm: "/dashboard/create-form",
+  // createTable: "/dashboard/create-table",
+  // createSettings: "/dashboard/create-settings",
+  // createAnalytics: "/dashboard/create-analytics",
+  // createSEO: "/dashboard/create-seo",
+  // createTeam: "/dashboard/create-team",
+  // createSettings: "/dashboard/create-settings",
 };
 
 const getActiveNavId = (pathname: string) => {
@@ -79,6 +88,10 @@ const getActiveNavId = (pathname: string) => {
 
   if (pathname.startsWith("/dashboard/quicknote")) {
     return "quicknote";
+  }
+
+  if (pathname.startsWith("/dashboard/create-note")) {
+    return "createNote";
   }
 
   return "dashboard";
@@ -91,6 +104,10 @@ const getPageTitle = (pathname: string) => {
 
   if (pathname.startsWith("/dashboard/quicknote")) {
     return "Quick Note";
+  }
+
+  if (pathname.startsWith("/dashboard/create-note")) {
+    return "Create Note";
   }
 
   return getActiveNavId(pathname).replace(/-/g, " ");
@@ -304,21 +321,21 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
         <SiteSwitcher collapsed={collapsed} />
       </div>
 
-      {/* New Notion */}
+      {/* New Note BTN */}
       <div className="px-2.5 pb-3 flex-shrink-0">
         {!collapsed ? (
           <button
-            onClick={() => handleSelect("quicknote")}
+            onClick={() => handleSelect("createNote")}
             className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]"
           >
             <span className="w-3.5 h-3.5"><Icons.plus /></span>
-            New Notion
+            New Note
           </button>
         ) : (
           <button
             onClick={() => handleSelect("quicknote")}
             className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600"
-            title="New Notion"
+            title="New Note"
           >
             <span className="w-4 h-4"><Icons.plus /></span>
           </button>
@@ -378,6 +395,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
 ══════════════════════════════════════════════ */
 export default function Sidebar() {
 
+  const navigate = useNavigate();
   const userInfo = getUserInfoStorage();
   const location = useLocation();
   const activeId = getActiveNavId(location.pathname);
@@ -444,13 +462,21 @@ export default function Sidebar() {
         {/* Topbar */}
         <div className="flex items-center justify-between px-4 md:px-6 py-3.5 bg-white flex-shrink-0 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            {/* Hamburger — mobile only */}
+            
             <button
-              className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-orange-50 hover:text-orange-500 transition-colors border border-gray-200 hover:border-orange-200"
+              className="lg:hidden cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-orange-50 hover:text-orange-500 transition-colors border border-gray-200 hover:border-orange-200"
               onClick={() => setMobileOpen(true)}
             >
               <span className="w-5 h-5"><Icons.menu /></span>
             </button>
+
+            <button
+              className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-orange-50 hover:text-orange-500 transition-colors border border-gray-200 hover:border-orange-200"
+              onClick={() => navigate(-1)}
+            >
+              <span className="w-5 h-5"><Icons.back /></span>
+            </button>
+
             <div>
               <h1 className="text-base font-extrabold text-gray-900 tracking-tight leading-none capitalize">
                 {getPageTitle(location.pathname)}

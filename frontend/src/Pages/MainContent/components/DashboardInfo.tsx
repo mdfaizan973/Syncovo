@@ -6,8 +6,11 @@ import {
     AlertTriangle,
     StickyNote,
   } from "lucide-react";
+import { useNavigate } from "react-router-dom";
   
   export default function DashboardInfo() {
+    const navigate = useNavigate();
+
     const stats = [
       {
         label: "My Active Tasks",
@@ -48,6 +51,10 @@ import {
             title: "Quick Note",
             icon: StickyNote,
             color: "bg-black hover:bg-neutral-800",
+            path: "/dashboard/quicknote",
+            onClick: () => {
+                navigate("/dashboard/quicknote");
+            },
           },
     //   {
     //     title: "New Table",
@@ -167,6 +174,7 @@ import {
                 {quickActions.map((action) => (
                   <button
                     key={action.title}
+                    onClick={action.onClick}
                     className={`${action.color} cursor-pointer rounded-xl px-4 py-3 min-w-[100px]  text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm flex flex-col items-center justify-center gap-1.5`}
                   >
                     <action.icon className="w-5 h-5" />
