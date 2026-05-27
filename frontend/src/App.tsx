@@ -14,7 +14,7 @@ function App() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [pathname]);
 
-  const isLoginOrSignupPage = ["/login", "/signup"].includes(pathname);
+  const isLoginOrSignupPage = ["/login", "/register"].includes(pathname);
 
 
   return (

@@ -1,6 +1,6 @@
 // MainRoutes.tsx
-import { Route, Routes } from "react-router-dom";
-import UnderConstruction from "../components/showcase/UnderConstruction";
+import { Navigate, Route, Routes } from "react-router-dom";
+// import UnderConstruction from "../components/showcase/UnderConstruction";
 import SignUp from "../Pages/auth/SignUp";
 import Login from "../Pages/auth/Login";
 import NotFound from "../shared/NotFound";
@@ -15,13 +15,25 @@ import TableView from "../Pages/workspaces/TableView";
 import FormBuilder from "../Pages/workspaces/FormBuilder";
 import FormsDashboard from "../Pages/workspaces/FormsDashboard";
 import TablesDashboard from "../Pages/workspaces/TablesDashboard";
+import LandingPage from "../Pages/prelogin/Landingpage";
+import { getUserInfoStorage } from "../utils/storage";
 
 export default function MainRoutes() {
+    const isAuthenticated = !!getUserInfoStorage();
+
+    const authRedirect = (component: React.ReactNode) => {
+        return isAuthenticated
+            ? <Navigate to="/dashboard" replace />
+            : component;
+    }
+
     return (
         <Routes>
-            <Route path="/" element={<UnderConstruction />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
+            {/* <Route path="/" element={<UnderConstruction />} /> */}
+            <Route path="/" element={authRedirect(<LandingPage />)} />
+            <Route path="/register" element={authRedirect(<SignUp />)} />
+            <Route path="/login" element={authRedirect(<Login />)} />
+
             <Route path="*" element={<NotFound />} />
 
             <Route path="/dashboard" element={

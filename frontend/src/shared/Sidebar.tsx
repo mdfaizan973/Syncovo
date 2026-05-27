@@ -282,7 +282,10 @@ function UserCard({ collapsed, userInfo }: any) {
         )}
       </div>
       <span
-        onClick={() => { logOutUser(); navigate("/login"); }}
+        onClick={() => {
+          logOutUser();
+          navigate("/");
+        }}
         className="w-4 h-4 cursor-pointer hover:text-red-500 flex-shrink-0 text-gray-300 group-hover:text-gray-400 transition-colors">
         <Icons.logout />
       </span>

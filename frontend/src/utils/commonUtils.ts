@@ -14,3 +14,13 @@ export const logOutUser = () => {
 export const getUserInitials = (text: any) => {
     return text?.charAt(0)?.toUpperCase() ?? "-";
 }
+
+export const formatDate = (date: string = "") => {
+    if (!date) return "";
+    
+    return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+}

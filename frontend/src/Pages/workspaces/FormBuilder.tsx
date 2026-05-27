@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { WORKSPACES_RESPONSE } from "./mock";
+import { Button } from "../../components/ui/button";
+import { CheckIcon, PlusIcon, Presentation, SaveIcon, TrashIcon } from "lucide-react";
 
 const FIELD_TYPES = [
     "text",
@@ -13,6 +15,27 @@ const FIELD_TYPES = [
     "checkbox",
     "radio",
 ];
+
+const FIELD_TYPE_ICONS: Record<string, string> = {
+    text: "T",
+    textarea: "¶",
+    number: "#",
+    email: "@",
+    password: "•••",
+    date: "📅",
+    file: "📎",
+    select: "▾",
+    checkbox: "☑",
+    radio: "◉",
+};
+
+function toKey(label: string): string {
+    return label
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "_")
+        .replace(/[^a-z0-9_]/g, "");
+}
 
 export default function FormBuilder() {
 
@@ -38,7 +61,6 @@ export default function FormBuilder() {
 
         setFields([
             ...fields,
-
             {
                 label: "",
                 key: "",
@@ -60,6 +82,10 @@ export default function FormBuilder() {
         updatedFields[index][key] = value;
 
         setFields(updatedFields);
+    };
+
+    const removeField = (index: number) => {
+        setFields(fields.filter((_, i) => i !== index));
     };
 
     const addOption = (fieldIndex: number) => {
@@ -84,509 +110,637 @@ export default function FormBuilder() {
         setFields(updatedFields);
     };
 
+    const removeOption = (fieldIndex: number, optionIndex: number) => {
+        const updatedFields = [...fields];
+        updatedFields[fieldIndex].options = updatedFields[fieldIndex].options.filter(
+            (_: string, i: number) => i !== optionIndex
+        );
+        setFields(updatedFields);
+    };
+
     const handleSave = () => {
+
+        const schema = fields
+            .filter((f) => f.label.trim() !== "")
+            .map((f) => {
+                const entry: any = {
+                    key: f.key || toKey(f.label),
+                    label: f.label,
+                    type: f.type,
+                    required: f.required,
+                };
+                if (
+                    (f.type === "select" || f.type === "radio") &&
+                    f.options.length > 0
+                ) {
+                    entry.options = f.options.filter((o: string) => o.trim() !== "");
+                }
+                return entry;
+            });
 
         const payload = {
             workspace_id: workspaceId,
             table_name: tableName,
             description,
-            fields,
+            schema,
         };
 
         console.log("TABLE PAYLOAD", payload);
     };
 
+    // Derive preview fields for right panel
+    const previewFields = fields.filter((f) => f.label.trim() !== "");
+
     return (
-        <div className="p-6">
+        <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
 
-            {/* HEADER */}
+            <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
-            <div
-                className="
-                    bg-white
-                    border
-                    border-gray-200
-                    rounded-3xl
-                    p-6
-                "
-            >
+                {/* ── Top header card ── */}
+                <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
 
-                <h1 className="text-2xl font-black text-gray-900">
-                    Create Dynamic Table
-                </h1>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
-                <p className="text-sm text-gray-400 mt-1">
-                    Build dynamic forms and database tables
-                </p>
+                        <div className="flex items-center gap-3">
 
-                {/* FORM TOP */}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-
-                    {/* WORKSPACE */}
-
-                    <div>
-
-                        <label
-                            className="
-                                text-sm
-                                font-bold
-                                text-gray-700
-                                block
-                                mb-2
-                            "
-                        >
-                            Workspace
-                        </label>
-
-                        <select
-                            value={workspaceId}
-                            onChange={(e) =>
-                                setWorkspaceId(e.target.value)
-                            }
-                            className="
-                                w-full
-                                border
-                                border-gray-200
-                                rounded-2xl
-                                px-4
-                                py-3
-                                outline-none
-                                focus:border-orange-400
-                            "
-                        >
-
-                            <option value="">
-                                Select Workspace
-                            </option>
-
-                            {workspaces.map((workspace) => (
-
-                                <option
-                                    key={workspace.id}
-                                    value={workspace.id}
+                            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                <svg
+                                    className="w-4 h-4 text-orange-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                 >
-                                    {workspace.name}
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-                    {/* TABLE NAME */}
-
-                    <div>
-
-                        <label
-                            className="
-                                text-sm
-                                font-bold
-                                text-gray-700
-                                block
-                                mb-2
-                            "
-                        >
-                            Table Name
-                        </label>
-
-                        <input
-                            type="text"
-                            placeholder="Enter table name"
-                            value={tableName}
-                            onChange={(e) =>
-                                setTableName(e.target.value)
-                            }
-                            className="
-                                w-full
-                                border
-                                border-gray-200
-                                rounded-2xl
-                                px-4
-                                py-3
-                                outline-none
-                                focus:border-orange-400
-                            "
-                        />
-
-                    </div>
-
-                </div>
-
-                {/* DESCRIPTION */}
-
-                <div className="mt-5">
-
-                    <label
-                        className="
-                            text-sm
-                            font-bold
-                            text-gray-700
-                            block
-                            mb-2
-                        "
-                    >
-                        Description
-                    </label>
-
-                    <textarea
-                        placeholder="Enter description"
-                        value={description}
-                        onChange={(e) =>
-                            setDescription(e.target.value)
-                        }
-                        className="
-                            w-full
-                            border
-                            border-gray-200
-                            rounded-2xl
-                            px-4
-                            py-3
-                            h-28
-                            resize-none
-                            outline-none
-                            focus:border-orange-400
-                        "
-                    />
-
-                </div>
-
-            </div>
-
-            {/* FIELDS */}
-
-            <div className="mt-6">
-
-                <div className="flex items-center justify-between mb-4">
-
-                    <div>
-
-                        <h2 className="text-xl font-black text-gray-900">
-                            Dynamic Fields
-                        </h2>
-
-                        <p className="text-sm text-gray-400 mt-1">
-                            Create dynamic schema for the table
-                        </p>
-
-                    </div>
-
-                    <button
-                        onClick={addField}
-                        className="
-                            bg-orange-500
-                            hover:bg-orange-600
-                            text-white
-                            px-5
-                            py-2.5
-                            rounded-xl
-                            text-sm
-                            font-semibold
-                        "
-                    >
-                        Add Field
-                    </button>
-
-                </div>
-
-                <div className="space-y-5">
-
-                    {fields.map((field, index) => (
-
-                        <div
-                            key={index}
-                            className="
-                                bg-white
-                                border
-                                border-gray-200
-                                rounded-3xl
-                                p-5
-                            "
-                        >
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
-                                {/* LABEL */}
-
-                                <div>
-
-                                    <label
-                                        className="
-                                            text-xs
-                                            font-bold
-                                            text-gray-500
-                                            block
-                                            mb-2
-                                        "
-                                    >
-                                        Field Label
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        placeholder="Customer Name"
-                                        value={field.label}
-                                        onChange={(e) =>
-                                            updateField(
-                                                index,
-                                                "label",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="
-                                            w-full
-                                            border
-                                            border-gray-200
-                                            rounded-2xl
-                                            px-4
-                                            py-3
-                                            outline-none
-                                            focus:border-orange-400
-                                        "
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                     />
+                                </svg>
+                            </div>
 
-                                </div>
+                            <div>
+                                <h1 className="text-lg font-bold tracking-tight text-gray-800">
+                                    Create Dynamic Table
+                                </h1>
 
-                                {/* KEY */}
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                    Build dynamic forms and database tables
+                                </p>
+                            </div>
 
-                                <div>
+                        </div>
 
-                                    <label
-                                        className="
-                                            text-xs
-                                            font-bold
-                                            text-gray-500
-                                            block
-                                            mb-2
-                                        "
-                                    >
-                                        Field Key
-                                    </label>
+                    </div>
 
-                                    <input
-                                        type="text"
-                                        placeholder="customer_name"
-                                        value={field.key}
-                                        onChange={(e) =>
-                                            updateField(
-                                                index,
-                                                "key",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="
-                                            w-full
-                                            border
-                                            border-gray-200
-                                            rounded-2xl
-                                            px-4
-                                            py-3
-                                            outline-none
-                                            focus:border-orange-400
-                                        "
-                                    />
+                    {/* Top form: workspace / table name / description */}
+                    <div className="mt-3 pt-3 border-t border-gray-100">
 
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                                {/* TYPE */}
+                            {/* Workspace */}
+                            <div className="flex flex-col gap-1.5">
 
-                                <div>
+                                <label className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                    Workspace
+                                </label>
 
-                                    <label
-                                        className="
-                                            text-xs
-                                            font-bold
-                                            text-gray-500
-                                            block
-                                            mb-2
-                                        "
-                                    >
-                                        Field Type
-                                    </label>
+                                <select
+                                    value={workspaceId}
+                                    onChange={(e) => setWorkspaceId(e.target.value)}
+                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors text-gray-700"
+                                >
+                                    <option value="">Select Workspace</option>
 
-                                    <select
-                                        value={field.type}
-                                        onChange={(e) =>
-                                            updateField(
-                                                index,
-                                                "type",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="
-                                            w-full
-                                            border
-                                            border-gray-200
-                                            rounded-2xl
-                                            px-4
-                                            py-3
-                                            outline-none
-                                            focus:border-orange-400
-                                        "
-                                    >
+                                    {workspaces.map((workspace) => (
 
-                                        {FIELD_TYPES.map((type) => (
+                                        <option
+                                            key={workspace.id}
+                                            value={workspace.id}
+                                        >
+                                            {workspace.name}
+                                        </option>
 
-                                            <option
-                                                key={type}
-                                                value={type}
-                                            >
-                                                {type}
-                                            </option>
+                                    ))}
 
-                                        ))}
-
-                                    </select>
-
-                                </div>
-
-                                {/* REQUIRED */}
-
-                                <div>
-
-                                    <label
-                                        className="
-                                            text-xs
-                                            font-bold
-                                            text-gray-500
-                                            block
-                                            mb-2
-                                        "
-                                    >
-                                        Required
-                                    </label>
-
-                                    <div
-                                        className="
-                                            h-[50px]
-                                            border
-                                            border-gray-200
-                                            rounded-2xl
-                                            flex
-                                            items-center
-                                            px-4
-                                        "
-                                    >
-
-                                        <input
-                                            type="checkbox"
-                                            checked={field.required}
-                                            onChange={(e) =>
-                                                updateField(
-                                                    index,
-                                                    "required",
-                                                    e.target.checked
-                                                )
-                                            }
-                                        />
-
-                                    </div>
-
-                                </div>
+                                </select>
 
                             </div>
 
-                            {/* OPTIONS */}
+                            {/* Table name */}
+                            <div className="flex flex-col gap-1.5">
 
-                            {(field.type === "select" ||
-                                field.type === "radio") && (
+                                <label className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                    Table Name
+                                </label>
 
-                                <div className="mt-5">
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Customer Orders"
+                                    value={tableName}
+                                    onChange={(e) => setTableName(e.target.value)}
+                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-800"
+                                />
 
-                                    <div className="flex items-center justify-between">
+                            </div>
 
-                                        <h3
-                                            className="
-                                                text-sm
-                                                font-bold
-                                                text-gray-700
-                                            "
+                        </div>
+
+                        <div className="mt-3 flex flex-col gap-1.5">
+
+                            <label className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                Description
+                            </label>
+
+                            <textarea
+                                placeholder="Describe what this table stores..."
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={2}
+                                className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-800 resize-none leading-relaxed"
+                            />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* ── Left / Right two-column layout ── */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-start">
+
+                    {/* ── LEFT: Field builder ── */}
+                    <div className="flex flex-col gap-3">
+
+                        <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
+
+                            <div className="flex items-center justify-between">
+
+                                <div>
+                                    <h2 className="text-sm font-bold tracking-tight text-gray-800">
+                                        Dynamic Fields
+                                    </h2>
+
+                                    <p className="text-xs text-gray-400 mt-0.5">
+                                        Define columns for your table schema
+                                    </p>
+                                </div>
+
+                                <Button
+                                    onClick={addField}
+                                    variant="secondary"
+                                    leftIcon={<PlusIcon className="w-3.5 h-3.5" />}
+                                >
+                                    Add Field
+                                </Button>
+
+                            </div>
+
+                        </div>
+
+                        {/* Field rows */}
+                        <div className="flex flex-col gap-2">
+
+                            {fields.map((field, index) => (
+
+                                <div
+                                    key={index}
+                                    className="bg-white rounded-xl border border-gray-100 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200 overflow-hidden"
+                                >
+
+                                    {/* Field row header */}
+                                    <div className="px-4 py-3 flex items-center gap-2">
+
+                                        {/* Drag handle / index indicator */}
+                                        <div className="w-6 h-6 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                                            <span className="text-[10px] font-medium text-gray-400">
+                                                {index + 1}
+                                            </span>
+                                        </div>
+
+                                        {/* Label input */}
+                                        <input
+                                            type="text"
+                                            placeholder="Field Label  e.g. Customer Name"
+                                            value={field.label}
+                                            onChange={(e) => {
+                                                updateField(index, "label", e.target.value);
+                                                updateField(index, "key", toKey(e.target.value));
+                                            }}
+                                            className="flex-1 h-8 px-2.5 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-800 min-w-0"
+                                        />
+
+                                        {/* Type selector */}
+                                        <select
+                                            value={field.type}
+                                            onChange={(e) => updateField(index, "type", e.target.value)}
+                                            className="h-8 px-2 text-xs rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors text-gray-700 shrink-0"
                                         >
-                                            Options
-                                        </h3>
+                                            {FIELD_TYPES.map((type) => (
 
-                                        <button
-                                            onClick={() =>
-                                                addOption(index)
-                                            }
-                                            className="
-                                                text-orange-500
-                                                text-sm
-                                                font-semibold
-                                            "
-                                        >
-                                            + Add Option
-                                        </button>
+                                                <option
+                                                    key={type}
+                                                    value={type}
+                                                >
+                                                    {type}
+                                                </option>
 
-                                    </div>
+                                            ))}
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                                        </select>
 
-                                        {field.options.map(
-                                            (
-                                                option: string,
-                                                optionIndex: number
-                                            ) => (
+                                        {/* Required toggle */}
+                                        <label className="flex items-center gap-1.5 shrink-0 cursor-pointer select-none">
 
+                                            <div className="relative">
                                                 <input
-                                                    key={optionIndex}
-                                                    type="text"
-                                                    placeholder="Option"
-                                                    value={option}
+                                                    type="checkbox"
+                                                    checked={field.required}
                                                     onChange={(e) =>
-                                                        updateOption(
-                                                            index,
-                                                            optionIndex,
-                                                            e.target.value
-                                                        )
+                                                        updateField(index, "required", e.target.checked)
                                                     }
-                                                    className="
-                                                        border
-                                                        border-gray-200
-                                                        rounded-2xl
-                                                        px-4
-                                                        py-3
-                                                        outline-none
-                                                        focus:border-orange-400
-                                                    "
+                                                    className="peer sr-only"
                                                 />
 
-                                            )
+                                                <div className={`w-5 h-5 rounded-md border-2 transition-all duration-150 flex items-center justify-center ${field.required ? "bg-orange-500 border-orange-500" : "bg-white border-gray-300"}`}>
+                                                    {field.required && (
+                                                       <CheckIcon className="w-3.5 h-3.5 text-white" />
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <span className="text-xs text-gray-400">Req</span>
+
+                                        </label>
+
+                                        {/* Remove field */}
+                                        {fields.length > 1 && (
+                                            <button
+                                                onClick={() => removeField(index)}
+                                                className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-all flex items-center justify-center shrink-0"
+                                            >
+                                                <TrashIcon className="w-3.5 h-3.5" />
+                                            </button>
                                         )}
 
                                     </div>
 
+                                    {/* Key preview pill */}
+                                    {field.key && (
+                                        <div className="px-4 pb-2 flex items-center gap-1.5">
+                                            <span className="text-[10px] text-gray-400">key:</span>
+                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-100 font-mono">
+                                                {field.key}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Options (select / radio) */}
+                                    {(field.type === "select" || field.type === "radio") && (
+
+                                        <div className="px-4 pb-3 pt-1 border-t border-gray-100">
+
+                                            <div className="flex items-center justify-between mb-2">
+
+                                                <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                                    Options
+                                                </span>
+
+                                                <button
+                                                    onClick={() => addOption(index)}
+                                                    className="h-6 px-2 cursor-pointer text-[11px] font-medium rounded-md border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-all flex items-center gap-1"
+                                                >
+                                                    <PlusIcon className="w-3.5 h-3.5" />
+                                                    Add Option
+                                                </button>
+
+                                            </div>
+
+                                            {field.options.length === 0 ? (
+
+                                                <p className="text-xs text-gray-300 italic">
+                                                    No options yet — click Add Option
+                                                </p>
+
+                                            ) : (
+
+                                                <div className="flex flex-col gap-1.5">
+
+                                                    {field.options.map(
+                                                        (option: string, optionIndex: number) => (
+
+                                                            <div
+                                                                key={optionIndex}
+                                                                className="flex items-center gap-2"
+                                                            >
+
+                                                                <div className="w-4 h-4 shrink-0 flex items-center justify-center">
+                                                                    {field.type === "radio" ? (
+                                                                        <div className="w-3 h-3 rounded-full border-2 border-gray-300" />
+                                                                    ) : (
+                                                                        <div className="w-3 h-3 rounded border-2 border-gray-300" />
+                                                                    )}
+                                                                </div>
+
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder={`Option ${optionIndex + 1}`}
+                                                                    value={option}
+                                                                    onChange={(e) =>
+                                                                        updateOption(index, optionIndex, e.target.value)
+                                                                    }
+                                                                    className="flex-1 h-7 px-2.5 text-xs rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-700"
+                                                                />
+
+                                                                <button
+                                                                    onClick={() => removeOption(index, optionIndex)}
+                                                                    className="w-6 h-6 cursor-pointer rounded-md border border-red-100 bg-red-50 text-red-400 hover:bg-red-100 transition-all flex items-center justify-center shrink-0"
+                                                                >
+                                                                    <TrashIcon className="w-3.5 h-3.5" />
+                                                                </button>
+
+                                                            </div>
+
+                                                        )
+                                                    )}
+
+                                                </div>
+
+                                            )}
+
+                                        </div>
+
+                                    )}
+
                                 </div>
 
+                            ))}
+
+                        </div>
+
+                        {/* Add another field — bottom inline ghost */}
+                        <button
+                            onClick={addField}
+                            className="h-9 w-full cursor-pointer rounded-xl border border-dashed border-gray-200 bg-white text-gray-400 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 transition-all text-sm flex items-center justify-center gap-1.5"
+                        >
+                            <PlusIcon className="w-3.5 h-3.5" />
+                            Add another field
+                        </button>
+
+                    </div>
+
+                    {/* ── RIGHT: Preview + Save ── */}
+                    <div className="flex flex-col gap-3 xl:sticky xl:top-4">
+
+                        {/* Save card */}
+                        <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
+
+                            <div className="flex items-start justify-between gap-3">
+
+                                <div>
+                                    <h2 className="text-sm font-bold tracking-tight text-gray-800">
+                                        {tableName || "Untitled Table"}
+                                    </h2>
+
+                                    <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
+                                        {description || "No description provided."}
+                                    </p>
+                                </div>
+
+                                <Button
+                                    onClick={handleSave}
+                                    variant="primary"
+                                    leftIcon={<SaveIcon className="w-3.5 h-3.5" />}
+                                >
+                                    Save Table
+                                </Button>
+
+                            </div>
+
+                            {workspaceId && (
+                                <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1.5">
+                                    <span className="text-xs text-gray-400">Workspace:</span>
+                                    <span className="text-xs font-medium text-gray-700">
+                                        {workspaces.find((w) => w.id === workspaceId)?.name ?? workspaceId}
+                                    </span>
+                                </div>
                             )}
 
                         </div>
 
-                    ))}
+                        {/* Live form preview */}
+                        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
 
-                </div>
+                            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
 
-                {/* SAVE */}
+                                <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                    Form Preview
+                                </span>
 
-                <div className="flex justify-end mt-6">
+                                <span className="text-[10px] font-medium px-1.5 py-px rounded-full text-white bg-orange-500">
+                                    {previewFields.length} fields
+                                </span>
 
-                    <button
-                        onClick={handleSave}
-                        className="
-                            bg-orange-500
-                            hover:bg-orange-600
-                            text-white
-                            px-6
-                            py-3
-                            rounded-2xl
-                            text-sm
-                            font-bold
-                            transition-all
-                        "
-                    >
-                        Save Table
-                    </button>
+                            </div>
+
+                            <div className="px-4 py-4">
+
+                                {previewFields.length === 0 ? (
+
+                                    <div className="flex flex-col items-center justify-center py-8 gap-2">
+
+                                        <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+                                            <Presentation className="w-4 h-4 text-gray-300" />
+                                        </div>
+
+                                        <p className="text-xs text-gray-400">
+                                            Add fields to see the form preview
+                                        </p>
+
+                                    </div>
+
+                                ) : (
+
+                                    <div className="flex flex-col gap-4">
+
+                                        {previewFields.map((field, i) => (
+
+                                            <div
+                                                key={i}
+                                                className="flex flex-col gap-1.5"
+                                            >
+
+                                                <label className="text-xs font-medium text-gray-700 flex items-center gap-1">
+                                                    {field.label}
+                                                    {field.required && (
+                                                        <span className="text-orange-500 text-xs">*</span>
+                                                    )}
+                                                    <span className="ml-auto text-[10px] font-medium px-1.5 py-px rounded-full bg-gray-100 text-gray-400">
+                                                        {FIELD_TYPE_ICONS[field.type] ?? field.type}
+                                                    </span>
+                                                </label>
+
+                                                {field.type === "textarea" && (
+                                                    <textarea
+                                                        disabled
+                                                        placeholder={`Enter ${field.label}...`}
+                                                        rows={3}
+                                                        className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 bg-gray-50 text-gray-400 placeholder:text-gray-300 resize-none outline-none cursor-not-allowed"
+                                                    />
+                                                )}
+
+                                                {field.type === "select" && (
+                                                    <select
+                                                        disabled
+                                                        className="h-8 px-2.5 text-xs rounded-lg border border-gray-200 bg-gray-50 text-gray-400 outline-none cursor-not-allowed"
+                                                    >
+                                                        <option>
+                                                            {field.options.length > 0
+                                                                ? `${field.options.filter((o: string) => o).length} options`
+                                                                : "No options yet"}
+                                                        </option>
+                                                    </select>
+                                                )}
+
+                                                {field.type === "checkbox" && (
+                                                    <div className="flex items-center gap-2 h-8">
+                                                        <div className="w-4 h-4 rounded border-2 border-gray-300" />
+                                                        <span className="text-xs text-gray-400">
+                                                            {field.label}
+                                                        </span>
+                                                    </div>
+                                                )}
+
+                                                {field.type === "radio" && (
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {field.options.filter((o: string) => o).length > 0 ? (
+                                                            field.options
+                                                                .filter((o: string) => o)
+                                                                .map((opt: string, oi: number) => (
+                                                                    <div
+                                                                        key={oi}
+                                                                        className="flex items-center gap-2"
+                                                                    >
+                                                                        <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300" />
+                                                                        <span className="text-xs text-gray-500">
+                                                                            {opt}
+                                                                        </span>
+                                                                    </div>
+                                                                ))
+                                                        ) : (
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300" />
+                                                                <span className="text-xs text-gray-300">
+                                                                    No options yet
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {field.type === "file" && (
+                                                    <div className="h-16 rounded-lg border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+                                                        <span className="text-xs text-gray-300">
+                                                            📎 Upload file
+                                                        </span>
+                                                    </div>
+                                                )}
+
+                                                {!["textarea", "select", "checkbox", "radio", "file"].includes(field.type) && (
+                                                    <input
+                                                        type={field.type}
+                                                        disabled
+                                                        placeholder={`Enter ${field.label}...`}
+                                                        className="h-8 px-2.5 text-xs rounded-lg border border-gray-200 bg-gray-50 text-gray-400 placeholder:text-gray-300 outline-none cursor-not-allowed"
+                                                    />
+                                                )}
+
+                                            </div>
+
+                                        ))}
+
+                                        {/* Dummy submit */}
+                                        <Button
+                                            disabled
+                                            variant="secondary"
+                                            className="w-full mt-1"
+                                        >
+                                            Submit
+                                        </Button>
+
+                                    </div>
+
+                                )}
+
+                            </div>
+
+                        </div>
+
+                        {/* Schema preview */}
+                        {previewFields.length > 0 && (
+                            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+
+                                <div className="px-4 py-3 border-b border-gray-100">
+                                    <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                        Schema Preview
+                                    </span>
+                                </div>
+
+                                <div className="divide-y divide-gray-100">
+
+                                    {previewFields.map((field, i) => (
+
+                                        <div
+                                            key={i}
+                                            className="px-4 py-2.5 flex items-center gap-3"
+                                        >
+
+                                            <div className="w-6 h-6 rounded-md bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                                                <span className="text-[9px] font-bold text-orange-500">
+                                                    {FIELD_TYPE_ICONS[field.type] ?? "?"}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-medium text-gray-700 truncate">
+                                                    {field.label}
+                                                </p>
+                                                <p className="text-[10px] text-gray-400 font-mono truncate">
+                                                    {field.key || toKey(field.label)}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-1.5 shrink-0">
+
+                                                <span className="text-[10px] font-medium px-1.5 py-px rounded-full bg-gray-100 text-gray-500">
+                                                    {field.type}
+                                                </span>
+
+                                                {field.required && (
+                                                    <span className="text-[10px] font-medium px-1.5 py-px rounded-full bg-orange-50 text-orange-600 border border-orange-100">
+                                                        req
+                                                    </span>
+                                                )}
+
+                                                {(field.type === "select" || field.type === "radio") &&
+                                                    field.options.filter((o: string) => o).length > 0 && (
+                                                        <span className="text-[10px] font-medium px-1.5 py-px rounded-full bg-blue-50 text-blue-500 border border-blue-100">
+                                                            {field.options.filter((o: string) => o).length} opts
+                                                        </span>
+                                                    )}
+
+                                            </div>
+
+                                        </div>
+
+                                    ))}
+
+                                </div>
+
+                            </div>
+                        )}
+
+                    </div>
 
                 </div>
 

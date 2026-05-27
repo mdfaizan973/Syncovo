@@ -7,7 +7,7 @@ export function Spinner() {
   );
 }
 
-export function Divider({ label }: { label: string }) {
+export function Divider({ label= "" }: { label: string }) {
   return (
     <div className="flex items-center gap-3 my-1">
       <div className="flex-1 h-px bg-gray-100" />

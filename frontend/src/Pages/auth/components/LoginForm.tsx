@@ -69,7 +69,7 @@ export default function AuthPanel() {
     const otpComplete = otp.join("").length === 6;
 
     const handleNavigateToSignUpPage = () => {
-        navigate("/signup");
+        navigate("/register");
     };
 
     return (

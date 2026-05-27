@@ -67,7 +67,7 @@ export default function useNotes(loadAllNotes = false, noteId = '') {
     }
     // DELETE NOTE
     const deleteNote = async (id: string) => {
-
+        console.log("deleteNote", id);
         setNoteLoading(true);
         try {
             const response = await notesService.deleteNote(id);
