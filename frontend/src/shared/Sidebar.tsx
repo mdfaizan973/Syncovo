@@ -3,30 +3,24 @@ import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Book } from "lucide-react";
 import { WORKSPACES_RESPONSE } from "../Pages/workspaces/mock";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
   badge?: string | number; badgeType?: "count" | "status" | "new";
+  navigateTo?: string;
   children?: SubItem[];
 };
-type SubItem = { id: string; label: string; badge?: string; badgeType?: "count" | "draft" | "live" };
+type SubItem = { id: string; label: string; badge?: string; badgeType?: "count" | "draft" | "live"; navigateTo?: string };
 type Section = { title: string; items: NavItem[] };
 
 const NAV_SECTIONS: Section[] = [
   {
     title: "Overview",
     items: [
-      { id: "dashboard", label: "Dashboard", icon: Icons.dashboard },
-      {
-        id: "analytics", label: "Analytics", icon: Icons.analytics,
-        children: [
-          { id: "traffic", label: "Traffic overview" },
-          { id: "engagement", label: "Engagement" },
-          { id: "conversion", label: "Conversion funnel" },
-          { id: "reports", label: "Custom reports", badge: "New", badgeType: "live" },
-        ],
-      },
+      { id: "dashboard", label: "Dashboard", icon: Icons.dashboard, navigateTo: "/dashboard" },
+      { id: "workspaces", label: "Workspaces", icon: Icons.analytics, navigateTo: "/dashboard/workspaces" },
     ],
   },
   {
@@ -35,38 +29,20 @@ const NAV_SECTIONS: Section[] = [
       id: workspace.id,
       label: workspace.name,
       icon: Icons.content,
+      navigateTo: `/dashboard/workspace-view/${workspace.id}`,
       children: workspace.tables.map((table) => ({
         id: table.id,
         label: table.name,
         icon: Icons.content,
+        navigateTo: `/dashboard/table-view/${workspace.id}/${table.id}`,
       })),
     })),
-    // items: [
-    //   {
-    //     id: "content", label: "Finalyca Tech", icon: Icons.content, badge: 142,
-    //     children: [
-    //       { id: "posts", label: "Blog Tasks", badge: "84", badgeType: "count" },
-    //       { id: "articles", label: "Articles Tasks", badge: "31", badgeType: "count" },
-    //       { id: "drafts", label: "Linkedin Tasks", badge: "15", badgeType: "draft" },
-    //     ],
-    //   },
-    //   {
-    //     id: "pages", label: "Finalyca Sales", icon: Icons.pages, badge: 7,
-    //     // add the sales realted tasks here
-    //     children: [
-    //       { id: "quotes", label: "Quotes Tasks", badge: "4", badgeType: "count" },
-    //       { id: "invoices", label: "Invoices Tasks", badge: "2", badgeType: "draft" },
-    //       { id: "payments", label: "Payments Tasks", badge: "1", badgeType: "live" },
-    //       { id: "returns", label: "Returns Tasks", badge: "0", badgeType: "count" },
-    //     ],
-    //   },
-    // ],
   },
   {
     title: "Settings",
     items: [
-      { id: "forms", label: "Forms", icon: Icons.forms, badge: 7, badgeType: "count" },
-      { id: "tables", label: "Tables", icon: Icons.content, badge: 7, badgeType: "count" },
+      { id: "forms", label: "Forms", icon: Icons.forms, badge: 7, badgeType: "count", navigateTo: "/dashboard/forms" },
+      { id: "tables", label: "Tables", icon: Icons.content, badge: 7, badgeType: "count", navigateTo: "/dashboard/tables" },
       { id: "settings", label: "Settings", icon: Icons.settings },
     ],
   },
@@ -77,16 +53,6 @@ const SITES = [
   { id: "docs", name: "Docs Site", status: "live", url: "docs.syncovo.io" },
   { id: "blog", name: "Blog", status: "draft", url: "blog.syncovo.io" },
 ];
-
-const NAVIGATION_ROUTE_MAP: Record<string, string> = {
-  dashboard: "/dashboard",
-  quicknote: "/dashboard/quicknote",
-  createNote: "/dashboard/create-note",
-  workspaces: "/dashboard/workspaces",
-  workspaceView: "/dashboard/workspace-view",
-  tableView: "/dashboard/table-view",
-  formBuilder: "/dashboard/form-builder",
-};
 
 const getActiveNavId = (pathname: string) => {
 
@@ -116,6 +82,12 @@ const getActiveNavId = (pathname: string) => {
 
   if (pathname.startsWith("/dashboard/form-builder")) {
     return "formBuilder";
+  }
+  if (pathname.startsWith("/dashboard/forms")) {
+    return "forms";
+  }
+  if (pathname.startsWith("/dashboard/tables")) {
+    return "tables";
   }
 
   return "dashboard";
@@ -150,6 +122,12 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/dashboard/form-builder")) {
     return "Form Builder";
   }
+  if (pathname.startsWith("/dashboard/forms")) {
+    return "Forms";
+  }
+  if (pathname.startsWith("/dashboard/tables")) {
+    return "Tables";
+  }
 
   return "Dashboard";
 };
@@ -170,7 +148,7 @@ function Badge({ value, type }: { value?: string | number; type?: string }) {
 function SubNavItem({ item, onSelect }: { item: SubItem; onSelect: () => void }) {
   return (
     <button onClick={onSelect}
-      className="w-full flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-left transition-all duration-150 text-gray-400 hover:text-gray-600 hover:bg-gray-50">
+      className="cursor-pointer w-full flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-left transition-all duration-150 text-gray-400 hover:text-gray-600 hover:bg-gray-50">
       <div className="flex items-center gap-2 min-w-0">
         <span className="w-1 h-1 rounded-full flex-shrink-0 bg-gray-300" />
         <span className="text-xs font-medium truncate text-gray-500">{item.label}</span>
@@ -183,13 +161,14 @@ function SubNavItem({ item, onSelect }: { item: SubItem; onSelect: () => void })
 /* ── NavItem ── */
 function NavItem({ item, active, expanded, onSelect, onToggle, collapsed }: {
   item: NavItem; active: boolean; expanded: boolean;
-  onSelect: (id: string) => void; onToggle: (id: string) => void; collapsed: boolean;
+  onSelect: (id: string, navigateTo: string) => void; onToggle: (id: string) => void; collapsed: boolean;
 }) {
   const hasChildren = !!item.children?.length;
+
   return (
     <div>
       <button
-        onClick={() => hasChildren ? onToggle(item.id) : onSelect(item.id)}
+        onClick={() => hasChildren ? onToggle(item.id) : onSelect(item.id, item.navigateTo)}
         title={collapsed ? item.label : undefined}
         className={[
           "w-full flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all duration-150 relative group border",
@@ -206,7 +185,7 @@ function NavItem({ item, active, expanded, onSelect, onToggle, collapsed }: {
         </span>
         {!collapsed && (
           <>
-            <span className={`flex-1 text-sm font-semibold truncate min-w-0 ${active ? "text-orange-600" : "text-gray-600 group-hover:text-gray-800"}`}>
+            <span className={`flex-1 cursor-pointer text-sm font-semibold truncate min-w-0 ${active ? "text-orange-600" : "text-gray-600 group-hover:text-gray-800"}`}>
               {item.label}
             </span>
             <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -224,7 +203,7 @@ function NavItem({ item, active, expanded, onSelect, onToggle, collapsed }: {
       {hasChildren && expanded && !collapsed && (
         <div className="mt-0.5 ml-4 pl-3 flex flex-col gap-0.5 border-l border-gray-100">
           {item.children!.map(child => (
-            <SubNavItem key={child.id} item={child} onSelect={() => onSelect(child.id)} />
+            <SubNavItem key={child.id} item={child} onSelect={() => onSelect(child.id, child.navigateTo)} />
           ))}
         </div>
       )}
@@ -321,13 +300,17 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
 }) {
   const navigate = useNavigate();
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: string, navigateTo: string) => {
+    console.log("navigateTo", navigateTo);
     setActiveId(id);
+    navigate(navigateTo);
 
-    const nextRoute = NAVIGATION_ROUTE_MAP[id];
-    if (nextRoute) {
-      navigate(nextRoute);
-    }
+
+    // const nextRoute = NAVIGATION_ROUTE_MAP;
+
+    // if (nextRoute) {
+    //   navigate(nextRoute);
+    // }
 
     onNavSelect?.(id);
   };
@@ -366,19 +349,19 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
       <div className="px-2.5 pb-3 flex-shrink-0">
         {!collapsed ? (
           <button
-            onClick={() => handleSelect("createNote")}
+            onClick={() => navigate("/dashboard/quicknote")}
             className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]"
           >
-            <span className="w-3.5 h-3.5"><Icons.plus /></span>
-            New Note
+            <span className="w-3.5 h-3.5"><Book className="w-4 h-4" /></span>
+            Notes
           </button>
         ) : (
           <button
-            onClick={() => handleSelect("quicknote")}
+            onClick={() => navigate("/dashboard/quicknote")}
             className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600"
-            title="New Note"
+            title="Notes"
           >
-            <span className="w-4 h-4"><Icons.plus /></span>
+            <span className="w-4 h-4"><Book className="w-4 h-4" /></span>
           </button>
         )}
       </div>
@@ -401,7 +384,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
                   item={item}
                   active={activeId === item.id}
                   expanded={expandedIds.has(item.id)}
-                  onSelect={handleSelect}
+                  onSelect={(id, navigateTo) => handleSelect(id, navigateTo)}
                   onToggle={toggleExpand}
                   collapsed={collapsed}
                 />
@@ -503,7 +486,7 @@ export default function Sidebar() {
         {/* Topbar */}
         <div className="flex items-center justify-between px-4 md:px-6 py-3.5 bg-white flex-shrink-0 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            
+
             <button
               className="lg:hidden cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-orange-50 hover:text-orange-500 transition-colors border border-gray-200 hover:border-orange-200"
               onClick={() => setMobileOpen(true)}

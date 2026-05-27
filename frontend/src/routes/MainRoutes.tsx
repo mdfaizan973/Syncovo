@@ -13,6 +13,8 @@ import WorkspacesDashboard from "../Pages/workspaces/WorkspacesDashboard";
 import WorkspaceView from "../Pages/workspaces/WorkspaceView";
 import TableView from "../Pages/workspaces/TableView";
 import FormBuilder from "../Pages/workspaces/FormBuilder";
+import FormsDashboard from "../Pages/workspaces/FormsDashboard";
+import TablesDashboard from "../Pages/workspaces/TablesDashboard";
 
 export default function MainRoutes() {
     return (
@@ -35,6 +37,8 @@ export default function MainRoutes() {
                 <Route path="workspace-view/:workspaceId" element={<WorkspaceView />} />
                 <Route path="table-view/:workspaceId/:tableId" element={<TableView />} />
                 <Route path="form-builder" element={<FormBuilder />} />
+                <Route path="forms" element={<FormsDashboard />} />
+                <Route path="tables" element={<TablesDashboard />} />
 
             </Route>
 
