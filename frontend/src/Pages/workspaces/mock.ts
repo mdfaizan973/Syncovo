@@ -252,6 +252,7 @@ export const WORKSPACES_RESPONSE = {
                     description: "Manage indian sales records",
 
                     created_by: "u_1",
+                    created_at: "2026-05-27",
 
                     assigned_users: [
                         "u_1",
@@ -335,6 +336,7 @@ export const WORKSPACES_RESPONSE = {
                     description: "Track customer issues",
 
                     created_by: "u_1",
+                    created_at: "2026-05-27",
 
                     assigned_users: [
                         "u_1",

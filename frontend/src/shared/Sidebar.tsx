@@ -3,8 +3,9 @@ import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Book } from "lucide-react";
+import { Book, LayoutPanelTop, Table } from "lucide-react";
 import { WORKSPACES_RESPONSE } from "../Pages/workspaces/mock";
+import useNotes from "../hooks/useNotes";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -15,38 +16,7 @@ type NavItem = {
 type SubItem = { id: string; label: string; badge?: string; badgeType?: "count" | "draft" | "live"; navigateTo?: string };
 type Section = { title: string; items: NavItem[] };
 
-const NAV_SECTIONS: Section[] = [
-  {
-    title: "Overview",
-    items: [
-      { id: "dashboard", label: "Dashboard", icon: Icons.dashboard, navigateTo: "/dashboard" },
-      { id: "workspaces", label: "Workspaces", icon: Icons.analytics, navigateTo: "/dashboard/workspaces" },
-    ],
-  },
-  {
-    title: "Workspaces",
-    items: WORKSPACES_RESPONSE.data.map((workspace) => ({
-      id: workspace.id,
-      label: workspace.name,
-      icon: Icons.content,
-      navigateTo: `/dashboard/workspace-view/${workspace.id}`,
-      children: workspace.tables.map((table) => ({
-        id: table.id,
-        label: table.name,
-        icon: Icons.content,
-        navigateTo: `/dashboard/table-view/${workspace.id}/${table.id}`,
-      })),
-    })),
-  },
-  {
-    title: "Settings",
-    items: [
-      { id: "forms", label: "Forms", icon: Icons.forms, badge: 7, badgeType: "count", navigateTo: "/dashboard/forms" },
-      { id: "tables", label: "Tables", icon: Icons.content, badge: 7, badgeType: "count", navigateTo: "/dashboard/tables" },
-      { id: "settings", label: "Settings", icon: Icons.settings },
-    ],
-  },
-];
+
 
 const SITES = [
   { id: "main", name: "Syncovo Main", status: "live", url: "syncovo.io" },
@@ -294,29 +264,61 @@ function UserCard({ collapsed, userInfo }: any) {
 }
 
 /* ── SidebarContent (reused for desktop + mobile drawer) ── */
-function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expandedIds, toggleExpand, onNavSelect, userInfo }: {
+function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expandedIds, toggleExpand, onNavSelect, userInfo, notes }: {
   collapsed: boolean; setCollapsed: (v: boolean) => void;
   activeId: string; setActiveId: (id: string) => void;
   expandedIds: Set<string>; toggleExpand: (id: string) => void;
   onNavSelect?: (id: string) => void;
   userInfo: any;
+  notes: any[];
 }) {
+
+  const noteCount = notes?.length ?? 0;
+  const formCount = 7;
+  const tableCount = 7;
+
+  const NAV_SECTIONS: Section[] = [
+    {
+      title: "Overview",
+      items: [
+        { id: "dashboard", label: "Dashboard", icon: Icons.dashboard, navigateTo: "/dashboard" },
+        { id: "workspaces", label: "Workspaces", icon: Icons.analytics, navigateTo: "/dashboard/workspaces" },
+      ],
+    },
+    {
+      title: "Workspaces",
+      items: WORKSPACES_RESPONSE.data.map((workspace) => ({
+        id: workspace.id,
+        label: workspace.name,
+        icon: Icons.content,
+        navigateTo: `/dashboard/workspace-view/${workspace.id}`,
+        children: workspace.tables.map((table) => ({
+          id: table.id,
+          label: table.name,
+          icon: Icons.content,
+          navigateTo: `/dashboard/table-view/${workspace.id}/${table.id}`,
+        })),
+      })),
+    },
+    {
+      title: "Tools",
+      items: [
+        { id: "quicknote", label: "Notes", icon: () => <Book className="w-4 h-4" />, badge: noteCount, badgeType: "count", navigateTo: "/dashboard/quicknote" },
+        { id: "forms", label: "Forms", icon: () => <LayoutPanelTop className="w-4 h-4" />, badge: formCount, badgeType: "count", navigateTo: "/dashboard/forms" },
+        { id: "tables", label: "Tables", icon: () => <Table className="w-4 h-4" />, badge: tableCount, badgeType: "count", navigateTo: "/dashboard/tables" },
+      ],
+    },
+  ];
+
   const navigate = useNavigate();
 
   const handleSelect = (id: string, navigateTo: string) => {
-    console.log("navigateTo", navigateTo);
     setActiveId(id);
     navigate(navigateTo);
 
-
-    // const nextRoute = NAVIGATION_ROUTE_MAP;
-
-    // if (nextRoute) {
-    //   navigate(nextRoute);
-    // }
-
     onNavSelect?.(id);
   };
+
 
   return (
     <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: "none" }}>
@@ -344,33 +346,13 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
       </div>
 
       {/* Site Switcher */}
-      <div className="px-2.5 py-3 flex-shrink-0">
+      {/* <div className="px-2.5 py-3 flex-shrink-0">
         <SiteSwitcher collapsed={collapsed} />
-      </div>
+      </div> */}
 
-      {/* New Note BTN */}
-      <div className="px-2.5 pb-3 flex-shrink-0">
-        {!collapsed ? (
-          <button
-            onClick={() => navigate("/dashboard/quicknote")}
-            className="w-full cursor-pointer flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all duration-200 bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md hover:shadow-orange-200 active:scale-[0.98]"
-          >
-            <span className="w-3.5 h-3.5"><Book className="w-4 h-4" /></span>
-            Notes
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate("/dashboard/quicknote")}
-            className="w-full cursor-pointer flex items-center justify-center rounded-xl py-2 transition-all duration-150 bg-orange-500 text-white hover:bg-orange-600"
-            title="Notes"
-          >
-            <span className="w-4 h-4"><Book className="w-4 h-4" /></span>
-          </button>
-        )}
-      </div>
 
       {/* Nav sections */}
-      <nav className="flex-1 px-2 pb-2 flex flex-col gap-4">
+      <nav className="flex-1 px-2 pb-2 flex flex-col mt-4 gap-4">
         {NAV_SECTIONS.map(section => (
           <div key={section.title}>
             {!collapsed ? (
@@ -427,6 +409,8 @@ export default function Sidebar() {
   const location = useLocation();
   const activeId = getActiveNavId(location.pathname);
 
+  const { notes } = useNotes(true);
+
   const [collapsed, setCollapsed] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["content"]));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -464,6 +448,7 @@ export default function Sidebar() {
           toggleExpand={toggleExpand}
           onNavSelect={() => setMobileOpen(false)}
           userInfo={userInfo}
+          notes={notes}
         />
       </div>
 
@@ -480,6 +465,7 @@ export default function Sidebar() {
           expandedIds={expandedIds}
           toggleExpand={toggleExpand}
           userInfo={userInfo}
+          notes={notes}
         />
       </div>
 

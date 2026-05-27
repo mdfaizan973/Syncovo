@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { WORKSPACES_RESPONSE } from "./mock";
+import { useEffect, useMemo, useState } from "react";
+import { FORMS_RESPONSE, WORKSPACES_RESPONSE } from "./mock";
 import { Button } from "../../components/ui/button";
-import { CheckIcon, PlusIcon, Presentation, SaveIcon, TrashIcon } from "lucide-react";
+import { CheckIcon, LayoutPanelTop, PlusIcon, Presentation, SaveIcon, Trash, TrashIcon } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const FIELD_TYPES = [
     "text",
@@ -38,6 +39,17 @@ function toKey(label: string): string {
 }
 
 export default function FormBuilder() {
+
+    const { formId } = useParams();
+    const currentForm = FORMS_RESPONSE;
+    
+    const tableSchema = useMemo(() => {
+        return (
+            FORMS_RESPONSE.data.find((form) => form.id === formId)?.fields || []
+        );
+    }, [formId]);
+
+    console.log("tableSchema", tableSchema);
 
     const workspaces = WORKSPACES_RESPONSE.data;
 
@@ -151,6 +163,13 @@ export default function FormBuilder() {
     // Derive preview fields for right panel
     const previewFields = fields.filter((f) => f.label.trim() !== "");
 
+    useEffect(() => {
+        if (formId) {
+            setFields(tableSchema);
+        }
+    }, [tableSchema, formId])
+
+
     return (
         <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
 
@@ -161,34 +180,32 @@ export default function FormBuilder() {
 
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex justify-between w-full items-center gap-3">
+                            <div className="flex items-center gap-3">
 
-                            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                <svg
-                                    className="w-4 h-4 text-orange-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
-                                </svg>
+                                <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                    <LayoutPanelTop className="w-4 h-4 text-orange-500" />
+                                </div>
+
+                                <div>
+                                    <h1 className="text-lg font-bold tracking-tight text-gray-800">
+                                        Create Dynamic Table
+                                    </h1>
+
+                                    <p className="text-xs text-gray-400 mt-0.5">
+                                        Build dynamic forms and database tables
+                                    </p>
+                                </div>
                             </div>
 
-                            <div>
-                                <h1 className="text-lg font-bold tracking-tight text-gray-800">
-                                    Create Dynamic Table
-                                </h1>
+                            <div className="flex items-center gap-2">
 
-                                <p className="text-xs text-gray-400 mt-0.5">
-                                    Build dynamic forms and database tables
-                                </p>
+                                <button
+                                    onClick={() => alert("Delete Table")}
+                                    className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
+                                    <Trash className="w-3.5 h-3.5" />
+                                </button>
                             </div>
-
                         </div>
 
                     </div>
@@ -364,7 +381,7 @@ export default function FormBuilder() {
 
                                                 <div className={`w-5 h-5 rounded-md border-2 transition-all duration-150 flex items-center justify-center ${field.required ? "bg-orange-500 border-orange-500" : "bg-white border-gray-300"}`}>
                                                     {field.required && (
-                                                       <CheckIcon className="w-3.5 h-3.5 text-white" />
+                                                        <CheckIcon className="w-3.5 h-3.5 text-white" />
                                                     )}
                                                 </div>
                                             </div>

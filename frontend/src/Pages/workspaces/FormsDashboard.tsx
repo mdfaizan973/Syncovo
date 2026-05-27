@@ -6,8 +6,6 @@ import {
     Users,
     LayoutPanelTop,
     CalendarDays,
-    BarChart3,
-    Sparkles,
 } from "lucide-react";
 
 import { FORMS_RESPONSE } from "./mock";
@@ -47,27 +45,38 @@ export default function FormsDashboard() {
 
                     <div className="flex items-center gap-2">
 
-                        <button
-                            className="h-9 px-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 text-sm font-medium transition-all flex items-center gap-2"
-                        >
-                            <BarChart3 className="w-4 h-4" />
-                            Analytics
-                        </button>
 
                         <button
                             onClick={() => navigate("/dashboard/form-builder")}
-                            className="h-9 px-4 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-all flex items-center gap-2"
+                            className="h-9 px-4 cursor-pointer rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-all flex items-center gap-2"
                         >
                             <Plus className="w-4 h-4" />
-                            Create Form
+                            Create
                         </button>
 
+                        <div className="h-9 px-3 rounded-lg border border-gray-200 bg-white flex items-center gap-2">
+
+                            <div className="w-6 h-6 rounded-lg bg-orange-50 flex items-center justify-center">
+                                <FileText className="w-3.5 h-3.5 text-orange-500" />
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-xs text-gray-400">
+                                    Total
+                                </span>
+
+                                <span className="text-sm font-medium text-gray-800">
+                                    {FORMS_RESPONSE?.data?.length ?? 0}
+                                </span>
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>
 
                 {/* Overview Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
 
                     <div className="bg-white rounded-xl border border-gray-100 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200 p-4">
 
@@ -151,7 +160,7 @@ export default function FormsDashboard() {
 
                     </div>
 
-                </div>
+                </div> */}
 
                 {/* Forms Section */}
                 <div className="bg-white rounded-xl border border-gray-100 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
@@ -171,12 +180,6 @@ export default function FormsDashboard() {
 
                         </div>
 
-                        <div className="h-7 px-3 rounded-full text-xs font-medium border bg-orange-50 text-orange-600 border-orange-200 flex items-center gap-2">
-                            Active
-                            <span className="text-[10px] font-medium px-1.5 py-px rounded-full text-white bg-orange-500">
-                                {FORMS_RESPONSE.data.length}
-                            </span>
-                        </div>
 
                     </div>
 
@@ -187,10 +190,8 @@ export default function FormsDashboard() {
 
                             <div
                                 key={form.id}
-                                onClick={() =>
-                                    alert("Go to the form builder page to edit the form")
-                                }
-                                className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
+
+                                className="bg-white rounded-xl border border-gray-100 p-4 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
                             >
 
                                 {/* Card Top */}
@@ -200,7 +201,11 @@ export default function FormsDashboard() {
                                         <FileText className="w-4 h-4 text-orange-500" />
                                     </div>
 
-                                    <button className="w-7 h-7 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 flex items-center justify-center transition-all">
+                                    <button
+                                        onClick={() =>
+                                            navigate(`/dashboard/form-builder/${form.id}`)
+                                        }
+                                        className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 flex items-center justify-center transition-all">
                                         <ArrowRight className="w-3.5 h-3.5" />
                                     </button>
 

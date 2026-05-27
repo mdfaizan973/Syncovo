@@ -49,6 +49,7 @@ export default function MainRoutes() {
                 <Route path="workspace-view/:workspaceId" element={<WorkspaceView />} />
                 <Route path="table-view/:workspaceId/:tableId" element={<TableView />} />
                 <Route path="form-builder" element={<FormBuilder />} />
+                <Route path="form-builder/:formId" element={<FormBuilder />} />
                 <Route path="forms" element={<FormsDashboard />} />
                 <Route path="tables" element={<TablesDashboard />} />
 

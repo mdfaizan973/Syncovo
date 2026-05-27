@@ -109,7 +109,7 @@ export default function TableView() {
 
                             {/* Search */}
                             <div className="relative">
-                               <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                                <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
 
                                 <Input
                                     type="text"
@@ -124,8 +124,8 @@ export default function TableView() {
                             <button
                                 onClick={() => setFilterOpen((v) => !v)}
                                 className={`h-9 px-3 cursor-pointer text-sm font-medium rounded-lg border transition-all flex items-center gap-1.5 ${filterOpen
-                                        ? "bg-orange-50 text-orange-600 border-orange-200"
-                                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                                    ? "bg-orange-50 text-orange-600 border-orange-200"
+                                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                                     }`}
                             >
                                 <FilterIcon className="w-3.5 h-3.5" />
@@ -148,11 +148,23 @@ export default function TableView() {
                             </button>
 
                             {/* Add Record — UI only */}
-                            <button onClick={() => alert("Open a model with the form of the table")} className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
+                            <button
+                                onClick={() => alert("Open a model with the form of the table")}
+                                className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
                                 <Plus className="w-3.5 h-3.5" />
                                 Add Record
                             </button>
 
+                            <button
+                                onClick={() => alert("Edit Form Colums")}
+                                className="w-7 h-7 cursor-pointer rounded-lg border border-blue-100 bg-blue-50 text-blue-500 flex items-center justify-center transition-all">
+                                <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                                onClick={() => alert("Delete Table")}
+                                className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
+                                <Trash className="w-3.5 h-3.5" />
+                            </button>
                         </div>
 
                     </div>
@@ -447,12 +459,12 @@ export default function TableView() {
 
                                                     {/* Edit — UI only */}
                                                     <button className="w-7 h-7 cursor-pointer rounded-lg border border-blue-100 bg-blue-50 text-blue-500 hover:bg-blue-100 transition-all flex items-center justify-center">
-                                                       <Edit className="w-3.5 h-3.5" />
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </button>
 
                                                     {/* Delete — UI only */}
                                                     <button className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-all flex items-center justify-center">
-                                                       <Trash className="w-3.5 h-3.5" />
+                                                        <Trash className="w-3.5 h-3.5" />
                                                     </button>
 
                                                 </div>

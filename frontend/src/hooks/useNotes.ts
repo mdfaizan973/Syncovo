@@ -11,6 +11,7 @@ export default function useNotes(loadAllNotes = false, noteId = '') {
         setNoteLoading(true);
         try {
             const response = await notesService.postNote(note);
+            await getAllNotes();
             return response;
         } catch (error) {
             console.error("Error in createNote:", error);
@@ -67,7 +68,7 @@ export default function useNotes(loadAllNotes = false, noteId = '') {
     }
     // DELETE NOTE
     const deleteNote = async (id: string) => {
-        console.log("deleteNote", id);
+
         setNoteLoading(true);
         try {
             const response = await notesService.deleteNote(id);
@@ -83,13 +84,20 @@ export default function useNotes(loadAllNotes = false, noteId = '') {
         }
     }
 
+    const refreshNotes = async () => {
+        await getAllNotes();
+    }
+
     useEffect(() => {
-        if (loadAllNotes) {
-            getAllNotes();
+        const fetchNotes = async () => {
+            if (loadAllNotes) {
+                await getAllNotes();
+            }
+            if (noteId) {
+                await getSingleNote(noteId as string);
+            }
         }
-        if (noteId) {
-            getSingleNote(noteId as string);
-        }
+        fetchNotes();
     }, [loadAllNotes, noteId]);
 
     return {
@@ -101,5 +109,6 @@ export default function useNotes(loadAllNotes = false, noteId = '') {
         getSingleNote,
         updateNote,
         deleteNote,
+        refreshNotes,
     };
 }
