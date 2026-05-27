@@ -3,7 +3,7 @@ import { Icons } from "../Pages/MainContent/components/DashboardIcons";
 import { getUserInfoStorage } from "../utils/storage";
 import { getUserInitials, logOutUser } from "../utils/commonUtils";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { WORKSPACES_RESPONSE } from "../Pages/workspaces/mock";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -30,27 +30,37 @@ const NAV_SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Databse",
-    items: [
-      {
-        id: "content", label: "Finalyca Tech", icon: Icons.content, badge: 142,
-        children: [
-          { id: "posts", label: "Blog Tasks", badge: "84", badgeType: "count" },
-          { id: "articles", label: "Articles Tasks", badge: "31", badgeType: "count" },
-          { id: "drafts", label: "Linkedin Tasks", badge: "15", badgeType: "draft" },
-        ],
-      },
-      {
-        id: "pages", label: "Finalyca Sales", icon: Icons.pages, badge: 7,
-        // add the sales realted tasks here
-        children: [
-          { id: "quotes", label: "Quotes Tasks", badge: "4", badgeType: "count" },
-          { id: "invoices", label: "Invoices Tasks", badge: "2", badgeType: "draft" },
-          { id: "payments", label: "Payments Tasks", badge: "1", badgeType: "live" },
-          { id: "returns", label: "Returns Tasks", badge: "0", badgeType: "count" },
-        ],
-      },
-    ],
+    title: "Workspaces",
+    items: WORKSPACES_RESPONSE.data.map((workspace) => ({
+      id: workspace.id,
+      label: workspace.name,
+      icon: Icons.content,
+      children: workspace.tables.map((table) => ({
+        id: table.id,
+        label: table.name,
+        icon: Icons.content,
+      })),
+    })),
+    // items: [
+    //   {
+    //     id: "content", label: "Finalyca Tech", icon: Icons.content, badge: 142,
+    //     children: [
+    //       { id: "posts", label: "Blog Tasks", badge: "84", badgeType: "count" },
+    //       { id: "articles", label: "Articles Tasks", badge: "31", badgeType: "count" },
+    //       { id: "drafts", label: "Linkedin Tasks", badge: "15", badgeType: "draft" },
+    //     ],
+    //   },
+    //   {
+    //     id: "pages", label: "Finalyca Sales", icon: Icons.pages, badge: 7,
+    //     // add the sales realted tasks here
+    //     children: [
+    //       { id: "quotes", label: "Quotes Tasks", badge: "4", badgeType: "count" },
+    //       { id: "invoices", label: "Invoices Tasks", badge: "2", badgeType: "draft" },
+    //       { id: "payments", label: "Payments Tasks", badge: "1", badgeType: "live" },
+    //       { id: "returns", label: "Returns Tasks", badge: "0", badgeType: "count" },
+    //     ],
+    //   },
+    // ],
   },
   {
     title: "Settings",
@@ -72,16 +82,14 @@ const NAVIGATION_ROUTE_MAP: Record<string, string> = {
   dashboard: "/dashboard",
   quicknote: "/dashboard/quicknote",
   createNote: "/dashboard/create-note",
-  // createForm: "/dashboard/create-form",
-  // createTable: "/dashboard/create-table",
-  // createSettings: "/dashboard/create-settings",
-  // createAnalytics: "/dashboard/create-analytics",
-  // createSEO: "/dashboard/create-seo",
-  // createTeam: "/dashboard/create-team",
-  // createSettings: "/dashboard/create-settings",
+  workspaces: "/dashboard/workspaces",
+  workspaceView: "/dashboard/workspace-view",
+  tableView: "/dashboard/table-view",
+  formBuilder: "/dashboard/form-builder",
 };
 
 const getActiveNavId = (pathname: string) => {
+
   if (pathname === "/dashboard" || pathname === "/dashboard/") {
     return "dashboard";
   }
@@ -94,10 +102,27 @@ const getActiveNavId = (pathname: string) => {
     return "createNote";
   }
 
+  if (pathname.startsWith("/dashboard/workspaces")) {
+    return "workspaces";
+  }
+
+  if (pathname.startsWith("/dashboard/workspace-view/")) {
+    return "workspaces";
+  }
+
+  if (pathname.startsWith("/dashboard/table-view/")) {
+    return "workspaces";
+  }
+
+  if (pathname.startsWith("/dashboard/form-builder")) {
+    return "formBuilder";
+  }
+
   return "dashboard";
 };
 
 const getPageTitle = (pathname: string) => {
+
   if (pathname === "/dashboard" || pathname === "/dashboard/") {
     return "Dashboard";
   }
@@ -110,7 +135,23 @@ const getPageTitle = (pathname: string) => {
     return "Create Note";
   }
 
-  return getActiveNavId(pathname).replace(/-/g, " ");
+  if (pathname.startsWith("/dashboard/workspaces")) {
+    return "Workspaces";
+  }
+
+  if (pathname.startsWith("/dashboard/workspace-view/")) {
+    return "Workspace View";
+  }
+
+  if (pathname.startsWith("/dashboard/table-view/")) {
+    return "Table View";
+  }
+
+  if (pathname.startsWith("/dashboard/form-builder")) {
+    return "Form Builder";
+  }
+
+  return "Dashboard";
 };
 
 /* ── Badge ── */

@@ -9,6 +9,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import DashboardInfo from "../Pages/MainContent/components/DashboardInfo";
 import CreateQuickNote from "../Pages/MainContent/components/QuickNotes/CreateQuickNote";
 import QuickNotesDashboard from "../Pages/MainContent/components/QuickNotes/QuickNotesDashboard";
+import WorkspacesDashboard from "../Pages/workspaces/WorkspacesDashboard";
+import WorkspaceView from "../Pages/workspaces/WorkspaceView";
+import TableView from "../Pages/workspaces/TableView";
+import FormBuilder from "../Pages/workspaces/FormBuilder";
 
 export default function MainRoutes() {
     return (
@@ -27,6 +31,11 @@ export default function MainRoutes() {
                 <Route path="quicknote" element={<QuickNotesDashboard />} />
                 <Route path="create-note" element={<CreateQuickNote />} />
                 <Route path="view-note/:id" element={<CreateQuickNote />} />
+                <Route path="workspaces" element={<WorkspacesDashboard />} />
+                <Route path="workspace-view/:workspaceId" element={<WorkspaceView />} />
+                <Route path="table-view/:workspaceId/:tableId" element={<TableView />} />
+                <Route path="form-builder" element={<FormBuilder />} />
+
             </Route>
 
         </Routes>
