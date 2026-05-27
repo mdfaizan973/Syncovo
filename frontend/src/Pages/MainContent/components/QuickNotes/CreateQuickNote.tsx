@@ -37,7 +37,7 @@ export default function CreateQuickNote() {
 
     return (
         <div className="min-h-screen bg-[#F6F8FB] p-3 md:p-4">
-            <div className="max-w-5xl mx-auto flex flex-col gap-3">
+            <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
                 {/* Header */}
                 <div className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">

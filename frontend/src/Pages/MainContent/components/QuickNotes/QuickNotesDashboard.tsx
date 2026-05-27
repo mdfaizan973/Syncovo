@@ -36,7 +36,7 @@ export default function QuickNotesDashboard() {
 
     return (
         <div className="min-h-screen bg-[#F6F8FB] p-3 md:p-4">
-            <div className="max-w-5xl mx-auto flex flex-col gap-3">
+            <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
                 {/* Header */}
                 <div

@@ -10,7 +10,7 @@ export default function WorkspacesDashboard() {
     return (
         <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
 
-            <div className="max-w-5xl mx-auto flex flex-col gap-3">
+            <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
                 <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
 

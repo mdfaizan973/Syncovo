@@ -80,7 +80,7 @@ export default function TableView() {
     return (
         <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
 
-            <div className="max-w-6xl mx-auto flex flex-col gap-3">
+            <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
                 {/* ── Header card ── */}
                 <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
@@ -148,7 +148,7 @@ export default function TableView() {
                             </button>
 
                             {/* Add Record — UI only */}
-                            <button className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
+                            <button onClick={() => alert("Open a model with the form of the table")} className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
                                 <Plus className="w-3.5 h-3.5" />
                                 Add Record
                             </button>
