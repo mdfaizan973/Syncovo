@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FORMS_RESPONSE, WORKSPACES_RESPONSE } from "./mock";
 import { Button } from "../../components/ui/button";
 import { CheckIcon, LayoutPanelTop, PlusIcon, Presentation, SaveIcon, Trash, TrashIcon } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const FIELD_TYPES = [
     "text",
@@ -41,15 +41,14 @@ function toKey(label: string): string {
 export default function FormBuilder() {
 
     const { formId } = useParams();
+    const navigate = useNavigate();
     const currentForm = FORMS_RESPONSE;
-    
+
     const tableSchema = useMemo(() => {
         return (
-            FORMS_RESPONSE.data.find((form) => form.id === formId)?.fields || []
+            currentForm.data.find((form) => form.id === formId)?.fields || []
         );
-    }, [formId]);
-
-    console.log("tableSchema", tableSchema);
+    }, [formId, currentForm]);
 
     const workspaces = WORKSPACES_RESPONSE.data;
 
@@ -83,11 +82,8 @@ export default function FormBuilder() {
         ]);
     };
 
-    const updateField = (
-        index: number,
-        key: string,
-        value: any
-    ) => {
+    const updateField = ( index: number, key: string,
+        value: any) => {
 
         const updatedFields = [...fields];
 
@@ -166,6 +162,16 @@ export default function FormBuilder() {
     useEffect(() => {
         if (formId) {
             setFields(tableSchema);
+        }else{
+            setFields([
+                {
+                    label: "",
+                    key: "",
+                    type: "text",
+                    required: false,
+                    options: [],
+                },
+            ]);
         }
     }, [tableSchema, formId])
 
@@ -200,11 +206,26 @@ export default function FormBuilder() {
 
                             <div className="flex items-center gap-2">
 
-                                <button
-                                    onClick={() => alert("Delete Table")}
-                                    className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
-                                    <Trash className="w-3.5 h-3.5" />
-                                </button>
+                                {
+                                    formId && (
+                                        <>
+                                            <button
+                                                onClick={() => alert("Delete Table")}
+                                                className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
+                                                <Trash className="w-4 h-4" />
+                                            </button>
+                                            <Button
+                                                variant="primary"
+                                                leftIcon={<PlusIcon className="w-4 h-4" />}
+                                                onClick={() => navigate("/dashboard/form-builder")}>
+                                                Create New
+                                            </Button>
+                                        </>
+                                    )
+                                }
+
+
+
                             </div>
                         </div>
 
