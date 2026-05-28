@@ -600,17 +600,17 @@ export default function TableView() {
 
                         <div className="px-5 pt-2 pb-4 border-b border-gray-100 flex-shrink-0">
 
-                                <div className="flex items-center justify-center gap-2 pb-2 border-b border-gray-100">
-                                    <Button variant="primary" className="h-4 cursor-pointer">   
-                                        All
-                                    </Button>
-                                    <Button variant="secondary" className="h-4 cursor-pointer">   
-                                        Viewers
-                                    </Button>
-                                    <Button variant="secondary" className="h-4 cursor-pointer">   
-                                        Editors
-                                    </Button>
-                                   
+                            <div className="flex items-center justify-center gap-2 pb-2 border-b border-gray-100">
+                                <Button variant="primary" className="h-4 cursor-pointer">
+                                    All
+                                </Button>
+                                <Button variant="secondary" className="h-4 cursor-pointer">
+                                    Viewers
+                                </Button>
+                                <Button variant="secondary" className="h-4 cursor-pointer">
+                                    Editors
+                                </Button>
+
                             </div>
                             {
                                 members.map((user) => (
