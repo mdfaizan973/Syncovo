@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { WORKSPACES_RESPONSE } from "./mock";
+// import { WORKSPACES_RESPONSE } from "./mock";
 import { Edit, Plus, Trash } from "lucide-react";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import { useState } from "react";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
+import { useAuth } from "../../hooks/useAuth";
+import { toast } from "sonner";
 
 export default function WorkspacesDashboard() {
 
@@ -11,10 +13,43 @@ export default function WorkspacesDashboard() {
 
     // const workspaces = WORKSPACES_RESPONSE.data;
     const { workspaces, createWorkspace, updateWorkspace, deleteWorkspace } = useWorkspaces();
+    const { getUsersByEmail } = useAuth();
+    const [users, setUsers] = useState<any[]>([]);
+
     const [initialValues, setInitialValues] = useState<any>(null);
     const [open, setOpen] = useState(false);
 
+
+
+    const handleSearchUsers = async (email: string, roleType: string = "") => { 
+
+        if (users.some((user) => user.email === email)) {
+            toast.error("User already exists");
+            return;
+        }
+
+        const response = await getUsersByEmail(email);
+
+        if (response.success) {
+            
+          const userData = response.data;
+      
+          if (!userData) return;
+      
+          const formattedUser = {
+            ...userData,
+            role_type:  roleType === "editors"  ? "editor" : "viewer",
+          };
+      
+          setUsers((prev) => [ formattedUser, ...prev, ]);
+        }
+
+    }
+
+    console.log(users);
+
     const handleCreateWorkspace = () => {
+        setInitialValues(null);
         setOpen(true);
     }
 
@@ -30,11 +65,12 @@ export default function WorkspacesDashboard() {
                 setOpen(false);
             }
         } catch (error) {
-            console.error("Error in handleSubmit:", error);
+            console.error("Error submitting workspace:", error);
         }
     }
 
     const handleUpdateWorkspace = async (payload: any) => {
+        setInitialValues(null);
         setOpen(true);
         setInitialValues(payload);
     }
@@ -46,7 +82,7 @@ export default function WorkspacesDashboard() {
                 setOpen(false);
             }
         } catch (error) {
-            console.error("Error in handleDeleteWorkspace:", error);
+            console.error("Error deleting workspace:", error);
         }
     }
 
@@ -210,9 +246,11 @@ export default function WorkspacesDashboard() {
             </div>
             <WorkSpaceFormModal
                 open={open}
+                users={users}
                 onClose={handleCloseModal}
                 onSubmit={handleSubmit}
                 initialValues={initialValues}
+                handleSearchUsers={handleSearchUsers}
             />
         </>
     );

@@ -9,11 +9,13 @@ import {
     Users,
     X,
 } from "lucide-react";
+import { Input } from "../components/ui/input";
 
 type User = {
     id: string;
     full_name: string;
     email: string;
+    role_type?: string;
 };
 
 type WorkspaceData = {
@@ -34,6 +36,7 @@ type Props = {
     users?: User[];
 
     loading?: boolean;
+    handleSearchUsers?: (email: string, roleType: string) => Promise<any>;
 };
 
 export default function WorkSpaceFormModal({
@@ -43,8 +46,11 @@ export default function WorkSpaceFormModal({
     initialValues,
     users = [],
     loading = false,
+    handleSearchUsers
 }: Props) {
-    console.log("initialValues", initialValues);
+
+    
+    console.log(users);
 
     const [formValues, setFormValues] = useState<any>({
         name: initialValues?.name || "",
@@ -61,12 +67,19 @@ export default function WorkSpaceFormModal({
                 editors: initialValues.editors,
                 viewers: initialValues.viewers,
             });
+        } else {
+            setFormValues({
+                name: "",
+                description: "",
+                editors: [],
+                viewers: [],
+            });
         }
     }, [initialValues]);
 
 
 
-    const handleChangeValues  = (e: any) => {
+    const handleChangeValues = (e: any) => {
         setFormValues({ ...formValues, [e.target.name]: e.target.value })
     }
 
@@ -78,9 +91,9 @@ export default function WorkSpaceFormModal({
 
         return users.filter((user) => {
 
-            const alreadyAdded = formValues.editors.some(
-                (editor) => editor.id === user.id
-            );
+            const alreadyAdded = formValues.editors
+            .filter((editor: User) => editor.role_type === "editor")
+            .some((editor) => editor.id === user.id );
 
             return (
                 !alreadyAdded &&
@@ -96,7 +109,9 @@ export default function WorkSpaceFormModal({
 
         return users.filter((user) => {
 
-            const alreadyAdded = formValues.viewers.some(
+            const alreadyAdded = formValues.viewers
+            .filter((viewer: User) => viewer.role_type === "viewer")
+            .some(
                 (viewer) => viewer.id === user.id
             );
 
@@ -128,7 +143,7 @@ export default function WorkSpaceFormModal({
         setFormValues({ ...formValues, viewers: formValues.viewers.filter((user: User) => user.id !== userId) });
     };
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
 
         const payload = {
             name: formValues?.name || "",
@@ -139,6 +154,15 @@ export default function WorkSpaceFormModal({
 
         onSubmit(payload, initialValues?.id || "");
     };
+
+
+    const handleSearchEditors = async () => {
+         await handleSearchUsers(editorSearch, "editors");
+    }
+
+    const handleSearchViewers = async () => {
+         await handleSearchUsers(viewerSearch, "viewers");
+    }
 
     if (!open) return null;
 
@@ -252,20 +276,22 @@ export default function WorkSpaceFormModal({
                             <div className="p-4 flex flex-col gap-4">
 
                                 {/* SEARCH */}
+                                <div className="flex items-center gap-2">
 
-                                <div className="relative">
-
-                                    <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-
-                                    <input
+                                    <Input
                                         type="text"
                                         placeholder="Search editor by email"
                                         value={editorSearch}
                                         onChange={(e) =>
                                             setEditorSearch(e.target.value)
                                         }
-                                        className="w-full h-10 pl-10 pr-3 rounded-xl border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 text-sm"
                                     />
+
+                                    <button
+                                        onClick={handleSearchEditors}
+                                        className="cursor-pointer border border-gray-200 rounded-xl p-2 h-10 w-10">
+                                        <Search className="w-4 h-4 text-gray-400" />
+                                    </button>
 
                                 </div>
 
@@ -378,20 +404,22 @@ export default function WorkSpaceFormModal({
                             <div className="p-4 flex flex-col gap-4">
 
                                 {/* SEARCH */}
+                                <div className="flex items-center gap-2">
 
-                                <div className="relative">
-
-                                    <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-
-                                    <input
+                                    <Input
                                         type="text"
                                         placeholder="Search viewer by email"
                                         value={viewerSearch}
                                         onChange={(e) =>
                                             setViewerSearch(e.target.value)
                                         }
-                                        className="w-full h-10 pl-10 pr-3 rounded-xl border border-gray-200 bg-gray-50 outline-none focus:border-blue-400 text-sm"
                                     />
+
+                                    <button
+                                        onClick={handleSearchViewers}
+                                        className="cursor-pointer border border-gray-200 rounded-xl p-2 h-10 w-10">
+                                        <Search className="w-4 h-4 text-gray-400" />
+                                    </button>
 
                                 </div>
 

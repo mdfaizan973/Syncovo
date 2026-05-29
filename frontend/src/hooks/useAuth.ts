@@ -38,7 +38,7 @@ export const useAuth = () => {
     const verifyOtp = async (otp: any) => {
         setAuthLoading(true);
         try {
-            const response = await authService.verifyOtp( otp );
+            const response = await authService.verifyOtp(otp);
             return response;
         } catch (error) {
             setError(error.message);
@@ -93,6 +93,18 @@ export const useAuth = () => {
         }
     }
 
+    // get users by email function
+    const getUsersByEmail = async (email: string) => {
+        setAuthLoading(true);
+        try {
+            const response = await authService.getUsersByEmail(email);
+            return response;
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setAuthLoading(false);
+        }
+    }
 
     return {
         authLoading,
@@ -105,6 +117,7 @@ export const useAuth = () => {
         updateUser,
         deleteUser,
         getUser,
-        getUserById
+        getUserById,
+        getUsersByEmail
     };
 }

@@ -55,10 +55,21 @@ export const getUser = async () => {
 // get user by id function
 export const getUserById = async (id: string) => {
     try {
-        const response = await apiClient.getRequest(`/auth/get-user-by-id/${id}`);
+        const response = await apiClient.getRequest(`/api/auth/get-user-by-id/${id}`);
         return response;
     } catch (error) {
         console.error("Error in getUserById:", error);
+        return error;
+    }
+}
+
+// get users by email function
+export const getUsersByEmail = async (email: string) => {
+    try {
+        const response = await apiClient.getRequest(`/api/auth/get-users-by-email/${email}`);
+        return response;
+    } catch (error) {
+        console.error("Error in getUsersByEmail:", error);
         return error;
     }
 }
