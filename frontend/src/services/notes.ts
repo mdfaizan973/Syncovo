@@ -1,5 +1,5 @@
 import * as apiClient from "../utils/apiClient";
-// add try catch block
+
 // POST NOTE FUNCTION
 export const postNote = async (note: any) => {
     try {
