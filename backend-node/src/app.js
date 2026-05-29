@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const authRoutes = require('./modules/auth/auth.routes');
 const notesRoutes = require('./modules/notes/notes.routes');
+const workspaceRoutes = require('./modules/organisations/organisation.routes');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/workspaces', workspaceRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({
