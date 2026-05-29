@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { WORKSPACES_RESPONSE } from "./mock";
-import { Plus } from "lucide-react";
+import { Edit, Plus, Trash } from "lucide-react";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import { useState } from "react";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
@@ -10,8 +10,8 @@ export default function WorkspacesDashboard() {
     const navigate = useNavigate();
 
     // const workspaces = WORKSPACES_RESPONSE.data;
-    const { workspaces, createWorkspace } = useWorkspaces();
-
+    const { workspaces, createWorkspace, updateWorkspace, deleteWorkspace } = useWorkspaces();
+    const [initialValues, setInitialValues] = useState<any>(null);
     const [open, setOpen] = useState(false);
 
     const handleCreateWorkspace = () => {
@@ -22,15 +22,31 @@ export default function WorkspacesDashboard() {
         setOpen(false);
     }
 
-    const handleSubmit = async (payload: any) => {
+    const handleSubmit = async (payload: any, id: string = "") => {
 
         try {
-            const response = await createWorkspace(payload);
+            const response = id ? await updateWorkspace(id, payload) : await createWorkspace(payload);
             if (response.success) {
                 setOpen(false);
             }
         } catch (error) {
             console.error("Error in handleSubmit:", error);
+        }
+    }
+
+    const handleUpdateWorkspace = async (payload: any) => {
+        setOpen(true);
+        setInitialValues(payload);
+    }
+
+    const handleDeleteWorkspace = async (id: string) => {
+        try {
+            const response = await deleteWorkspace(id);
+            if (response.success) {
+                setOpen(false);
+            }
+        } catch (error) {
+            console.error("Error in handleDeleteWorkspace:", error);
         }
     }
 
@@ -91,22 +107,42 @@ export default function WorkspacesDashboard() {
                                 className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
                             >
 
-                                <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-start justify-between gap-2 w-full">
 
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-between gap-3 w-full">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                                📁
+                                            </div>
 
-                                        <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                            📁
+                                            <div>
+                                                <h2 className="text-sm font-medium text-gray-800 truncate">
+                                                    {workspace.name}
+                                                </h2>
+
+                                                <p className="text-xs text-gray-400 truncate mt-0.5">
+                                                    {workspace.description}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <div>
-                                            <h2 className="text-sm font-medium text-gray-800 truncate">
-                                                {workspace.name}
-                                            </h2>
-
-                                            <p className="text-xs text-gray-400 truncate mt-0.5">
-                                                {workspace.description}
-                                            </p>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleUpdateWorkspace(workspace);
+                                                }}
+                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                <Edit className="w-3.5 h-3.5" />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteWorkspace(workspace.id);
+                                                }}
+                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                <Trash className="w-3.5 h-3.5" />
+                                            </button>
                                         </div>
 
                                     </div>
@@ -176,6 +212,7 @@ export default function WorkspacesDashboard() {
                 open={open}
                 onClose={handleCloseModal}
                 onSubmit={handleSubmit}
+                initialValues={initialValues}
             />
         </>
     );

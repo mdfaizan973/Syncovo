@@ -11,6 +11,9 @@ export const useWorkspaces = (loadAllWorkspaces = true) => {
         setWorkspaceLoading(true);
         try {
             const response = await workspacesService.postWorkspace(workspace);
+            if (response.success) {
+                await getAllWorkspaces();
+            }
             return response;
         } catch (error) {
             console.error("Error in createWorkspace:", error);
@@ -51,6 +54,9 @@ export const useWorkspaces = (loadAllWorkspaces = true) => {
         setWorkspaceLoading(true);
         try {
             const response = await workspacesService.updateWorkspace(id, workspace);
+            if (response.success) {
+                await getAllWorkspaces();
+            }
             return response;
         } catch (error) {
             console.error("Error in updateWorkspace:", error);
@@ -64,6 +70,9 @@ export const useWorkspaces = (loadAllWorkspaces = true) => {
         setWorkspaceLoading(true);
         try {
             const response = await workspacesService.deleteWorkspace(id);
+            if (response.success) {
+                await getAllWorkspaces();
+            }
             return response;
         } catch (error) {
             console.error("Error in deleteWorkspace:", error);

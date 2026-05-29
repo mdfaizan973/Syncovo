@@ -1,6 +1,6 @@
 // /src/components/modals/WorkSpaceFormModal.tsx
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Mail,
     Search,
@@ -17,6 +17,7 @@ type User = {
 };
 
 type WorkspaceData = {
+    id?: string;
     name: string;
     description: string;
     editors: User[];
@@ -26,7 +27,7 @@ type WorkspaceData = {
 type Props = {
     open: boolean;
     onClose: () => void;
-    onSubmit: (payload: WorkspaceData) => void;
+    onSubmit: (payload: WorkspaceData, id: string) => void;
 
     initialValues?: WorkspaceData;
 
@@ -43,22 +44,31 @@ export default function WorkSpaceFormModal({
     users = [],
     loading = false,
 }: Props) {
+    console.log("initialValues", initialValues);
 
-    const [name, setName] = useState(
-        initialValues?.name || ""
-    );
+    const [formValues, setFormValues] = useState<any>({
+        name: initialValues?.name || "",
+        description: initialValues?.description || "",
+        editors: initialValues?.editors || [],
+        viewers: initialValues?.viewers || [],
+    });
 
-    const [description, setDescription] = useState(
-        initialValues?.description || ""
-    );
+    useEffect(() => {
+        if (initialValues) {
+            setFormValues({
+                name: initialValues.name,
+                description: initialValues.description,
+                editors: initialValues.editors,
+                viewers: initialValues.viewers,
+            });
+        }
+    }, [initialValues]);
 
-    const [editors, setEditors] = useState<User[]>(
-        initialValues?.editors || []
-    );
 
-    const [viewers, setViewers] = useState<User[]>(
-        initialValues?.viewers || []
-    );
+
+    const handleChangeValues  = (e: any) => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value })
+    }
 
     const [editorSearch, setEditorSearch] = useState("");
 
@@ -68,7 +78,7 @@ export default function WorkSpaceFormModal({
 
         return users.filter((user) => {
 
-            const alreadyAdded = editors.some(
+            const alreadyAdded = formValues.editors.some(
                 (editor) => editor.id === user.id
             );
 
@@ -80,13 +90,13 @@ export default function WorkSpaceFormModal({
             );
         });
 
-    }, [editorSearch, users, editors]);
+    }, [editorSearch, users, formValues.editors]);
 
     const filteredViewers = useMemo(() => {
 
         return users.filter((user) => {
 
-            const alreadyAdded = viewers.some(
+            const alreadyAdded = formValues.viewers.some(
                 (viewer) => viewer.id === user.id
             );
 
@@ -98,38 +108,36 @@ export default function WorkSpaceFormModal({
             );
         });
 
-    }, [viewerSearch, users, viewers]);
+    }, [viewerSearch, users, formValues.viewers]);
 
     const addEditor = (user: User) => {
-        setEditors((prev) => [...prev, user]);
+        setFormValues({ ...formValues, editors: [...formValues.editors, user] });
         setEditorSearch("");
     };
 
     const addViewer = (user: User) => {
-        setViewers((prev) => [...prev, user]);
+        setFormValues({ ...formValues, viewers: [...formValues.viewers, user] });
         setViewerSearch("");
     };
 
     const removeEditor = (userId: string) => {
-        setEditors((prev) =>
-            prev.filter((user) => user.id !== userId)
-        );
+        setFormValues({ ...formValues, editors: formValues.editors.filter((user: User) => user.id !== userId) });
     };
 
     const removeViewer = (userId: string) => {
-        setViewers((prev) =>
-            prev.filter((user) => user.id !== userId)
-        );
+        setFormValues({ ...formValues, viewers: formValues.viewers.filter((user: User) => user.id !== userId) });
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
 
-        onSubmit({
-            name,
-            description,
-            editors,
-            viewers,
-        });
+        const payload = {
+            name: formValues?.name || "",
+            description: formValues?.description || "",
+            editors: formValues?.editors.map((editor: User) => editor.id) || [],
+            viewers: formValues?.viewers.map((viewer: User) => viewer.id) || [],
+        }
+
+        onSubmit(payload, initialValues?.id || "");
     };
 
     if (!open) return null;
@@ -189,11 +197,10 @@ export default function WorkSpaceFormModal({
 
                         <input
                             type="text"
+                            name="name"
                             placeholder="Enter workspace name"
-                            value={name}
-                            onChange={(e) =>
-                                setName(e.target.value)
-                            }
+                            value={formValues.name}
+                            onChange={handleChangeValues}
                             className="h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 text-sm"
                         />
 
@@ -209,11 +216,10 @@ export default function WorkSpaceFormModal({
 
                         <textarea
                             rows={4}
+                            name="description"
                             placeholder="Enter workspace description"
-                            value={description}
-                            onChange={(e) =>
-                                setDescription(e.target.value)
-                            }
+                            value={formValues.description}
+                            onChange={handleChangeValues}
                             className="px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 text-sm resize-none"
                         />
 
@@ -314,7 +320,7 @@ export default function WorkSpaceFormModal({
 
                                 <div className="flex flex-wrap gap-2">
 
-                                    {editors.map((editor) => (
+                                    {formValues.editors.map((editor: User) => (
 
                                         <div
                                             key={editor.id}
@@ -440,7 +446,7 @@ export default function WorkSpaceFormModal({
 
                                 <div className="flex flex-wrap gap-2">
 
-                                    {viewers.map((viewer) => (
+                                    {formValues.viewers.map((viewer: User) => (
 
                                         <div
                                             key={viewer.id}
