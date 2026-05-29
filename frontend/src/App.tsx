@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import MainRoutes from "./routes/MainRoutes";
 import Footer from "./shared/Footer";
-import Language from "./shared/Language";
+// import Language from "./shared/Language";
 // import Navbar from "./shared/Navbar";
 import { useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -29,7 +29,7 @@ function App() {
       {/* Footer */}
       {!isLoginOrSignupPage && <Footer />}
 
-      <Language />
+      {/* <Language /> */}
     </>
   );
 }

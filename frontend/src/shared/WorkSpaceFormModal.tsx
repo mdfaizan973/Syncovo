@@ -50,8 +50,6 @@ export default function WorkSpaceFormModal({
 }: Props) {
 
     
-    console.log(users);
-
     const [formValues, setFormValues] = useState<any>({
         name: initialValues?.name || "",
         description: initialValues?.description || "",

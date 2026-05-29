@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as workspacesService from "../services/workspaces";
 
-export const useWorkspaces = (loadAllWorkspaces = true) => {
+export const useWorkspaces = (loadAllWorkspaces = true, workspaceId = '') => {
     const [workspaces, setWorkspaces] = useState<any[]>([]);
     const [workspace, setWorkspace] = useState<any | null>(null);
     const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(false);
@@ -94,6 +94,14 @@ export const useWorkspaces = (loadAllWorkspaces = true) => {
         }
         fetchWorkspaces();
     }, [loadAllWorkspaces]);
+
+    useEffect(() => {
+        if (workspaceId) {
+            getSingleWorkspace(workspaceId as string);
+        }
+    }, [workspaceId]);
+
+
     return {
         workspaces,
         workspace,

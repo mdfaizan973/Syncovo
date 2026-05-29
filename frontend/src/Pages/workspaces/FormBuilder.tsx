@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { FORMS_RESPONSE, WORKSPACES_RESPONSE } from "./mock";
 import { Button } from "../../components/ui/button";
-import { CheckIcon, LayoutPanelTop, PlusIcon, Presentation, SaveIcon, Trash, TrashIcon } from "lucide-react";
+import { CheckIcon, LayoutPanelTop, PlusIcon, Presentation, SaveIcon, Search, Trash, TrashIcon, UserPlus2, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Input } from "../../components/ui/input";
+import { useAuth } from "../../hooks/useAuth";
+import { toast } from "sonner";
+import { useTables } from "../../hooks/useTables";
+import { useWorkspaces } from "../../hooks/useWorkspaces";
 
 const FIELD_TYPES = [
     "text",
@@ -43,6 +48,10 @@ export default function FormBuilder() {
     const { formId } = useParams();
     const navigate = useNavigate();
     const currentForm = FORMS_RESPONSE;
+    const { getUsersByEmail } = useAuth();
+    const { tables, createTable } = useTables();
+    const { workspaces } = useWorkspaces();
+
 
     const tableSchema = useMemo(() => {
         return (
@@ -50,13 +59,18 @@ export default function FormBuilder() {
         );
     }, [formId, currentForm]);
 
-    const workspaces = WORKSPACES_RESPONSE.data;
 
     const [workspaceId, setWorkspaceId] = useState("");
 
     const [tableName, setTableName] = useState("");
 
     const [description, setDescription] = useState("");
+    const [users, setUsers] = useState<any[]>([]);
+
+    const [viewers, setViewers] = useState<any>([]);
+    const [editors, setEditors] = useState<any>([]);
+    const [viewerSearch, setViewerSearch] = useState("");
+    const [editorSearch, setEditorSearch] = useState("");
 
     const [fields, setFields] = useState<any[]>([
         {
@@ -82,7 +96,71 @@ export default function FormBuilder() {
         ]);
     };
 
-    const updateField = ( index: number, key: string,
+    const handleSearchUsers = async (email: string, roleType: string = "") => {
+
+        if (users.some((user) => user.email === email)) {
+            toast.error("User already exists");
+            return;
+        }
+
+        const response = await getUsersByEmail(email);
+
+        if (response.success) {
+
+            const userData = response.data;
+
+            if (!userData) return;
+
+            const formattedUser = {
+                ...userData,
+                role_type: roleType === "editors" ? "editor" : "viewer",
+            };
+
+            setUsers((prev) => [formattedUser, ...prev,]);
+        }
+
+    }
+
+    const filteredEditors = useMemo(() => {
+
+        return users.filter((user) => {
+
+            const alreadyAdded = editors
+                .filter((editor: any) => editor.role_type === "editor")
+                .some((editor) => editor.id === user.id);
+
+            return (
+                !alreadyAdded &&
+                user.email
+                    .toLowerCase()
+                    .includes(editorSearch.toLowerCase())
+            );
+        });
+
+    }, [editorSearch, users, editors]);
+
+    const filteredViewers = useMemo(() => {
+
+        return users.filter((user) => {
+
+            const alreadyAdded = viewers
+                .filter((viewer: any) => viewer.role_type === "viewer")
+                .some(
+                    (viewer) => viewer.id === user.id
+                );
+
+            return (
+                !alreadyAdded &&
+                user.email
+                    .toLowerCase()
+                    .includes(viewerSearch.toLowerCase())
+            );
+        });
+
+    }, [viewerSearch, users, viewers]);
+
+
+    const updateField = (index: number, key: string,
         value: any) => {
 
         const updatedFields = [...fields];
@@ -126,8 +204,7 @@ export default function FormBuilder() {
         setFields(updatedFields);
     };
 
-    const handleSave = () => {
-
+    const handleSave = async () => {
         const schema = fields
             .filter((f) => f.label.trim() !== "")
             .map((f) => {
@@ -137,23 +214,25 @@ export default function FormBuilder() {
                     type: f.type,
                     required: f.required,
                 };
-                if (
-                    (f.type === "select" || f.type === "radio") &&
-                    f.options.length > 0
-                ) {
+                if ((f.type === "select" || f.type === "radio") && f.options.length > 0) {
                     entry.options = f.options.filter((o: string) => o.trim() !== "");
                 }
                 return entry;
             });
 
         const payload = {
-            workspace_id: workspaceId,
-            table_name: tableName,
-            description,
-            schema,
+            workspace_id: "ab4bbd30-661d-497c-aef9-a04a3829c1c0",
+            name: tableName,
+            description: description || "",
+            editors: editors.map((e: any) => e.id),
+            viewers: viewers.map((v: any) => v.id),
+            schema: schema,
         };
 
-        console.log("TABLE PAYLOAD", payload);
+        const response = await createTable(payload);
+        if(response.success) {
+            navigate(`/dashboard/workspace-view/${response.data.workspace_id}`);
+        }
     };
 
     // Derive preview fields for right panel
@@ -162,7 +241,7 @@ export default function FormBuilder() {
     useEffect(() => {
         if (formId) {
             setFields(tableSchema);
-        }else{
+        } else {
             setFields([
                 {
                     label: "",
@@ -246,7 +325,7 @@ export default function FormBuilder() {
                                 <select
                                     value={workspaceId}
                                     onChange={(e) => setWorkspaceId(e.target.value)}
-                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors text-gray-700"
+                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200  outline-none focus:border-orange-400 transition-colors text-gray-700"
                                 >
                                     <option value="">Select Workspace</option>
 
@@ -277,11 +356,131 @@ export default function FormBuilder() {
                                     placeholder="e.g. Customer Orders"
                                     value={tableName}
                                     onChange={(e) => setTableName(e.target.value)}
-                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200 bg-gray-50 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-800"
+                                    className="h-9 px-3 text-sm rounded-lg border border-gray-200 outline-none focus:border-orange-400 transition-colors placeholder:text-gray-300 text-gray-800"
                                 />
 
                             </div>
 
+                        </div>
+
+                        <div className="mt-2 pt-2 ">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                        Viewers
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="Search viewer by email"
+                                            value={viewerSearch}
+                                            onChange={(e) => setViewerSearch(e.target.value)}
+                                        />
+                                        <button
+                                            onClick={() => handleSearchUsers(viewerSearch, "viewers")}
+                                            className="cursor-pointer border border-gray-200 rounded-xl p-2 h-10 w-10">
+                                            <Search className="w-4 h-4 text-gray-400" />
+                                        </button>
+                                    </div>
+
+                                    {viewerSearch && (
+                                        <div className="border border-gray-100 rounded-xl overflow-hidden">
+                                            {filteredViewers.length > 0 ? (
+                                                filteredViewers.map((user) => (
+                                                    <button
+                                                        key={user.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setViewers((prev: any) => [...prev, user]);
+                                                            setViewerSearch("");
+                                                        }}
+                                                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-blue-50 transition-all border-b border-gray-100 last:border-none cursor-pointer"
+                                                    >
+                                                        <div className="flex flex-col items-start">
+                                                            <span className="text-sm font-medium text-gray-700">{user.full_name}</span>
+                                                            <span className="text-xs text-gray-400">{user.email}</span>
+                                                        </div>
+                                                        <UserPlus2 className="w-4 h-4 text-blue-500" />
+                                                    </button>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-4 text-xs text-gray-400">No users found</div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Selected viewers */}
+                                    <div className="flex flex-wrap gap-2">
+                                        {viewers.map((viewer: any) => (
+                                            <div key={viewer.id} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 border border-blue-100">
+                                                <span className="text-xs font-medium text-gray-700">{viewer.email}</span>
+                                                <button type="button" onClick={() => setViewers((prev: any) => prev.filter((v: any) => v.id !== viewer.id))} className="cursor-pointer">
+                                                    <X className="w-3.5 h-3.5 text-red-500" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                        Editors
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="Search editor by email"
+                                            value={editorSearch}
+                                            onChange={(e) => setEditorSearch(e.target.value)}
+                                        />
+                                        <button
+                                            onClick={() => handleSearchUsers(editorSearch, "editors")}
+                                            className="cursor-pointer border border-gray-200 rounded-xl p-2 h-10 w-10">
+                                            <Search className="w-4 h-4 text-gray-400" />
+                                        </button>
+                                    </div>
+
+                                    {editorSearch && (
+                                        <div className="border border-gray-100 rounded-xl overflow-hidden">
+                                            {filteredEditors.length > 0 ? (
+                                                filteredEditors.map((user) => (
+                                                    <button
+                                                        key={user.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setEditors((prev: any) => [...prev, user]);
+                                                            setEditorSearch("");
+                                                        }}
+                                                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-orange-50 transition-all border-b border-gray-100 last:border-none cursor-pointer"
+                                                    >
+                                                        <div className="flex flex-col items-start">
+                                                            <span className="text-sm font-medium text-gray-700">{user.full_name}</span>
+                                                            <span className="text-xs text-gray-400">{user.email}</span>
+                                                        </div>
+                                                        <UserPlus2 className="w-4 h-4 text-orange-500" />
+                                                    </button>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-4 text-xs text-gray-400">No users found</div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Selected editors */}
+                                    <div className="flex flex-wrap gap-2">
+                                        {editors.map((editor: any) => (
+                                            <div key={editor.id} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-orange-50 border border-orange-100">
+                                                <span className="text-xs font-medium text-gray-700">{editor.email}</span>
+                                                <button type="button" onClick={() => setEditors((prev: any) => prev.filter((e: any) => e.id !== editor.id))} className="cursor-pointer">
+                                                    <X className="w-3.5 h-3.5 text-red-500" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="mt-3 flex flex-col gap-1.5">

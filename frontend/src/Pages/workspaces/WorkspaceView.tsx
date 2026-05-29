@@ -1,15 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { WORKSPACES_RESPONSE } from "./mock";
+// import { WORKSPACES_RESPONSE } from "./mock";
+import { useWorkspaces } from "../../hooks/useWorkspaces";
+import { useTables } from "../../hooks/useTables";
 
 export default function WorkspaceView() {
 
-    const {workspaceId} = useParams();
-
+    const { workspaceId } = useParams();
     const navigate = useNavigate();
 
-    const workspace = WORKSPACES_RESPONSE.data.find(
-        (item) => item.id === workspaceId
-    );
+    const { workspaces } = useWorkspaces();
+
+    const { tables } = useTables(workspaceId);
+
+    const workspace = workspaces?.find((item) => item.id === workspaceId) || null; 
 
     if (!workspace) {
         return (
@@ -24,6 +27,8 @@ export default function WorkspaceView() {
             </div>
         );
     }
+
+  
 
     return (
         <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
@@ -119,12 +124,12 @@ export default function WorkspaceView() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
-                        {workspace.tables.map((table) => (
+                        {tables?.map((table) => (
 
                             <div
                                 key={table.id}
                                 onClick={() =>
-                                    navigate(`/dashboard/table-view/${workspaceId}/${table.id}`)
+                                    navigate(`/dashboard/table-view/${table.workspace_id}/${table.id}`)
                                 }
                                 className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
                             >
@@ -155,7 +160,7 @@ export default function WorkspaceView() {
                                         </p>
 
                                         <p className="text-sm font-medium text-gray-800 mt-0.5">
-                                            {table.rows.length}
+                                            {table?.rows?.length || 0}
                                         </p>
                                     </div>
 
@@ -165,7 +170,7 @@ export default function WorkspaceView() {
                                         </p>
 
                                         <p className="text-sm font-medium text-gray-800 mt-0.5">
-                                            {table.schema.length}
+                                            {table?.schema?.length || 0}
                                         </p>
                                     </div>
 

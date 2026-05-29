@@ -117,7 +117,6 @@ export default function DynamicFormModal({
     const handleSubmit = () => {
         setSubmitted(true);
         if (!validate(values)) return;
-        console.log(`[DynamicFormModal] Submit — ${title}`, values);
         onSubmit?.(values);
         onClose();
     };

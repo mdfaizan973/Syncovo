@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { WORKSPACES_RESPONSE } from "./mock";
+// import { WORKSPACES_RESPONSE } from "./mock";
 import { Card } from "../../components/ui/card";
 import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Edit, FilterIcon, Plus, SearchIcon, Trash, Users, XIcon } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import DynamicFormModal from "../../shared/Dynamicformmodal";
-import { getUserInfoByKey, getUserInfoStorage } from "../../utils/storage";
+import { getUserInfoByKey } from "../../utils/storage";
 import { Button } from "../../components/ui/button";
+import { useTables } from "../../hooks/useTables";
 
 export default function TableView() {
 
-    const { tableId } = useParams();
+    const { tableId, workspaceId } = useParams();
+    const { tables } = useTables(workspaceId);
 
     const [search, setSearch] = useState("");
     const [statsOpen, setStatsOpen] = useState(false);
@@ -27,14 +29,8 @@ export default function TableView() {
     >([]);
     const [nextFilterId, setNextFilterId] = useState(1);
 
-    const allTables = WORKSPACES_RESPONSE.data.flatMap(
-        (workspace) => workspace.tables
-    );
 
-    // const get all the fields 
-    const allFields: any = allTables.find((table) => table.id === tableId);
-
-    const table = allTables.find(
+    const table = tables.find(
         (item) => item.id === tableId
     );
 
@@ -73,7 +69,7 @@ export default function TableView() {
             prev.map((f) => (f.id === id ? { ...f, [key]: value } : f))
         );
     };
-    console.log(table);
+
     useEffect(() => {
         // setMembers(table?.assigned_users || []);
         const viewers = table?.viewers.map((viewer) => ({
@@ -86,10 +82,9 @@ export default function TableView() {
             role: "Editor",
         }));
 
-        setMembers([...viewers, ...editors]);
+        // setMembers([...editors, ...viewers]);
     }, [table]);
 
-    console.log(members);
 
     if (!table) {
         return (
@@ -105,6 +100,12 @@ export default function TableView() {
         );
     }
 
+    const handleSaveRow = async (payload: any) => {
+        console.log("New Row: ",payload)
+    }
+    const handleDeleteRow = async (rowId: string) => {
+        console.log("Row Delete: ",rowId)
+    }
     return (
         <>
 
@@ -502,7 +503,9 @@ export default function TableView() {
                                                         </button>
 
                                                         {/* Delete — UI only */}
-                                                        <button className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-all flex items-center justify-center">
+                                                        <button
+                                                            onClick={() => handleDeleteRow(row.id)}
+                                                            className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-all flex items-center justify-center">
                                                             <Trash className="w-3.5 h-3.5" />
                                                         </button>
 
@@ -551,13 +554,13 @@ export default function TableView() {
             <DynamicFormModal
                 open={customerOpen}
                 onClose={() => setCustomerOpen(false)}
-                title={allFields?.name || "Add Record"}
-                description={allFields?.description || "Fill in the details below to create a new record."}
-                fields={allFields?.schema || []}
+                title={tables?.name || "Add Record"}
+                description={tables?.description || "Fill in the details below to create a new record."}
+                fields={table.schema || []}
                 submitLabel="Save Record"
                 initialValues={initialValues}
                 onSubmit={(data) => {
-                    console.log("[CustomerModal] Submitted:", data);
+                    handleSaveRow(data);
                 }}
             />
 

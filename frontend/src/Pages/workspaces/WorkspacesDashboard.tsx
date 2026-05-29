@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "sonner";
+import { WORKSPACES_RESPONSE } from "./mock";
 
 export default function WorkspacesDashboard() {
 
@@ -45,8 +46,6 @@ export default function WorkspacesDashboard() {
         }
 
     }
-
-    console.log(users);
 
     const handleCreateWorkspace = () => {
         setInitialValues(null);
@@ -133,7 +132,7 @@ export default function WorkspacesDashboard() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
-                        {workspaces.map((workspace) => (
+                        {workspaces?.map((workspace) => (
 
                             <div
                                 key={workspace.id}
