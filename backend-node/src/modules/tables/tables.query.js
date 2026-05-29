@@ -10,6 +10,10 @@ const createTablesTableQuery = `
     description TEXT,
 
     schema JSONB DEFAULT '[]',
+    rows JSONB DEFAULT '[]',
+
+    editors TEXT[] DEFAULT ARRAY[]::TEXT[],
+    viewers TEXT[] DEFAULT ARRAY[]::TEXT[],
 
     created_by UUID NOT NULL,
 
@@ -38,8 +42,12 @@ const createTableQuery = async ({
   name,
   description,
   schema,
+  rows,
+  editors,
+  viewers,
   created_by,
 }) => {
+
   const result = await query(
     `
       INSERT INTO tables_data (
@@ -48,9 +56,15 @@ const createTableQuery = async ({
         name,
         description,
         schema,
+        rows,
+        editors,
+        viewers,
         created_by
       )
-      VALUES ($1,$2,$3,$4,$5,$6)
+
+      VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9
+      )
 
       RETURNING *
     `,
@@ -60,6 +74,9 @@ const createTableQuery = async ({
       name,
       description,
       JSON.stringify(schema),
+      JSON.stringify(rows),
+      editors,
+      viewers,
       created_by,
     ]
   );
@@ -79,6 +96,8 @@ const getAllTablesQuery = async (
     `,
     [workspaceId]
   );
+
+  // response should include the editors and viewwer { id, full_name, email} instead only id
 
   return result.rows;
 };

@@ -1,16 +1,11 @@
 const crypto = require('crypto');
 
-const {
-  createTableQuery,
-  getAllTablesQuery,
-  getTableByIdQuery,
-  updateTableQuery,
-  deleteTableQuery,
-} = require('./table.query');
 
 const {
   removeDeletedSchemaKeysFromRows,
 } = require('../table_rows/table-row.query');
+
+const { createTableQuery, getAllTablesQuery, getTableByIdQuery, updateTableQuery, deleteTableQuery } = require('./tables.query');
 
 const createTable = async (
   payload,
@@ -38,10 +33,21 @@ const createTable = async (
 
   const table = await createTableQuery({
     id: crypto.randomUUID(),
+  
     workspace_id: payload.workspace_id,
+  
     name: payload.name,
+  
     description: payload.description || '',
+  
     schema: payload.schema || [],
+    
+    rows: payload.rows || [],
+  
+    editors: payload.editors || [],
+  
+    viewers: payload.viewers || [],
+  
     created_by: userId,
   });
 

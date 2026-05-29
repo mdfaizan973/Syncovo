@@ -169,30 +169,31 @@ const getAllWorkspacesQuery = async (userId) => {
     return workspaces;
   };
 
-const getWorkspaceByIdQuery = async (
-  workspaceId,
-  userId
-) => {
-  const result = await query(
-    `
-      SELECT *
-      FROM workspaces
-
-      WHERE id = $1
-
-      AND (
-        created_by = $2
-        OR $2 = ANY(editors)
-        OR $2 = ANY(viewers)
-      )
-
-      LIMIT 1
-    `,
-    [workspaceId, userId]
-  );
-
-  return result.rows[0] || null;
-};
+  const getWorkspaceByIdQuery = async (
+    workspaceId,
+    userId
+  ) => {
+  
+    const result = await query(
+      `
+        SELECT *
+        FROM workspaces
+    
+        WHERE id = $1::uuid
+    
+        AND (
+          created_by = $2::uuid
+          OR $2::text = ANY(editors)
+          OR $2::text = ANY(viewers)
+        )
+    
+        LIMIT 1
+      `,
+      [workspaceId, userId]
+    );
+  
+    return result.rows[0] || null;
+  };
 
 const updateWorkspaceQuery = async (
   workspaceId,
