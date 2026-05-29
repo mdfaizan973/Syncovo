@@ -318,10 +318,31 @@ const verifyOtp = async ({ email, otp }) => {
   };
 };
 
+const getUsersByEmail = async (email) => {
+  if (!email) {
+    const error = new Error('email is required');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const users = await findUserByEmail(email);
+  if (!users) {
+    const error = new Error("Users not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return {
+    message: 'User fetched successfully',
+    users,
+  };
+};
+
 module.exports = {
   registerUser,
   getUsers,
   updateUser,
   loginUser,
   verifyOtp,
+  getUsersByEmail,
 };

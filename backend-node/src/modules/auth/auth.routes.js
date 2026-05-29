@@ -9,5 +9,6 @@ router.put('/users/:id', authController.updateUser);
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/verify-otp', authController.verifyOtp);
+router.get('/get-users-by-email/:email', authController.getUsersByEmail);
 
 module.exports = router;

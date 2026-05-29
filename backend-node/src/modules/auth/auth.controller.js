@@ -73,6 +73,19 @@ const verifyOtp = async (req, res, next) => {
   }
 };
 
+const getUsersByEmail = async (req, res, next) => {
+  try {
+    const result = await authService.getUsersByEmail(req.params.email);
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result.users,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 
 module.exports = {
   register,
@@ -80,6 +93,7 @@ module.exports = {
   updateUser,
   login,
   verifyOtp,
+  getUsersByEmail,
 };
 
 
