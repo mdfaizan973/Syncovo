@@ -54,6 +54,15 @@ const handleResponse = (response: any) => {
     };
 };
 
+const handleGetResponse = (response: any) => {
+    return {
+        success: true,
+        data: response?.data?.data || response?.data || response || null,
+        message: response?.data?.message || response?.message || "Request successful",
+        status: response?.status,
+    };
+}
+
 /* =========================
    COMMON ERROR HANDLER
 ========================= */
@@ -83,7 +92,7 @@ export const getRequest = async (url: string, params = {}) => {
             params,
         });
 
-        return handleResponse(response);
+        return handleGetResponse(response);
 
     } catch (error) {
 

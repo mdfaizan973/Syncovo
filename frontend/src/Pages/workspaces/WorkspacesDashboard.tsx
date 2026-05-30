@@ -6,21 +6,20 @@ import { useState } from "react";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "sonner";
-import { WORKSPACES_RESPONSE } from "./mock";
+import Loader from "../../shared/Loader";
 
 export default function WorkspacesDashboard() {
 
     const navigate = useNavigate();
 
-    // const workspaces = WORKSPACES_RESPONSE.data;
-    const { workspaces, createWorkspace, updateWorkspace, deleteWorkspace } = useWorkspaces();
+    const { workspaces, workspaceLoading, createWorkspace, updateWorkspace, deleteWorkspace } = useWorkspaces();
+    
     const { getUsersByEmail } = useAuth();
+
     const [users, setUsers] = useState<any[]>([]);
 
     const [initialValues, setInitialValues] = useState<any>(null);
     const [open, setOpen] = useState(false);
-
-
 
     const handleSearchUsers = async (email: string, roleType: string = "") => { 
 
@@ -83,6 +82,12 @@ export default function WorkspacesDashboard() {
         } catch (error) {
             console.error("Error deleting workspace:", error);
         }
+    }
+
+    if(workspaceLoading){
+        return (
+            <Loader loading={workspaceLoading}  />
+        )
     }
 
     return (
