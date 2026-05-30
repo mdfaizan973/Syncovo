@@ -1,4 +1,4 @@
-const tableRowsService = require('./tableRows.service');
+const tableRowsService = require('./table-row.service');
 
 const createTableRow = async (
   req,
@@ -6,7 +6,6 @@ const createTableRow = async (
   next
 ) => {
   try {
-
     const result =
       await tableRowsService.createTableRow(
         req.body,
@@ -18,7 +17,6 @@ const createTableRow = async (
       message: result.message,
       data: result.row,
     });
-
   } catch (error) {
     next(error);
   }
@@ -30,11 +28,9 @@ const getAllTableRows = async (
   next
 ) => {
   try {
-
     const result =
       await tableRowsService.getAllTableRows(
-        req.query.table_id,
-        req.user.id
+        req.query.table_id
       );
 
     return res.status(200).json({
@@ -42,7 +38,6 @@ const getAllTableRows = async (
       message: result.message,
       data: result.rows,
     });
-
   } catch (error) {
     next(error);
   }
@@ -54,11 +49,9 @@ const getSingleTableRow = async (
   next
 ) => {
   try {
-
     const result =
       await tableRowsService.getSingleTableRow(
-        req.params.id,
-        req.user.id
+        req.params.id
       );
 
     return res.status(200).json({
@@ -66,7 +59,6 @@ const getSingleTableRow = async (
       message: result.message,
       data: result.row,
     });
-
   } catch (error) {
     next(error);
   }
@@ -78,12 +70,10 @@ const updateTableRow = async (
   next
 ) => {
   try {
-
     const result =
       await tableRowsService.updateTableRow(
         req.params.id,
-        req.body,
-        req.user.id
+        req.body
       );
 
     return res.status(200).json({
@@ -91,7 +81,6 @@ const updateTableRow = async (
       message: result.message,
       data: result.row,
     });
-
   } catch (error) {
     next(error);
   }
@@ -103,18 +92,15 @@ const deleteTableRow = async (
   next
 ) => {
   try {
-
     const result =
       await tableRowsService.deleteTableRow(
-        req.params.id,
-        req.user.id
+        req.params.id
       );
 
     return res.status(200).json({
       success: true,
       message: result.message,
     });
-
   } catch (error) {
     next(error);
   }

@@ -2,38 +2,37 @@ const express = require('express');
 
 const router = express.Router();
 
-const tableRowsController = require('./tableRows.controller');
-
+const tableRowController = require('./table-rows.controller');
 const authMiddleware = require('../../middleware/auth.middleware');
 
 router.post(
   '/',
   authMiddleware,
-  tableRowsController.createTableRow
+  tableRowController.createTableRow
 );
 
 router.get(
   '/',
   authMiddleware,
-  tableRowsController.getAllTableRows
+  tableRowController.getAllTableRows
 );
 
 router.get(
   '/:id',
   authMiddleware,
-  tableRowsController.getSingleTableRow
+  tableRowController.getSingleTableRow
 );
 
 router.put(
   '/:id',
   authMiddleware,
-  tableRowsController.updateTableRow
+  tableRowController.updateTableRow
 );
 
 router.delete(
   '/:id',
   authMiddleware,
-  tableRowsController.deleteTableRow
+  tableRowController.deleteTableRow
 );
 
 module.exports = router;

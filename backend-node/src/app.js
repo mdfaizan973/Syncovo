@@ -5,6 +5,7 @@ const authRoutes = require('./modules/auth/auth.routes');
 const notesRoutes = require('./modules/notes/notes.routes');
 const workspaceRoutes = require('./modules/organisations/organisation.routes');
 const tableRoutes = require('./modules/tables/table.routes');
+const tableRowRoutes = require('./modules/table_rows/table-rows.routes');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/tables', tableRoutes);
+app.use('/api/table-rows', tableRowRoutes);
 // // for forms
 // app.use('/api/forms', formRoutes);
 // // for rows

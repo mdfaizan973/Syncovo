@@ -1,123 +1,138 @@
-const tableRowsService = require('./tableRows.service');
+const crypto = require('crypto');
+const { createTableRowQuery, getAllTableRowsQuery, getTableRowByIdQuery, updateTableRowQuery, deleteTableRowQuery, getTableByIdQuery } = require('./table-row.query');
 
 const createTableRow = async (
-  req,
-  res,
-  next
+  payload,
+  userId
 ) => {
-  try {
+  const table =
+    await getTableByIdQuery(
+      payload.table_id
+    );
 
-    const result =
-      await tableRowsService.createTableRow(
-        req.body,
-        req.user.id
-      );
+  if (!table) {
+    const error = new Error(
+      'Table not found'
+    );
 
-    return res.status(201).json({
-      success: true,
-      message: result.message,
-      data: result.row,
+    error.statusCode = 404;
+
+    throw error;
+  }
+
+  const row =
+    await createTableRowQuery({
+      id: crypto.randomUUID(),
+
+      table_id: payload.table_id,
+
+      row_data:
+        payload.row_data || {},
+
+      created_by: userId,
     });
 
-  } catch (error) {
-    next(error);
-  }
+  return {
+    message:
+      'Row created successfully',
+
+    row,
+  };
 };
 
 const getAllTableRows = async (
-  req,
-  res,
-  next
+  tableId
 ) => {
-  try {
+  const rows =
+    await getAllTableRowsQuery(
+      tableId
+    );
 
-    const result =
-      await tableRowsService.getAllTableRows(
-        req.query.table_id,
-        req.user.id
-      );
+  return {
+    message:
+      'Rows fetched successfully',
 
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-      data: result.rows,
-    });
-
-  } catch (error) {
-    next(error);
-  }
+    rows,
+  };
 };
 
 const getSingleTableRow = async (
-  req,
-  res,
-  next
+  rowId
 ) => {
-  try {
+  const row =
+    await getTableRowByIdQuery(
+      rowId
+    );
 
-    const result =
-      await tableRowsService.getSingleTableRow(
-        req.params.id,
-        req.user.id
-      );
+  if (!row) {
+    const error = new Error(
+      'Row not found'
+    );
 
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-      data: result.row,
-    });
+    error.statusCode = 404;
 
-  } catch (error) {
-    next(error);
+    throw error;
   }
+
+  return {
+    message:
+      'Row fetched successfully',
+
+    row,
+  };
 };
 
 const updateTableRow = async (
-  req,
-  res,
-  next
+  rowId,
+  payload
 ) => {
-  try {
+  const row =
+    await updateTableRowQuery(
+      rowId,
+      payload.row_data || {}
+    );
 
-    const result =
-      await tableRowsService.updateTableRow(
-        req.params.id,
-        req.body,
-        req.user.id
-      );
+  if (!row) {
+    const error = new Error(
+      'Row not found'
+    );
 
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-      data: result.row,
-    });
+    error.statusCode = 404;
 
-  } catch (error) {
-    next(error);
+    throw error;
   }
+
+  return {
+    message:
+      'Row updated successfully',
+
+    row,
+  };
 };
 
 const deleteTableRow = async (
-  req,
-  res,
-  next
+  rowId
 ) => {
-  try {
+  const row =
+    await deleteTableRowQuery(
+      rowId
+    );
 
-    const result =
-      await tableRowsService.deleteTableRow(
-        req.params.id,
-        req.user.id
-      );
+  if (!row) {
+    const error = new Error(
+      'Row not found'
+    );
 
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-    });
+    error.statusCode = 404;
 
-  } catch (error) {
-    next(error);
+    throw error;
   }
+
+  return {
+    message:
+      'Row deleted successfully',
+    row,
+  };
 };
 
 module.exports = {

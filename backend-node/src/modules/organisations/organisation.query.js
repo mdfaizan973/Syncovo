@@ -1,5 +1,26 @@
 const { query } = require('../../config/db');
 
+const getTableCountQuery = async (workspaceId) => {
+  const result = await query(
+    `
+      SELECT COUNT(*) FROM tables_data WHERE workspace_id = $1
+    `,
+    [workspaceId]
+  );
+  return result.rows[0].count;
+};
+
+// const getFormCountQuery = async (workspaceId) => {
+
+//   const result = await query(
+//     `
+//       SELECT COUNT(*) FROM forms WHERE workspace_id = $1
+//     `,
+//     [workspaceId]
+//   );
+//   return result.rows[0].count;
+// };
+
 const createWorkspacesTableQuery = `
   CREATE TABLE IF NOT EXISTS workspaces (
     id UUID PRIMARY KEY,
@@ -85,6 +106,8 @@ const getAllWorkspacesQuery = async (userId) => {
   
     for (const workspace of workspaceResult.rows) {
   
+      const totalTables = await getTableCountQuery(workspace.id);
+      // const totalForms = await getFormCountQuery(workspace.id);
       // OWNER
       const ownerResult = await query(
         `
@@ -131,7 +154,6 @@ const getAllWorkspacesQuery = async (userId) => {
       }));
   
       // ❌ REMOVE DB CALLS FOR NOW (tables/forms don't exist)
-      const total_tables = 0;
       const total_forms = 0;
       const total_members = editors.length + viewers.length + 1;
   
@@ -150,7 +172,7 @@ const getAllWorkspacesQuery = async (userId) => {
           ...viewers,
         ],
   
-        total_tables,
+        total_tables: Number(totalTables),
         total_forms,
   
         total_members: total_members,
@@ -169,12 +191,13 @@ const getAllWorkspacesQuery = async (userId) => {
     return workspaces;
   };
 
+  //TODO: @Faizan - make it correct for the workspace view
   const getWorkspaceByIdQuery = async (
     workspaceId,
     userId
   ) => {
   
-    const result = await query(
+    const workspaceResult = await query(
       `
         SELECT *
         FROM workspaces
@@ -192,7 +215,15 @@ const getAllWorkspacesQuery = async (userId) => {
       [workspaceId, userId]
     );
   
-    return result.rows[0] || null;
+    const workspace = workspaceResult.rows[0];
+
+    const totalTables = await getTableCountQuery(workspace.id);
+    // const totalForms = await getFormCountQuery(workspace.id);
+
+    return {
+      ...workspace,
+      total_tables: totalTables,
+    };
   };
 
 const updateWorkspaceQuery = async (

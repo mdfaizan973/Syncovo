@@ -15,7 +15,7 @@ const createTableRowsTableQuery = `
 
     CONSTRAINT fk_table
       FOREIGN KEY(table_id)
-      REFERENCES tables(id)
+      REFERENCES tables_data(id)
       ON DELETE CASCADE,
 
     CONSTRAINT fk_user
@@ -35,7 +35,6 @@ const createTableRowQuery = async ({
   row_data,
   created_by,
 }) => {
-
   const result = await query(
     `
       INSERT INTO table_rows (
@@ -63,7 +62,6 @@ const createTableRowQuery = async ({
 const getAllTableRowsQuery = async (
   tableId
 ) => {
-
   const result = await query(
     `
       SELECT *
@@ -82,7 +80,6 @@ const getAllTableRowsQuery = async (
 const getTableRowByIdQuery = async (
   rowId
 ) => {
-
   const result = await query(
     `
       SELECT *
@@ -102,7 +99,6 @@ const updateTableRowQuery = async (
   rowId,
   rowData
 ) => {
-
   const result = await query(
     `
       UPDATE table_rows
@@ -127,7 +123,6 @@ const updateTableRowQuery = async (
 const deleteTableRowQuery = async (
   rowId
 ) => {
-
   const result = await query(
     `
       DELETE FROM table_rows
@@ -145,11 +140,10 @@ const deleteTableRowQuery = async (
 const getTableByIdQuery = async (
   tableId
 ) => {
-
   const result = await query(
     `
       SELECT *
-      FROM tables
+      FROM tables_data
 
       WHERE id = $1
 
