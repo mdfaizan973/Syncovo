@@ -8,11 +8,13 @@ import DynamicFormModal from "../../shared/Dynamicformmodal";
 import { getUserInfoByKey } from "../../utils/storage";
 import { Button } from "../../components/ui/button";
 import { useTables } from "../../hooks/useTables";
+import { useTablesRow } from "../../hooks/useTablesRow";
 
 export default function TableView() {
 
     const { tableId, workspaceId } = useParams();
     const { tables } = useTables(workspaceId);
+    const { tableRows, createTableRow, updateTableRow, deleteTableRow, refreshTableRows } = useTablesRow(tableId);
 
     const [search, setSearch] = useState("");
     const [statsOpen, setStatsOpen] = useState(false);
@@ -30,19 +32,19 @@ export default function TableView() {
     const [nextFilterId, setNextFilterId] = useState(1);
 
 
-    const table = tables.find(
+    const table = tables?.find(
         (item) => item.id === tableId
     );
 
     const filteredRows = useMemo(() => {
 
-        if (!table) {
+        if (!tableRows) {
             return [];
         }
+        
+        return tableRows?.filter((row: any) => {
 
-        return table.rows.filter((row: any) => {
-
-            return Object.values(row).some((value) =>
+            return Object.values(row.row_data).some((value) =>
                 String(value)
                     .toLowerCase()
                     .includes(search.toLowerCase())
@@ -50,7 +52,7 @@ export default function TableView() {
 
         });
 
-    }, [search, table]);
+    }, [search, tableRows]);
 
     const addFilter = () => {
         setFilters((prev) => [
@@ -71,18 +73,22 @@ export default function TableView() {
     };
 
     useEffect(() => {
-        // setMembers(table?.assigned_users || []);
-        const viewers = table?.viewers.map((viewer) => ({
+
+        const viewers = (table?.viewers || []).map((viewer) => ({
             ...viewer,
             role: "Viewer",
         }));
 
-        const editors = table?.editors.map((editor) => ({
+        const editors = (table?.editors || []).map((editor) => ({
             ...editor,
             role: "Editor",
         }));
 
-        // setMembers([...editors, ...viewers]);
+        setMembers([
+            ...editors,
+            ...viewers,
+        ]);
+
     }, [table]);
 
 
@@ -101,10 +107,22 @@ export default function TableView() {
     }
 
     const handleSaveRow = async (payload: any) => {
-        console.log("New Row: ",payload)
+        const objectPayload = {
+            "table_id": tableId,
+            "row_data": payload
+        }
+        await createTableRow(objectPayload);
     }
+    
+    const handleUpdateRow = async (rowId: string, payload: any) => {
+       const objectPayload = {
+            "row_data": payload
+          }
+        await updateTableRow(rowId, objectPayload);
+    }
+
     const handleDeleteRow = async (rowId: string) => {
-        console.log("Row Delete: ",rowId)
+        await deleteTableRow(rowId);
     }
     return (
         <>
@@ -215,7 +233,7 @@ export default function TableView() {
                                                     {members[0]?.name || "No members"}
                                                 </span>
 
-                                                {members.length > 1 ? "," : ""}
+                                                {members?.length > 1 ? "," : ""}
 
                                                 {members[1]?.name ? <span className="text-sm font-medium text-gray-800">
 
@@ -247,7 +265,7 @@ export default function TableView() {
                                         </p>
 
                                         <h3 className="text-lg font-bold tracking-tight text-gray-800 mt-1">
-                                            {table.rows.length}
+                                            {tableRows?.length || 0}
                                         </h3>
                                     </div>
 
@@ -479,7 +497,7 @@ export default function TableView() {
                                                         className={`px-4 py-3 text-sm text-gray-600 ${field.type === "number" ? "text-right tabular-nums" : "text-left"
                                                             }`}
                                                     >
-                                                        {row[field.key]}
+                                                        {row.row_data[field.key]}
 
                                                     </td>
 
@@ -540,7 +558,7 @@ export default function TableView() {
                         <div className="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between">
 
                             <span className="text-xs text-gray-400">
-                                {filteredRows.length} of {table.rows.length} records
+                                {filteredRows?.length || 0 } of {tableRows?.length || 0} records
                             </span>
 
                         </div>
@@ -558,9 +576,13 @@ export default function TableView() {
                 description={tables?.description || "Fill in the details below to create a new record."}
                 fields={table.schema || []}
                 submitLabel="Save Record"
-                initialValues={initialValues}
+                initialValues={initialValues?.row_data || {}}
                 onSubmit={(data) => {
-                    handleSaveRow(data);
+                    if (initialValues?.id) {
+                        handleUpdateRow(initialValues?.id, data);
+                    } else {
+                        handleSaveRow(data);
+                    }
                 }}
             />
 
@@ -616,7 +638,7 @@ export default function TableView() {
 
                             </div>
                             {
-                                members.map((user) => (
+                                members?.map((user) => (
                                     <div className="pt-1 pb-2 border-b border-gray-100 flex-shrink-0">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex items-center gap-3">

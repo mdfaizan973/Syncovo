@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FORMS_RESPONSE, WORKSPACES_RESPONSE } from "./mock";
 import { Button } from "../../components/ui/button";
 import { CheckIcon, LayoutPanelTop, PlusIcon, Presentation, SaveIcon, Search, Trash, TrashIcon, UserPlus2, X } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Input } from "../../components/ui/input";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "sonner";
@@ -46,6 +46,10 @@ function toKey(label: string): string {
 export default function FormBuilder() {
 
     const { formId } = useParams();
+    const location = useLocation();
+    const workspaceIdLocation = location.state?.workspaceId;
+
+    console.log(formId)
     const navigate = useNavigate();
     const currentForm = FORMS_RESPONSE;
     const { getUsersByEmail } = useAuth();
@@ -60,7 +64,7 @@ export default function FormBuilder() {
     }, [formId, currentForm]);
 
 
-    const [workspaceId, setWorkspaceId] = useState("");
+    const [workspaceId, setWorkspaceId] = useState(workspaceIdLocation || "");
 
     const [tableName, setTableName] = useState("");
 
@@ -221,7 +225,7 @@ export default function FormBuilder() {
             });
 
         const payload = {
-            workspace_id: "ab4bbd30-661d-497c-aef9-a04a3829c1c0",
+            workspace_id: workspaceId,
             name: tableName,
             description: description || "",
             editors: editors.map((e: any) => e.id),

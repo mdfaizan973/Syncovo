@@ -61,7 +61,7 @@ export default function WorkspaceView() {
 
                             <button
                                 onClick={() =>
-                                    navigate("/dashboard/form-builder")
+                                    navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
                                 }
                                 className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
                             >
@@ -74,7 +74,7 @@ export default function WorkspaceView() {
 
                     <div className="mt-3 pt-3 border-t border-gray-100">
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
 
                             <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
@@ -85,6 +85,17 @@ export default function WorkspaceView() {
                                     {workspace.owner.name}
                                 </h3>
                             </div>
+                            
+                            
+                            <div className="bg-gray-50 rounded-xl p-3">
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                    Total Tables
+                                </p>
+
+                                <h3 className="text-sm font-medium text-gray-800 mt-1">
+                                    {workspace?.total_tables || 0}
+                                </h3>
+                            </div>
 
                             <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
@@ -92,7 +103,7 @@ export default function WorkspaceView() {
                                 </p>
 
                                 <h3 className="text-sm font-medium text-gray-800 mt-1">
-                                    {workspace.editors.length}
+                                    {workspace?.editors?.length || 0}
                                 </h3>
                             </div>
 
@@ -102,7 +113,7 @@ export default function WorkspaceView() {
                                 </p>
 
                                 <h3 className="text-sm font-medium text-gray-800 mt-1">
-                                    {workspace.viewers.length}
+                                    {workspace?.viewers?.length || 0}
                                 </h3>
                             </div>
 
@@ -160,7 +171,7 @@ export default function WorkspaceView() {
                                         </p>
 
                                         <p className="text-sm font-medium text-gray-800 mt-0.5">
-                                            {table?.rows?.length || 0}
+                                            {table?.row_count || 0}
                                         </p>
                                     </div>
 
