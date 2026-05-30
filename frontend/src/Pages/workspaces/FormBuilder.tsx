@@ -49,25 +49,22 @@ export default function FormBuilder() {
     const location = useLocation();
     const workspaceIdLocation = location.state?.workspaceId;
 
-    console.log(formId)
     const navigate = useNavigate();
-    const currentForm = FORMS_RESPONSE;
+    // const currentForm = FORMS_RESPONSE;
     const { getUsersByEmail } = useAuth();
-    const { tables, createTable } = useTables();
+    const { tables, createTable, updateTable, deleteTable } = useTables(workspaceIdLocation);
     const { workspaces } = useWorkspaces();
-
 
     const tableSchema = useMemo(() => {
         return (
-            currentForm.data.find((form) => form.id === formId)?.fields || []
+            tables?.find((form) => form.id === formId)?.schema || []
         );
-    }, [formId, currentForm]);
+    }, [formId, tables]);
+    
 
-
-    const [workspaceId, setWorkspaceId] = useState(workspaceIdLocation || "");
+    const [workspaceId, setWorkspaceId] = useState("");
 
     const [tableName, setTableName] = useState("");
-
     const [description, setDescription] = useState("");
     const [users, setUsers] = useState<any[]>([]);
 
@@ -75,6 +72,17 @@ export default function FormBuilder() {
     const [editors, setEditors] = useState<any>([]);
     const [viewerSearch, setViewerSearch] = useState("");
     const [editorSearch, setEditorSearch] = useState("");
+
+    useEffect(() => {
+        const curr = tables?.find((form) => form.id === formId) || {}
+        console.log(curr)
+        setTableName(curr.name || "")
+        setDescription(curr.description || "")
+        setWorkspaceId(curr.workspace_id || "")
+        setFields(curr.schema || [])
+        setViewers(curr.viewers || [])
+        setEditors(curr.editors || [])
+    }, [formId, tables])
 
     const [fields, setFields] = useState<any[]>([
         {
@@ -233,7 +241,8 @@ export default function FormBuilder() {
             schema: schema,
         };
 
-        const response = await createTable(payload);
+        const response = formId ? await updateTable(formId, payload) : await createTable(payload);
+
         if(response.success) {
             navigate(`/dashboard/workspace-view/${response.data.workspace_id}`);
         }
@@ -293,7 +302,10 @@ export default function FormBuilder() {
                                     formId && (
                                         <>
                                             <button
-                                                onClick={() => alert("Delete Table")}
+                                                onClick={async () => {
+                                                    await deleteTable(formId)
+                                                    navigate(`/dashboard/workspace-view/${workspaceId}`)
+                                                }}
                                                 className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
                                                 <Trash className="w-4 h-4" />
                                             </button>

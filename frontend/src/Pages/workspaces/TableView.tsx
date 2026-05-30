@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import { WORKSPACES_RESPONSE } from "./mock";
 import { Card } from "../../components/ui/card";
 import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Edit, FilterIcon, Plus, SearchIcon, Trash, Users, XIcon } from "lucide-react";
@@ -9,12 +9,15 @@ import { getUserInfoByKey } from "../../utils/storage";
 import { Button } from "../../components/ui/button";
 import { useTables } from "../../hooks/useTables";
 import { useTablesRow } from "../../hooks/useTablesRow";
+import { isNonViewer } from "../../utils/commonUtils";
 
 export default function TableView() {
 
+    const navigate = useNavigate();
+
     const { tableId, workspaceId } = useParams();
-    const { tables } = useTables(workspaceId);
-    const { tableRows, createTableRow, updateTableRow, deleteTableRow, refreshTableRows } = useTablesRow(tableId);
+    const { tables, deleteTable } = useTables(workspaceId);
+    const { tableRows, createTableRow, updateTableRow, deleteTableRow } = useTablesRow(tableId);
 
     const [search, setSearch] = useState("");
     const [statsOpen, setStatsOpen] = useState(false);
@@ -197,6 +200,7 @@ export default function TableView() {
                                 </button>
 
                                 {/* Add Record — UI only */}
+                               {isNonViewer(table?.viewers) && ( <>
                                 <button
                                     onClick={() => {
                                         setCustomerOpen(true)
@@ -208,10 +212,14 @@ export default function TableView() {
                                 </button>
 
                                 <button
-                                    onClick={() => alert("Delete Table")}
+                                    onClick={async () => {
+                                        await deleteTable(table.id)
+                                        navigate(`/dashboard/workspace-view/${workspaceId}`)
+                                    }}
                                     className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
                                     <Trash className="w-4 h-4" />
                                 </button>
+                                        </>)}
                             </div>
 
                         </div>

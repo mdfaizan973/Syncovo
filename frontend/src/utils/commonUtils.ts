@@ -1,3 +1,5 @@
+import { getUserInfoByKey } from "./storage";
+
 export const unpackToken = (token: string) => {
     const payload = JSON.parse(atob(token.split('.')[1]));
 
@@ -23,4 +25,9 @@ export const formatDate = (date: string = "") => {
         month: "long",
         day: "numeric",
     });
+}
+
+export function isNonViewer(viewers: { id: string }[]): boolean {
+    const userId = getUserInfoByKey("id") ?? ""
+    return !viewers.some((user) => user.id === userId);
 }

@@ -7,6 +7,7 @@ import { useWorkspaces } from "../../hooks/useWorkspaces";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "sonner";
 import Loader from "../../shared/Loader";
+import { isNonViewer } from "../../utils/commonUtils";
 
 export default function WorkspacesDashboard() {
 
@@ -90,6 +91,10 @@ export default function WorkspacesDashboard() {
         )
     }
 
+    // console.log(workspaces);
+
+    
+    
     return (
         <>
 
@@ -166,24 +171,26 @@ export default function WorkspacesDashboard() {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleUpdateWorkspace(workspace);
-                                                }}
-                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
-                                                <Edit className="w-3.5 h-3.5" />
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteWorkspace(workspace.id);
-                                                }}
-                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
-                                                <Trash className="w-3.5 h-3.5" />
-                                            </button>
-                                        </div>
+                                        {isNonViewer(workspace?.viewers || []) && (
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleUpdateWorkspace(workspace);
+                                                    }}
+                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                    <Edit className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteWorkspace(workspace.id);
+                                                    }}
+                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                    <Trash className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        )}
 
                                     </div>
 

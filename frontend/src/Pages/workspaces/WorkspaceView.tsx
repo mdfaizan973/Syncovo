@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 // import { WORKSPACES_RESPONSE } from "./mock";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
 import { useTables } from "../../hooks/useTables";
+import { isNonViewer } from "../../utils/commonUtils";
+import { Edit, Trash } from "lucide-react";
 
 export default function WorkspaceView() {
 
@@ -10,9 +12,13 @@ export default function WorkspaceView() {
 
     const { workspaces } = useWorkspaces();
 
-    const { tables } = useTables(workspaceId);
+    const { tables, deleteTable } = useTables(workspaceId);
 
-    const workspace = workspaces?.find((item) => item.id === workspaceId) || null; 
+    const workspace = workspaces?.find((item) => item.id === workspaceId) || null;
+
+    const handleUpdateTable = async (table: any) => {
+        navigate(`/dashboard/form-builder/${table.id}`, { state: { workspaceId: workspaceId } });
+    }
 
     if (!workspace) {
         return (
@@ -27,8 +33,6 @@ export default function WorkspaceView() {
             </div>
         );
     }
-
-  
 
     return (
         <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
@@ -57,18 +61,19 @@ export default function WorkspaceView() {
 
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        {isNonViewer(workspace?.viewers || []) &&
+                            (<div className="flex items-center gap-2">
 
-                            <button
-                                onClick={() =>
-                                    navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
-                                }
-                                className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
-                            >
-                                Create Table
-                            </button>
+                                <button
+                                    onClick={() =>
+                                        navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
+                                    }
+                                    className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
+                                >
+                                    Create Table
+                                </button>
 
-                        </div>
+                            </div>)}
 
                     </div>
 
@@ -85,8 +90,8 @@ export default function WorkspaceView() {
                                     {workspace.owner.name}
                                 </h3>
                             </div>
-                            
-                            
+
+
                             <div className="bg-gray-50 rounded-xl p-3">
                                 <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
                                     Total Tables
@@ -145,21 +150,45 @@ export default function WorkspaceView() {
                                 className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
                             >
 
-                                <div className="flex items-start gap-3">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                            <span className="text-base">🗃️</span>
+                                        </div>
 
-                                    <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                        <span className="text-base">🗃️</span>
+                                        <div className="min-w-0">
+                                            <h3 className="text-sm font-medium text-gray-800 truncate">
+                                                {table.name}
+                                            </h3>
+
+                                            <p className="text-xs text-gray-400 truncate mt-0.5">
+                                                {table.description}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <div className="min-w-0">
-                                        <h3 className="text-sm font-medium text-gray-800 truncate">
-                                            {table.name}
-                                        </h3>
+                                    {isNonViewer(table?.viewers || []) && (
+                                        <div className="flex items-center gap-2">
+                                            <button
 
-                                        <p className="text-xs text-gray-400 truncate mt-0.5">
-                                            {table.description}
-                                        </p>
-                                    </div>
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleUpdateTable(table);
+                                                }}
+                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                <Edit className="w-3.5 h-3.5" />
+                                            </button>
+                                            <button
+
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+                                                    await deleteTable(table.id);
+                                                }}
+                                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                <Trash className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    )}
 
                                 </div>
 
