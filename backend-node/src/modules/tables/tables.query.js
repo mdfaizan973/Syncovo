@@ -118,7 +118,7 @@ const getAllTablesQuery = async (
   for (const table of tableResult.rows) {
 
     const totalRows = await getRowCountQuery(table.id);
-    
+
     const ownerResult = await query(
       `
         SELECT
@@ -300,9 +300,9 @@ const getTableByIdQuery = async (
     })
   );
   const totalRows =
-  await getRowCountQuery(
-    table.id
-  );
+    await getRowCountQuery(
+      table.id
+    );
 
   return {
     id: table.id,

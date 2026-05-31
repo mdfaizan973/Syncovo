@@ -6,6 +6,7 @@ const notesRoutes = require('./modules/notes/notes.routes');
 const workspaceRoutes = require('./modules/organisations/organisation.routes');
 const tableRoutes = require('./modules/tables/table.routes');
 const tableRowRoutes = require('./modules/table_rows/table-rows.routes');
+const userInfoRoutes = require('./modules/usersInfo/usersInfo.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/notes', notesRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/table-rows', tableRowRoutes);
+app.use('/api/user-info', userInfoRoutes);
 // // for forms
 // app.use('/api/forms', formRoutes);
 // // for rows
