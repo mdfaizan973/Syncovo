@@ -3,41 +3,55 @@ import {
   Bell,
   Clock3,
   CheckCircle2,
-  AlertTriangle,
+  Book,
   StickyNote,
+  LayoutPanelTop,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import { getGreetings } from "../../../utils/commonUtils";
 import { getUserInfoByKey } from "../../../utils/storage";
+import useNotes from "../../../hooks/useNotes";
+import { useTables } from "../../../hooks/useTables";
+import { useEffect } from "react";
+import { useUserInfo } from "../../../hooks/userInfo";
 
 export default function DashboardInfo() {
   const navigate = useNavigate();
 
+  const { notes } = useNotes(true);
+
+  const userId = getUserInfoByKey("id");
+  const { userInfo } = useUserInfo(userId);
+  console.log(userInfo);
+
+  const myNotes = notes?.length ?? 0;
+
+  // make the stats dynamic based on the data from the backend and should be simmiler to my project dashboard
   const stats = [
     {
       label: "My Active Tasks",
       value: "18",
-      info: "+4 assigned today",
+      info: "",
       color: "text-orange-500",
       bg: "bg-orange-50",
       icon: Clock3,
     },
     {
-      label: "Tasks Due Today",
-      value: "5",
-      info: "2 high priority",
+      label: "My Notes",
+      value: myNotes,
+      info: "",
       color: "text-red-500",
       bg: "bg-red-50",
-      icon: AlertTriangle,
+      icon: Book,
     },
     {
-      label: "Completed This Week",
-      value: "42",
-      info: "+12% productivity",
+      label: "My Forms/Tables",
+      value: 10,
+      info: "",
       color: "text-green-500",
       bg: "bg-green-50",
-      icon: CheckCircle2,
+      icon: LayoutPanelTop,
     },
     {
       label: "Unread Notifications",
@@ -161,7 +175,7 @@ export default function DashboardInfo() {
                 </p>
 
                 <h1 className="text-lg font-bold tracking-tight text-gray-800 mt-0.5">
-                  {getGreetings()}, { getUserInfoByKey("full_name")}
+                  {getGreetings()}, {getUserInfoByKey("full_name")}
                 </h1>
               </div>
 
@@ -272,25 +286,23 @@ export default function DashboardInfo() {
                   <div className="flex items-center gap-1.5 shrink-0">
 
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
-                        task.priority === "Critical"
+                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${task.priority === "Critical"
                           ? "bg-red-50 text-red-600 border-red-100"
                           : task.priority === "High"
                             ? "bg-orange-50 text-orange-600 border-orange-100"
                             : "bg-gray-50 text-gray-500 border-gray-200"
-                      }`}
+                        }`}
                     >
                       {task.priority}
                     </span>
 
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
-                        task.status === "In Progress"
+                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${task.status === "In Progress"
                           ? "bg-blue-50 text-blue-600 border-blue-100"
                           : task.status === "Review"
                             ? "bg-purple-50 text-purple-600 border-purple-100"
                             : "bg-gray-50 text-gray-500 border-gray-200"
-                      }`}
+                        }`}
                     >
                       {task.status}
                     </span>
@@ -318,8 +330,8 @@ export default function DashboardInfo() {
                 </h2>
 
                 <button className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
-                View All
-              </button>
+                  View All
+                </button>
 
               </div>
 
