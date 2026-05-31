@@ -6,13 +6,15 @@ import { useNavigate } from "react-router-dom";
 import useNotes from "../../../../hooks/useNotes";
 import DataNotFound from "../../../../shared/DataNotFound";
 import { formatDate } from "../../../../utils/commonUtils";
+import Loader from "../../../../shared/Loader";
 
 type View = "table" | "grid";
 type Tab = "all" | "favorites";
 
 export default function QuickNotesDashboard() {
     const navigate = useNavigate();
-    const { notes, deleteNote } = useNotes(true);
+
+    const { notes, noteLoading, deleteNote } = useNotes(true);
     const [activeTab, setActiveTab] = useState<Tab>("all");
     const [view, setView] = useState<View>("table");
     const [query, setQuery] = useState("");
@@ -33,6 +35,7 @@ export default function QuickNotesDashboard() {
             console.error("Error in handleDeleteNote:", error);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-[#F6F8FB] p-3 md:p-4">
@@ -81,18 +84,16 @@ export default function QuickNotesDashboard() {
                                 <button
                                     key={t}
                                     onClick={() => setActiveTab(t)}
-                                    className={`h-7 px-3 cursor-pointer rounded-full text-xs font-medium transition-all border flex items-center gap-1.5 ${
-                                        activeTab === t
+                                    className={`h-7 px-3 cursor-pointer rounded-full text-xs font-medium transition-all border flex items-center gap-1.5 ${activeTab === t
                                             ? "bg-orange-500 text-white border-orange-200"
                                             : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-                                    }`}
+                                        }`}
                                 >
                                     {t === "favorites" && <Star className="w-3 h-3" />}
                                     {t === "all" ? "All Notes" : "Favorites"}
                                     <span
-                                        className={`text-[10px] font-medium px-1.5 py-px rounded-full ${
-                                            t === "favorites" ? "bg-white text-orange-500" : "bg-white text-orange-500"
-                                        }`}
+                                        className={`text-[10px] font-medium px-1.5 py-px rounded-full ${t === "favorites" ? "bg-white text-orange-500" : "bg-white text-orange-500"
+                                            }`}
                                     >
                                         {t === "all" ? notes?.length ?? 0 : favCount}
                                     </span>
@@ -107,11 +108,10 @@ export default function QuickNotesDashboard() {
                                     <button
                                         key={v}
                                         onClick={() => setView(v)}
-                                        className={`w-7 h-7 cursor-pointer rounded-md flex items-center justify-center transition-all ${
-                                            view === v
+                                        className={`w-7 h-7 cursor-pointer rounded-md flex items-center justify-center transition-all ${view === v
                                                 ? "bg-white shadow-sm text-orange-500"
                                                 : "text-gray-400 hover:text-orange-500"
-                                        }`}
+                                            }`}
                                     >
                                         {v === "table" ? <Table2 className="w-3.5 h-3.5" /> : <LayoutGrid className="w-3.5 h-3.5" />}
                                     </button>
@@ -122,20 +122,23 @@ export default function QuickNotesDashboard() {
                 </div>
 
                 {/* Content */}
-                {filteredNotes?.length > 0 ? (
-                    <QuickNotesTableGrid
-                        filteredNotes={filteredNotes}
-                        view={view}
-                        handleDeleteNote={handleDeleteNote}
-                    />
-                ) : (
-                    <DataNotFound
-                        title="No notes found"
-                        description="We couldn't find anything here. Try creating a new entry or adjusting your filters."
-                        actionLabel="Create New"
-                        onAction={() => navigate("/dashboard/create-note")}
-                    />
-                )}
+                {noteLoading ? (
+                    <Loader loading={noteLoading} />
+                ) :
+                    filteredNotes?.length > 0 ? (
+                        <QuickNotesTableGrid
+                            filteredNotes={filteredNotes}
+                            view={view}
+                            handleDeleteNote={handleDeleteNote}
+                        />
+                    ) : (
+                        <DataNotFound
+                            title="No notes found"
+                            description="We couldn't find anything here. Try creating a new entry or adjusting your filters."
+                            actionLabel="Create New"
+                            onAction={() => navigate("/dashboard/create-note")}
+                        />
+                    )}
 
             </div>
         </div>
@@ -199,7 +202,7 @@ const QuickNotesTableGrid = ({
                                                     </div>
                                                     {note.description ? (
                                                         <p className="text-xs text-gray-400 truncate mt-0.5">{note.description}</p>
-                                                    ): (
+                                                    ) : (
                                                         <p className="text-xs text-gray-400 truncate mt-0.5">No description available</p>
                                                     )}
                                                 </div>
@@ -281,7 +284,7 @@ const QuickNotesTableGrid = ({
 
                             {note.description ? (
                                 <p className="text-xs text-gray-400 mt-1.5 leading-relaxed line-clamp-2">{note.description}</p>
-                            ): (
+                            ) : (
                                 <p className="text-xs text-gray-400 mt-1.5 leading-relaxed line-clamp-2">No description available</p>
                             )}
 

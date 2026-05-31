@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { BsStarFill } from "react-icons/bs";
 import useNotes from "../../../../hooks/useNotes";
 import { Button } from "../../../../components/ui/button";
+import Loader from "../../../../shared/Loader";
 
 export default function CreateQuickNote() {
     const { id } = useParams();
@@ -34,6 +35,12 @@ export default function CreateQuickNote() {
             if (res.success) navigate("/dashboard/quicknote");
         } catch (err) { console.error(err); }
     };
+
+    if (noteLoading) {
+        return (
+            <Loader loading={noteLoading} />
+        )
+    }
 
     return (
         <div className="min-h-screen bg-[#F6F8FB] p-3 md:p-4">

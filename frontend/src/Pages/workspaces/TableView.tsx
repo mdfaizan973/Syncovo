@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import { WORKSPACES_RESPONSE } from "./mock";
 import { Card } from "../../components/ui/card";
-import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Edit, FilterIcon, Plus, SearchIcon, Trash, Users, XIcon } from "lucide-react";
+import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Edit, FilterIcon, Plus, SearchIcon, TableIcon, Trash, Users, XIcon } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import DynamicFormModal from "../../shared/Dynamicformmodal";
 import { getUserInfoByKey } from "../../utils/storage";
@@ -10,14 +10,16 @@ import { Button } from "../../components/ui/button";
 import { useTables } from "../../hooks/useTables";
 import { useTablesRow } from "../../hooks/useTablesRow";
 import { isNonViewer } from "../../utils/commonUtils";
+import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
+import Loader from "../../shared/Loader";
 
 export default function TableView() {
 
     const navigate = useNavigate();
 
     const { tableId, workspaceId } = useParams();
-    const { tables, deleteTable } = useTables(workspaceId);
-    const { tableRows, createTableRow, updateTableRow, deleteTableRow } = useTablesRow(tableId);
+    const { tables, tableLoading, deleteTable } = useTables(workspaceId);
+    const { tableRows, tableRowLoading, createTableRow, updateTableRow, deleteTableRow } = useTablesRow(tableId);
 
     const [search, setSearch] = useState("");
     const [statsOpen, setStatsOpen] = useState(false);
@@ -44,7 +46,7 @@ export default function TableView() {
         if (!tableRows) {
             return [];
         }
-        
+
         return tableRows?.filter((row: any) => {
 
             return Object.values(row.row_data).some((value) =>
@@ -95,19 +97,39 @@ export default function TableView() {
     }, [table]);
 
 
+
+    if (tableLoading || tableRowLoading) {
+        return (
+            <Loader loading={tableLoading || tableRowLoading} />
+        )
+    }
+    
     if (!table) {
         return (
-            <div className="bg-[#F6F8FB] min-h-screen p-3 md:p-4">
-                <div className="max-w-5xl mx-auto">
-                    <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
-                        <p className="text-sm text-gray-400">
-                            Table Not Found
-                        </p>
+            <>
+                <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
+                    <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center">
+                        <TableIcon className="w-6 h-6 text-orange-400" />
                     </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <p className="text-sm font-medium text-gray-700">No tables found</p>
+                        <p className="text-xs text-gray-400">Get started by creating your first table</p>
+                    </div>
+                    <button
+                        onClick={() => navigate(`/dashboard/form-builder`, { state: { workspaceId: workspaceId } })}
+
+
+                        className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-medium rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-all"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Create Table
+                    </button>
                 </div>
-            </div>
+
+            </>
         );
     }
+
 
     const handleSaveRow = async (payload: any) => {
         const objectPayload = {
@@ -116,17 +138,19 @@ export default function TableView() {
         }
         await createTableRow(objectPayload);
     }
-    
+
     const handleUpdateRow = async (rowId: string, payload: any) => {
-       const objectPayload = {
+        const objectPayload = {
             "row_data": payload
-          }
+        }
         await updateTableRow(rowId, objectPayload);
     }
 
     const handleDeleteRow = async (rowId: string) => {
         await deleteTableRow(rowId);
     }
+
+
     return (
         <>
 
@@ -200,26 +224,26 @@ export default function TableView() {
                                 </button>
 
                                 {/* Add Record — UI only */}
-                               {isNonViewer(table?.viewers) && ( <>
-                                <button
-                                    onClick={() => {
-                                        setCustomerOpen(true)
-                                        setInitialValues({});
-                                    }}
-                                    className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
-                                    <Plus className="w-3.5 h-3.5" />
-                                    Add Record
-                                </button>
+                                {isNonViewer(table?.viewers) && (<>
+                                    <button
+                                        onClick={() => {
+                                            setCustomerOpen(true)
+                                            setInitialValues({});
+                                        }}
+                                        className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5">
+                                        <Plus className="w-3.5 h-3.5" />
+                                        Add Record
+                                    </button>
 
-                                <button
-                                    onClick={async () => {
-                                        await deleteTable(table.id)
-                                        navigate(`/dashboard/workspace-view/${workspaceId}`)
-                                    }}
-                                    className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
-                                    <Trash className="w-4 h-4" />
-                                </button>
-                                        </>)}
+                                    <button
+                                        onClick={async () => {
+                                            await deleteTable(table.id)
+                                            navigate(`/dashboard/workspace-view/${workspaceId}`)
+                                        }}
+                                        className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all">
+                                        <Trash className="w-4 h-4" />
+                                    </button>
+                                </>)}
                             </div>
 
                         </div>
@@ -479,9 +503,11 @@ export default function TableView() {
                                         ))}
 
                                         {/* Actions column header */}
-                                        <th className="px-4 py-2.5 text-right text-[11px] font-medium text-gray-400 uppercase tracking-wide">
-                                            Actions
-                                        </th>
+                                        {isNonViewer(table?.viewers) &&
+                                            <th className="px-4 py-2.5 text-right text-[11px] font-medium text-gray-400 uppercase tracking-wide">
+                                                Actions
+                                            </th>
+                                        }
 
                                     </tr>
 
@@ -512,7 +538,7 @@ export default function TableView() {
                                                 ))}
 
                                                 {/* Actions cell */}
-                                                <td className="px-4 py-3">
+                                                {isNonViewer(table?.viewers) && (<td className="px-4 py-3">
                                                     <div
                                                         className="flex items-center justify-end gap-1.5"
                                                         onClick={(e) => e.stopPropagation()}
@@ -536,7 +562,7 @@ export default function TableView() {
                                                         </button>
 
                                                     </div>
-                                                </td>
+                                                </td>)}
 
                                             </tr>
 
@@ -566,7 +592,7 @@ export default function TableView() {
                         <div className="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between">
 
                             <span className="text-xs text-gray-400">
-                                {filteredRows?.length || 0 } of {tableRows?.length || 0} records
+                                {filteredRows?.length || 0} of {tableRows?.length || 0} records
                             </span>
 
                         </div>

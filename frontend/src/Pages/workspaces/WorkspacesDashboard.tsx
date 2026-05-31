@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 // import { WORKSPACES_RESPONSE } from "./mock";
-import { Edit, Plus, Trash } from "lucide-react";
+import { Edit, FileSearch, Plus, Trash } from "lucide-react";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import { useState } from "react";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
@@ -14,7 +14,7 @@ export default function WorkspacesDashboard() {
     const navigate = useNavigate();
 
     const { workspaces, workspaceLoading, createWorkspace, updateWorkspace, deleteWorkspace } = useWorkspaces();
-    
+
     const { getUsersByEmail } = useAuth();
 
     const [users, setUsers] = useState<any[]>([]);
@@ -22,7 +22,7 @@ export default function WorkspacesDashboard() {
     const [initialValues, setInitialValues] = useState<any>(null);
     const [open, setOpen] = useState(false);
 
-    const handleSearchUsers = async (email: string, roleType: string = "") => { 
+    const handleSearchUsers = async (email: string, roleType: string = "") => {
 
         if (users.some((user) => user.email === email)) {
             toast.error("User already exists");
@@ -32,17 +32,17 @@ export default function WorkspacesDashboard() {
         const response = await getUsersByEmail(email);
 
         if (response.success) {
-            
-          const userData = response.data;
-      
-          if (!userData) return;
-      
-          const formattedUser = {
-            ...userData,
-            role_type:  roleType === "editors"  ? "editor" : "viewer",
-          };
-      
-          setUsers((prev) => [ formattedUser, ...prev, ]);
+
+            const userData = response.data;
+
+            if (!userData) return;
+
+            const formattedUser = {
+                ...userData,
+                role_type: roleType === "editors" ? "editor" : "viewer",
+            };
+
+            setUsers((prev) => [formattedUser, ...prev,]);
         }
 
     }
@@ -85,16 +85,13 @@ export default function WorkspacesDashboard() {
         }
     }
 
-    if(workspaceLoading){
+    if (workspaceLoading) {
         return (
-            <Loader loading={workspaceLoading}  />
+            <Loader loading={workspaceLoading} />
         )
     }
 
-    // console.log(workspaces);
 
-    
-    
     return (
         <>
 
@@ -124,23 +121,24 @@ export default function WorkspacesDashboard() {
 
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            {workspaces.length > 0 &&
+                                (<div className="flex items-center gap-2">
 
-                                <button
-                                    className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
-                                    onClick={() => handleCreateWorkspace()}
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Create Workspace
-                                </button>
+                                    <button
+                                        className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
+                                        onClick={() => handleCreateWorkspace()}
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Create Workspace
+                                    </button>
 
-                            </div>
+                                </div>)}
 
                         </div>
 
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {workspaces.length > 0 ? (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
                         {workspaces?.map((workspace) => (
 
@@ -250,7 +248,25 @@ export default function WorkspacesDashboard() {
 
                         ))}
 
-                    </div>
+                    </div>) :
+                        (
+                            <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
+                                <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center">
+                                    <FileSearch className="w-6 h-6 text-orange-400" />
+                                </div>
+                                <div className="flex flex-col items-center gap-1">
+                                    <p className="text-sm font-medium text-gray-700">No workspaces found</p>
+                                    <p className="text-xs text-gray-400">Get started by creating your first workspace</p>
+                                </div>
+                                <button
+                                    onClick={() => handleCreateWorkspace()}
+                                    className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-medium rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-all"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Create Workspace
+                                </button>
+                            </div>
+                        )}
 
                 </div>
 

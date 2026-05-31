@@ -49,6 +49,7 @@ export default function WorkSpaceFormModal({
     handleSearchUsers
 }: Props) {
 
+    console.log(open, "sdf")
     
     const [formValues, setFormValues] = useState<any>({
         name: initialValues?.name || "",

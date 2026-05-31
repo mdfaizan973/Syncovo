@@ -48,6 +48,7 @@ export default function FormBuilder() {
     const { formId } = useParams();
     const location = useLocation();
     const workspaceIdLocation = location.state?.workspaceId;
+    console.log(workspaceIdLocation)
 
     const navigate = useNavigate();
     // const currentForm = FORMS_RESPONSE;
@@ -75,10 +76,10 @@ export default function FormBuilder() {
 
     useEffect(() => {
         const curr = tables?.find((form) => form.id === formId) || {}
-        console.log(curr)
+
         setTableName(curr.name || "")
         setDescription(curr.description || "")
-        setWorkspaceId(curr.workspace_id || "")
+        setWorkspaceId(curr.workspace_id || workspaceIdLocation || "")
         setFields(curr.schema || [])
         setViewers(curr.viewers || [])
         setEditors(curr.editors || [])
