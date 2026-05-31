@@ -7,6 +7,9 @@ import {
   StickyNote,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../../components/ui/button";
+import { getGreetings } from "../../../utils/commonUtils";
+import { getUserInfoByKey } from "../../../utils/storage";
 
 export default function DashboardInfo() {
   const navigate = useNavigate();
@@ -158,16 +161,8 @@ export default function DashboardInfo() {
                 </p>
 
                 <h1 className="text-lg font-bold tracking-tight text-gray-800 mt-0.5">
-                  Good Morning, Faizan
+                  {getGreetings()}, { getUserInfoByKey("full_name")}
                 </h1>
-
-                <p className="text-xs text-gray-400 mt-0.5">
-                  Alpha Software Pvt Ltd · Product Q3 Workspace
-                </p>
-
-                <p className="text-xs text-gray-400 mt-0.5">
-                  You have <span className="font-medium text-gray-600">18 active tasks</span> and <span className="font-medium text-gray-600">5 pending deadlines</span> today.
-                </p>
               </div>
 
             </div>
@@ -247,7 +242,7 @@ export default function DashboardInfo() {
                 </p>
               </div>
 
-              <button className="h-7 px-3 text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
+              <button className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
                 View All
               </button>
 
@@ -316,11 +311,15 @@ export default function DashboardInfo() {
             {/* Databases */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
 
-              <div className="px-4 py-3 border-b border-gray-100">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
 
                 <h2 className="text-sm font-bold tracking-tight text-gray-800">
                   Databases
                 </h2>
+
+                <button className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
+                View All
+              </button>
 
               </div>
 

@@ -11,6 +11,7 @@ const btnVariants = {
   ghost: "bg-transparent text-orange-500 hover:bg-orange-50 active:bg-orange-100 focus-visible:ring-orange-200",
   dark: "bg-gray-900 text-white hover:bg-gray-800 active:bg-gray-700 shadow-sm hover:shadow-md focus-visible:ring-gray-600",
   warning: "bg-amber-400 text-white hover:bg-amber-500 active:bg-amber-600 shadow-sm hover:shadow-md hover:shadow-amber-200 focus-visible:ring-amber-400",
+  link : "text-orange-500 hover:text-orange-600 active:text-orange-700 hover:underline",
 };
 const btnSizes = {
   sm: "h-8  px-3   text-xs  gap-1.5 rounded-lg",

@@ -31,3 +31,11 @@ export function isNonViewer(viewers: { id: string }[]): boolean {
     const userId = getUserInfoByKey("id") ?? ""
     return !viewers.some((user) => user.id === userId);
 }
+
+
+export const getGreetings = () => {
+    const hours = new Date().getHours();
+    if (hours < 12) return "Good Morning";
+    if (hours < 18) return "Good Afternoon";
+    return "Good Evening";
+}
