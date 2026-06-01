@@ -6,10 +6,13 @@ import {
   Book,
   StickyNote,
   LayoutPanelTop,
+  ArrowRight,
+  Folder,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
-import { getGreetings } from "../../../utils/commonUtils";
+import { formatDate, getGreetings } from "../../../utils/commonUtils";
 import { getUserInfoByKey } from "../../../utils/storage";
 import useNotes from "../../../hooks/useNotes";
 import { useTables } from "../../../hooks/useTables";
@@ -19,47 +22,42 @@ import { useUserInfo } from "../../../hooks/userInfo";
 export default function DashboardInfo() {
   const navigate = useNavigate();
 
-  const { notes } = useNotes(true);
-
   const userId = getUserInfoByKey("id");
   const { userInfo } = useUserInfo(userId);
   console.log(userInfo);
 
-  const myNotes = notes?.length ?? 0;
-
-  // make the stats dynamic based on the data from the backend and should be simmiler to my project dashboard
   const stats = [
     {
-      label: "My Active Tasks",
-      value: "18",
-      info: "",
-      color: "text-orange-500",
+      label: "Workspaces",
+      value: userInfo?.totalWorkspaces?.length ?? 0,
+      info: "Total workspaces you are a part of",
+      color: "text-blue-500",
       bg: "bg-orange-50",
-      icon: Clock3,
+      icon: Folder,
     },
     {
       label: "My Notes",
-      value: myNotes,
-      info: "",
-      color: "text-red-500",
+      value: userInfo?.totalNotes?.length ?? 0,
+      info: "Personal notes, ideas, and documentation",
+      color: "text-green-500",
       bg: "bg-red-50",
       icon: Book,
     },
+    // {
+    //   label: "My Active Tasks",
+    //   value: 0,
+    //   info: "Tasks assigned to you across workspaces",
+    //   color: "text-yellow-500",
+    //   bg: "bg-orange-50",
+    //   icon: Clock3,
+    // },
     {
-      label: "My Forms/Tables",
-      value: 10,
-      info: "",
-      color: "text-green-500",
+      label: "Forms / Tables",
+      value: userInfo?.tables?.length ?? 0,
+      info: "Total forms and tables you have created",
+      color: "text-purple-500",
       bg: "bg-green-50",
       icon: LayoutPanelTop,
-    },
-    {
-      label: "Unread Notifications",
-      value: "9",
-      info: "3 mentions pending",
-      color: "text-indigo-500",
-      bg: "bg-indigo-50",
-      icon: Bell,
     },
   ];
 
@@ -135,24 +133,6 @@ export default function DashboardInfo() {
     "3 tasks are due tomorrow",
   ];
 
-  const databases = [
-    {
-      name: "Finalyca Tech",
-      tasks: "24 Tasks",
-      members: "8 Members",
-    },
-    {
-      name: "Finalyca Sales",
-      tasks: "12 Tasks",
-      members: "5 Members",
-    },
-    {
-      name: "Finalyca Marketing",
-      tasks: "9 Tasks",
-      members: "4 Members",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-[#F6F8FB] p-3 md:p-4">
 
@@ -207,13 +187,13 @@ export default function DashboardInfo() {
         </div>
 
         {/* ── Stats ── */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
           {stats.map((item) => (
 
             <div
               key={item.label}
-              className="bg-white rounded-xl border border-gray-100 p-4 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
+              className="bg-white rounded-xl border border-gray-100 px-4 py-3 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
             >
 
               <div className={`w-9 h-9 rounded-xl ${item.bg} flex items-center justify-center mb-3`}>
@@ -248,64 +228,51 @@ export default function DashboardInfo() {
 
               <div>
                 <h2 className="text-sm font-bold tracking-tight text-gray-800">
-                  My Tasks
+                  Notes
                 </h2>
 
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Assigned tasks across workspaces
+                  Notes, Ideas, and Documentation
                 </p>
               </div>
 
-              <button className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
+              <button onClick={() => navigate("/dashboard/quicknote")} className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
                 View All
               </button>
 
             </div>
 
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-gray-100 p-3">
 
-              {tasks.map((task, index) => (
+              {userInfo?.totalNotes?.slice(0, 5)?.reverse()?.map((note, index) => (
 
                 <div
                   key={index}
-                  className="px-4 py-3 hover:bg-orange-50/30 transition-colors cursor-pointer flex flex-col sm:flex-row sm:items-center gap-2"
+                  className={`px-4 border border-gray-100 py-3 mb-2 rounded-xl hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-2`}
+                  onClick={() => navigate(`/dashboard/view-note/${note.id}`)}
                 >
 
                   <div className="flex-1 min-w-0">
 
                     <h3 className="text-sm font-medium text-gray-800 truncate">
-                      {task.title}
+                      {note.title}
                     </h3>
 
                     <p className="text-xs text-gray-400 mt-0.5">
-                      {task.workspace} · Due {task.due}
+                      {note.description ? note.description : "No description available"}
                     </p>
 
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0">
-
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${task.priority === "Critical"
-                          ? "bg-red-50 text-red-600 border-red-100"
-                          : task.priority === "High"
-                            ? "bg-orange-50 text-orange-600 border-orange-100"
-                            : "bg-gray-50 text-gray-500 border-gray-200"
-                        }`}
-                    >
-                      {task.priority}
+                      className="text-[11px] font-medium px-2 py-0.5  text-yellow-500 border-yellow-200">
+                      {note.favorite ? <Star className="w-3.5 h-3.5 text-yellow-500" /> : null}
                     </span>
-
-                    <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${task.status === "In Progress"
-                          ? "bg-blue-50 text-blue-600 border-blue-100"
-                          : task.status === "Review"
-                            ? "bg-purple-50 text-purple-600 border-purple-100"
-                            : "bg-gray-50 text-gray-500 border-gray-200"
-                        }`}
-                    >
-                      {task.status}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                      <Clock3 className="w-3.5 h-3.5 text-gray-400" />
+                      {formatDate(note.updated_at || "")}
+                    </div>
 
                   </div>
 
@@ -320,16 +287,16 @@ export default function DashboardInfo() {
           {/* Right column */}
           <div className="flex flex-col gap-3">
 
-            {/* Databases */}
+            {/* Workspaces */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
 
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
 
                 <h2 className="text-sm font-bold tracking-tight text-gray-800">
-                  Databases
+                  Workspaces
                 </h2>
 
-                <button className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
+                <button onClick={() => navigate("/dashboard/workspaces")} className="h-7 px-3 cursor-pointer text-xs font-medium rounded-lg border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
                   View All
                 </button>
 
@@ -337,11 +304,12 @@ export default function DashboardInfo() {
 
               <div className="p-3 flex flex-col gap-2">
 
-                {databases.map((database, index) => (
+                {userInfo?.totalWorkspaces?.slice(0, 3)?.map((workspace, index) => (
 
                   <div
                     key={index}
                     className="border border-gray-100 rounded-xl px-3 py-2.5 hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200 cursor-pointer"
+                    onClick={() => navigate(`/dashboard/workspace-view/${workspace.id}`)}
                   >
 
                     <div className="flex items-center justify-between gap-3">
@@ -355,19 +323,20 @@ export default function DashboardInfo() {
                         <div className="min-w-0">
 
                           <h3 className="text-sm font-medium text-gray-800 truncate">
-                            {database.name}
+                            {workspace.name}
                           </h3>
 
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {database.tasks} · {database.members}
+                            Editors: {workspace?.editors?.length ?? 0} | Viewers: {workspace?.viewers?.length ?? 0}
                           </p>
 
                         </div>
 
                       </div>
 
-                      <button className="h-7 px-2.5 text-xs font-medium rounded-lg border border-orange-100 bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors shrink-0">
-                        Open
+                      <button
+                        className="h-7 px-2.5 cursor-pointer text-xs font-medium text-orange-600">
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </button>
 
                     </div>

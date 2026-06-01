@@ -11,7 +11,7 @@ export const useUserInfo = (userId: string) => {
         setUserInfoLoading(true);
         try {
             const response = await userInfoService.getAllTablesForUser(userId);
-            console.log(response);
+            setUserInfo(response?.data ?? null);
             return response;
         }
         catch (error) {
