@@ -355,18 +355,45 @@ const updateTableQuery = async (
   let index = 2;
 
   allowedFields.forEach((field) => {
+
     if (updates[field] !== undefined) {
-      fields.push(`${field} = $${index}`);
-      values.push(updates[field]);
+
+      if (field === 'schema') {
+
+        fields.push(
+          `${field} = $${index}::jsonb`
+        );
+
+        values.push(
+          JSON.stringify(
+            updates[field]
+          )
+        );
+
+      } else {
+
+        fields.push(
+          `${field} = $${index}`
+        );
+
+        values.push(
+          updates[field]
+        );
+
+      }
+
       index++;
     }
+
   });
 
   if (!fields.length) {
     return null;
   }
 
-  fields.push('updated_at = CURRENT_TIMESTAMP');
+  fields.push(
+    'updated_at = CURRENT_TIMESTAMP'
+  );
 
   const result = await query(
     `

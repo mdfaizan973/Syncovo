@@ -6,9 +6,7 @@ const getUserInfoQuery = async (userId) => {
         `
         SELECT *
         FROM tables_data
-        WHERE $1 = ANY(editors)
-        OR $1 = ANY(viewers)
-        OR created_by::text = $1
+        WHERE created_by::text = $1
         ORDER BY created_at DESC
         `,
         [userId]
@@ -16,4 +14,49 @@ const getUserInfoQuery = async (userId) => {
     return result.rows;
 };
 
-module.exports = { getUserInfoQuery };
+// total notes query
+const getTotalNotesQuery = async (userId) => {
+    const result = await query(
+        `
+        SELECT * FROM notes WHERE created_by = $1
+        `,
+        [userId]
+    );
+    return result.rows;
+};
+
+// total workspaces query
+const getTotalWorkspacesQuery = async (userId) => {
+    const result = await query(
+        `
+        SELECT * FROM workspaces WHERE created_by = $1
+        `,
+        [userId]
+    );
+    
+    return result.rows;
+};
+
+// total tasks assigned to the user query
+const getTotalTasksAssignedToUserQuery = async (userId) => {
+    const result = await query(
+        `
+        SELECT * FROM tables_data WHERE $1 = ANY(editors) OR $1 = ANY(viewers)
+        `,
+        [userId]
+    );
+    return result.rows;
+};
+
+// total notifications query
+const getTotalNotificationsQuery = async (userId) => {
+    const result = await query(
+        `
+        SELECT COUNT(*) FROM notifications WHERE created_by = $1
+        `,
+        [userId]
+    );
+    return result.rows[0].count;
+};
+
+module.exports = { getUserInfoQuery, getTotalNotesQuery, getTotalWorkspacesQuery, getTotalTasksAssignedToUserQuery };
