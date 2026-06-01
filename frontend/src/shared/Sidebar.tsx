@@ -6,6 +6,8 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Book, LayoutPanelTop, Table } from "lucide-react";
 import { WORKSPACES_RESPONSE } from "../Pages/workspaces/mock";
 import useNotes from "../hooks/useNotes";
+import { useWorkspaces } from "../hooks/useWorkspaces";
+import { Button } from "../components/ui/button";
 
 type NavItem = {
   id: string; label: string; icon: () => React.ReactNode;
@@ -14,7 +16,7 @@ type NavItem = {
   children?: SubItem[];
 };
 type SubItem = { id: string; label: string; badge?: string; badgeType?: "count" | "draft" | "live"; navigateTo?: string };
-type Section = { title: string; items: NavItem[] };
+type Section = { title: string; items: NavItem[]; onClick?: () => void };
 
 
 
@@ -273,9 +275,11 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
   notes: any[];
 }) {
 
+  const navigate = useNavigate();
+
+  const { workspaces } = useWorkspaces();
+
   const noteCount = notes?.length ?? 0;
-  const formCount = 7;
-  const tableCount = 7;
 
   const NAV_SECTIONS: Section[] = [
     {
@@ -283,34 +287,31 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
       items: [
         { id: "dashboard", label: "Dashboard", icon: Icons.dashboard, navigateTo: "/dashboard" },
         { id: "workspaces", label: "Workspaces", icon: Icons.analytics, navigateTo: "/dashboard/workspaces" },
+        { id: "quicknote", label: "Notes", icon: () => <Book className="w-4 h-4" />, badge: noteCount, badgeType: "count", navigateTo: "/dashboard/quicknote" },
       ],
     },
     {
       title: "Workspaces",
-      items: WORKSPACES_RESPONSE.data.map((workspace) => ({
+      onClick: () => navigate("/dashboard/workspaces"),
+      items: workspaces?.map((workspace) => ({
         id: workspace.id,
         label: workspace.name,
         icon: Icons.content,
         navigateTo: `/dashboard/workspace-view/${workspace.id}`,
-        children: workspace.tables.map((table) => ({
-          id: table.id,
-          label: table.name,
-          icon: Icons.content,
-          navigateTo: `/dashboard/table-view/${workspace.id}/${table.id}`,
-        })),
       })),
     },
     {
-      title: "Tools",
-      items: [
-        { id: "quicknote", label: "Notes", icon: () => <Book className="w-4 h-4" />, badge: noteCount, badgeType: "count", navigateTo: "/dashboard/quicknote" },
-        { id: "forms", label: "Forms", icon: () => <LayoutPanelTop className="w-4 h-4" />, badge: formCount, badgeType: "count", navigateTo: "/dashboard/forms" },
-        { id: "tables", label: "Tables", icon: () => <Table className="w-4 h-4" />, badge: tableCount, badgeType: "count", navigateTo: "/dashboard/tables" },
-      ],
-    },
+      title: "Notes",
+      onClick: () => { navigate("/dashboard/quicknote") },
+      items: notes?.slice(0, 5)?.map((note) => ({
+        id: note.id,
+        label: note.title,
+        icon: Icons.content,
+        navigateTo: `/dashboard/view-note/${note.id}`,
+      })),
+    }
   ];
 
-  const navigate = useNavigate();
 
   const handleSelect = (id: string, navigateTo: string) => {
     setActiveId(id);
@@ -319,6 +320,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
     onNavSelect?.(id);
   };
 
+  console.log(NAV_SECTIONS);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: "none" }}>
@@ -353,17 +355,31 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
 
       {/* Nav sections */}
       <nav className="flex-1 px-2 pb-2 flex flex-col mt-4 gap-4">
-        {NAV_SECTIONS.map(section => (
+        {NAV_SECTIONS?.map(section => (
           <div key={section.title}>
             {!collapsed ? (
-              <p className="px-2 mb-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-gray-300">
-                {section.title}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="px-2 mb-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-gray-300">
+                  {section.title}
+                  <span className="text-gray-400 ml-2 text-[10px]">({section?.items?.length ?? 0})</span>
+                </p>
+                {section?.onClick && section?.items?.length > 4 && (
+                  <Button
+                    type="button"
+                    onClick={section.onClick}
+                    variant="link"
+                    size="sm"
+                    className="text-[10px]"
+                  >
+                    View All
+                  </Button>
+                )}
+              </div>
             ) : (
               <div className="my-1 mx-2 h-px bg-gray-100" />
             )}
             <div className="flex flex-col gap-0.5">
-              {section.items.map(item => (
+              {section.items?.slice(0, 4)?.map(item => (
                 <NavItem
                   key={item.id}
                   item={item}
@@ -381,7 +397,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
 
       {/* Bottom */}
       <div className="px-2.5 py-3 flex-shrink-0 flex flex-col gap-2 border-t border-gray-100">
-        <button className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 w-full text-left transition-all duration-150 text-gray-400 hover:bg-gray-50 hover:text-gray-600" title="Notifications">
+        {/* <button className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 w-full text-left transition-all duration-150 text-gray-400 hover:bg-gray-50 hover:text-gray-600" title="Notifications">
           <div className="relative w-5 h-5 flex-shrink-0">
             <Icons.bell />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-orange-500 border-2 border-white" />
@@ -392,7 +408,7 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
               <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-500 border border-orange-100">3</span>
             </>
           )}
-        </button>
+        </button> */}
         <UserCard collapsed={collapsed} userInfo={userInfo} />
       </div>
     </div>

@@ -1,8 +1,6 @@
 import {
   FileText,
-  Bell,
   Clock3,
-  CheckCircle2,
   Book,
   StickyNote,
   LayoutPanelTop,
@@ -11,12 +9,8 @@ import {
   Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../components/ui/button";
 import { formatDate, getGreetings } from "../../../utils/commonUtils";
 import { getUserInfoByKey } from "../../../utils/storage";
-import useNotes from "../../../hooks/useNotes";
-import { useTables } from "../../../hooks/useTables";
-import { useEffect } from "react";
 import { useUserInfo } from "../../../hooks/userInfo";
 
 export default function DashboardInfo() {
@@ -24,7 +18,6 @@ export default function DashboardInfo() {
 
   const userId = getUserInfoByKey("id");
   const { userInfo } = useUserInfo(userId);
-  console.log(userInfo);
 
   const stats = [
     {
@@ -288,7 +281,7 @@ export default function DashboardInfo() {
           <div className="flex flex-col gap-3">
 
             {/* Workspaces */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
+            <div className="bg-white rounded-xl h-full border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
 
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
 
@@ -350,7 +343,7 @@ export default function DashboardInfo() {
             </div>
 
             {/* Notifications */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
+            {/* <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200">
 
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
 
@@ -387,7 +380,7 @@ export default function DashboardInfo() {
 
               </div>
 
-            </div>
+            </div> */}
 
           </div>
 

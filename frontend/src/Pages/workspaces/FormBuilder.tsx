@@ -48,7 +48,6 @@ export default function FormBuilder() {
     const { formId } = useParams();
     const location = useLocation();
     const workspaceIdLocation = location.state?.workspaceId;
-    console.log(workspaceIdLocation)
 
     const navigate = useNavigate();
     // const currentForm = FORMS_RESPONSE;
@@ -764,22 +763,12 @@ export default function FormBuilder() {
                                 <Button
                                     onClick={handleSave}
                                     variant="primary"
+                                    disabled={fields[0]?.label?.trim() == ""}
                                     leftIcon={<SaveIcon className="w-3.5 h-3.5" />}
                                 >
-                                    Save Table
+                                    {formId ? "Update Table" : "Create Table"}
                                 </Button>
-
                             </div>
-
-                            {workspaceId && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1.5">
-                                    <span className="text-xs text-gray-400">Workspace:</span>
-                                    <span className="text-xs font-medium text-gray-700">
-                                        {workspaces.find((w) => w.id === workspaceId)?.name ?? workspaceId}
-                                    </span>
-                                </div>
-                            )}
-
                         </div>
 
                         {/* Live form preview */}
