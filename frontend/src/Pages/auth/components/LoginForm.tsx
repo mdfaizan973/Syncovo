@@ -35,9 +35,14 @@ export default function AuthPanel() {
             setEmailErr("Please enter a valid email address.");
             return;
         }
-        await login({ email });
-        setEmailErr("");
-        setStep("otp");
+        const response = await login({ email });
+
+        if (response.success) {
+            setEmailErr("");
+            setStep("otp");
+        } else {
+            setEmailErr(response.message);
+        }
     };
 
     const handleVerifyOtp = async () => {

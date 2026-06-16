@@ -3,9 +3,9 @@ import { errorResponse, getResponseMessage, successResponse } from "./toasUtils"
 import { getUserInfoByKey } from "./storage";
 
 // https://syncovo-backend-node.vercel.app
-
+// http://localhost:5000
 const apiClient = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "https://syncovo-backend-node.vercel.app",
     headers: {
         "Content-Type": "application/json",
     },

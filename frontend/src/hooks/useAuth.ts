@@ -16,6 +16,7 @@ export const useAuth = () => {
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -26,9 +27,11 @@ export const useAuth = () => {
         setAuthLoading(true);
         try {
             const response = await authService.login(requestData);
+            console.log(2, response);
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -42,6 +45,7 @@ export const useAuth = () => {
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -54,6 +58,7 @@ export const useAuth = () => {
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -66,6 +71,7 @@ export const useAuth = () => {
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         }
     }
     // get user function
@@ -76,6 +82,7 @@ export const useAuth = () => {
             setUser(response?.data ?? []);
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -88,6 +95,7 @@ export const useAuth = () => {
             setSingleUser(response?.data ?? {});
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
@@ -101,6 +109,7 @@ export const useAuth = () => {
             return response;
         } catch (error) {
             setError(error.message);
+            throw error;
         } finally {
             setAuthLoading(false);
         }
