@@ -334,7 +334,6 @@ function SidebarContent({ collapsed, setCollapsed, activeId, setActiveId, expand
           {!collapsed && (
             <div className="min-w-0">
               <p className="text-gray-900 font-extrabold text-sm leading-none tracking-tight">Syncovo</p>
-              <p className="text-[10px] font-semibold mt-0.5 truncate text-orange-500">CMS</p>
             </div>
           )}
         </div>
@@ -510,7 +509,6 @@ export default function Sidebar() {
               <h1 className="text-base font-extrabold text-gray-900 tracking-tight leading-none capitalize">
                 {getPageTitle(location.pathname)}
               </h1>
-              <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Syncovo CMS · {SITES[0].url}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-3">
