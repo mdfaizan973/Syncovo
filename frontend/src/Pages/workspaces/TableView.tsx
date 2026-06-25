@@ -151,7 +151,7 @@ export default function TableView() {
     const handleDeleteRow = async (rowId: string) => {
         await deleteTableRow(rowId);
     }
-
+console.log(viewRow)
 
     return (
         <>
@@ -727,12 +727,12 @@ export default function TableView() {
                 </div>
             )}
 
-            <WorkSpaceRowViewModal
+            {/* <WorkSpaceRowViewModal
               open={!!viewRow}
               onClose={() => setViewRow({})}
               table={table}
               row={viewRow!}
-            />
+            /> */}
         </>
     );
 }
