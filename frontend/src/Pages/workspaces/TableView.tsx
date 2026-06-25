@@ -551,7 +551,8 @@ export default function TableView() {
                                                     >
                                                             <button
                                                                 onClick={() => {
-                                                                    onClick={() => setViewRow(row)}
+                                                                    // onClick={() => setViewRow(row)}
+                                                                    alert("Work in progress")
                                                                 }}
                                                             className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
                                                                 >
