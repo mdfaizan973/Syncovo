@@ -152,7 +152,7 @@ export default function TableView() {
     const handleDeleteRow = async (rowId: string) => {
         await deleteTableRow(rowId);
     }
-console.log(viewRow)
+
 
     return (
         <>
