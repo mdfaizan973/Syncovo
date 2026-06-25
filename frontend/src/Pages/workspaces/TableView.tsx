@@ -725,7 +725,7 @@ export default function TableView() {
 
                 </div>
             )}
-
+Syncovo
             <WorkSpaceRowViewModal
               open={!!viewRow}
               onClose={() => setViewRow(null)}
