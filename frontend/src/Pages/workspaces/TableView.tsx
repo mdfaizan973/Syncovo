@@ -526,14 +526,18 @@ export default function TableView() {
 
                                                 {table.schema.map((field: any) => (
 
-                                                    <td
+                                                <td
                                                         key={field.key}
-                                                        className={`px-4 py-3 text-sm text-gray-600 ${field.type === "number" ? "text-right tabular-nums" : "text-left"
-                                                            }`}
-                                                    >
-                                                        {row.row_data[field.key]}
-
-                                                    </td>
+                                                        className={`px-4 py-3 text-sm text-gray-600 ${
+                                                        field.type === "number"
+                                                        ? "text-right tabular-nums"
+                                                        : "text-left"
+                                                    }`}
+                                                >
+                                                <div className="max-w-[200px] truncate">
+                                                    {row.row_data[field.key]}
+                                                </div>
+                                                </td>
 
                                                 ))}
 
