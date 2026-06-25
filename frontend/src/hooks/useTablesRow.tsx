@@ -66,6 +66,7 @@ export const useTablesRow = (tableId = '', rowId = '') => {
     }
     // DELETE TABLE ROW
     const deleteTableRow = async (rowId: string) => {
+        setTableRowLoading(true)
         try {
             const response = await tableRowsService.deleteTableRow(rowId);
             if (response.success) {
@@ -75,6 +76,8 @@ export const useTablesRow = (tableId = '', rowId = '') => {
         } catch (error) {
             console.error("Error:", error);
             return error;
+        } finally {
+            setTableRowLoading(false);
         }
     }
     // REFRESH TABLE ROWS
