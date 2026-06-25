@@ -549,13 +549,10 @@ console.log(viewRow)
                                                         className="flex items-center justify-end gap-1.5"
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
-                                                            <button
-                                                                onClick={() => {
-                                                                    onClick={() => setViewRow(row)}
-                                                                    // alert("Work in progress")
-                                                                }}
-                                                            className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
-                                                                >
+                                                        <button
+                                                                onClick={() => setViewRow(row)}
+                                                                className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
+                                                        >
                                                             <Eye className="w-3.5 h-3.5" />
                                                         </button>
 
@@ -727,12 +724,12 @@ console.log(viewRow)
                 </div>
             )}
 
-            {/* <WorkSpaceRowViewModal
+            <WorkSpaceRowViewModal
               open={!!viewRow}
               onClose={() => setViewRow({})}
               table={table}
               row={viewRow!}
-            /> */}
+            />
         </>
     );
 }
