@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import { WORKSPACES_RESPONSE } from "./mock";
 import { Card } from "../../components/ui/card";
-import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Edit, FilterIcon, Plus, SearchIcon, TableIcon, Trash, Users, XIcon } from "lucide-react";
+import { ChartColumnIncreasing, Check, ChevronDown, ChevronRight, Eye, Edit, FilterIcon, Plus, SearchIcon, TableIcon, Trash, Users, XIcon } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import DynamicFormModal from "../../shared/Dynamicformmodal";
 import { getUserInfoByKey } from "../../utils/storage";
