@@ -12,7 +12,7 @@ import { useTablesRow } from "../../hooks/useTablesRow";
 import { isNonViewer } from "../../utils/commonUtils";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import Loader from "../../shared/Loader";
-import WorkSpaceRowViewModal from "./WorkSpaceRowViewModal";
+import WorkSpaceRowViewModal from "./Workspacerowviewmodal";
 
 export default function TableView() {
 
