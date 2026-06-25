@@ -12,6 +12,7 @@ import { useTablesRow } from "../../hooks/useTablesRow";
 import { isNonViewer } from "../../utils/commonUtils";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import Loader from "../../shared/Loader";
+import WorkSpaceRowViewModal from "./WorkSpaceRowViewModal";
 
 export default function TableView() {
 
@@ -29,6 +30,7 @@ export default function TableView() {
     const [initialValues, setInitialValues] = useState<Record<string, any>>({});
     const [members, setMembers] = useState<any[]>([]);
     const [openMembersModal, setOpenMembersModal] = useState(false);
+    const [viewRow, setViewRow] = useState<any | null>(null);
 
     // UI-only filter state
     const [filters, setFilters] = useState<
@@ -549,7 +551,7 @@ export default function TableView() {
                                                     >
                                                             <button
                                                                 onClick={() => {
-                                                                    console.log("View Row Data:", row);
+                                                                    onClick={() => setViewRow(row)}
                                                                 }}
                                                             className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
                                                                 >
@@ -723,6 +725,13 @@ export default function TableView() {
 
                 </div>
             )}
+
+            <WorkSpaceRowViewModal
+              open={!!viewRow}
+              onClose={() => setViewRow(null)}
+              table={table}
+              row={viewRow!}
+            />
         </>
     );
 }
