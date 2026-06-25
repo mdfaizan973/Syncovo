@@ -30,7 +30,7 @@ export default function TableView() {
     const [initialValues, setInitialValues] = useState<Record<string, any>>({});
     const [members, setMembers] = useState<any[]>([]);
     const [openMembersModal, setOpenMembersModal] = useState(false);
-    const [viewRow, setViewRow] = useState<any | null>(null);
+    const [viewRow, setViewRow] = useState<any>({});
 
     // UI-only filter state
     const [filters, setFilters] = useState<
@@ -551,8 +551,8 @@ export default function TableView() {
                                                     >
                                                             <button
                                                                 onClick={() => {
-                                                                    // onClick={() => setViewRow(row)}
-                                                                    alert("Work in progress")
+                                                                    onClick={() => setViewRow(row)}
+                                                                    // alert("Work in progress")
                                                                 }}
                                                             className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
                                                                 >
@@ -729,7 +729,7 @@ export default function TableView() {
 
             <WorkSpaceRowViewModal
               open={!!viewRow}
-              onClose={() => setViewRow(null)}
+              onClose={() => setViewRow({})}
               table={table}
               row={viewRow!}
             />
