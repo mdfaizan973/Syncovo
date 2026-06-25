@@ -50,6 +50,7 @@ export const useTablesRow = (tableId = '', rowId = '') => {
     }
     // UPDATE TABLE ROW
     const updateTableRow = async (rowId: string, payload: any) => {
+        setTableRowLoading(true);
         try {
             const response = await tableRowsService.updateTableRow(rowId, payload);
             if (response.success) {
@@ -59,6 +60,8 @@ export const useTablesRow = (tableId = '', rowId = '') => {
         } catch (error) {
             console.error("Error:", error);
             return error;
+        } finally {
+            setTableRowLoading(false);
         }
     }
     // DELETE TABLE ROW
