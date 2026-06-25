@@ -31,6 +31,7 @@ export default function TableView() {
     const [members, setMembers] = useState<any[]>([]);
     const [openMembersModal, setOpenMembersModal] = useState(false);
     const [viewRow, setViewRow] = useState<any>({});
+    const [viewRowOpen, setViewRowOpen] = useState(false);
 
     // UI-only filter state
     const [filters, setFilters] = useState<
@@ -550,7 +551,10 @@ console.log(viewRow)
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
                                                         <button
-                                                                onClick={() => setViewRow(row)}
+                                                                onClick={() => { 
+                                                                    setViewRow(row)
+                                                                    setViewRowOpen(true)
+                                                                }}
                                                                 className="w-7 h-7 cursor-pointer rounded-lg border border-green-100 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center justify-center"
                                                         >
                                                             <Eye className="w-3.5 h-3.5" />
@@ -724,12 +728,15 @@ console.log(viewRow)
                 </div>
             )}
 
-            {/* <WorkSpaceRowViewModal
-              open={!!viewRow}
-              onClose={() => setViewRow({})}
-              table={table}
-              row={viewRow!}
-            /> */}
+            <WorkSpaceRowViewModal
+  open={viewRowOpen}
+  onClose={() => {
+    setViewRowOpen(false);
+    setViewRow(null);
+  }}
+  table={table!}
+  row={viewRow!}
+/>
         </>
     );
 }
