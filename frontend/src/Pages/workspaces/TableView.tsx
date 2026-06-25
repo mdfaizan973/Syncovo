@@ -724,12 +724,12 @@ console.log(viewRow)
                 </div>
             )}
 
-            <WorkSpaceRowViewModal
+            {/* <WorkSpaceRowViewModal
               open={!!viewRow}
               onClose={() => setViewRow({})}
               table={table}
               row={viewRow!}
-            />
+            /> */}
         </>
     );
 }
