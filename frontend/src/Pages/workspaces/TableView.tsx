@@ -13,6 +13,7 @@ import { isNonViewer } from "../../utils/commonUtils";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import Loader from "../../shared/Loader";
 import WorkSpaceRowViewModal from "./Workspacerowviewmodal";
+import DeleteConfirmModal from "../../shared/DeleteConfirmModal";
 
 export default function TableView() {
 
@@ -32,7 +33,8 @@ export default function TableView() {
     const [openMembersModal, setOpenMembersModal] = useState(false);
     const [viewRow, setViewRow] = useState<any>({});
     const [viewRowOpen, setViewRowOpen] = useState(false);
-
+    const [deleteRowId, setDeleteRowId] = useState<string | null>(null);
+    
     const [appliedFilters, setAppliedFilters] = useState<
         { id: number; field: string; operator: string; value: string }[]
     >([]);
@@ -601,7 +603,7 @@ const filteredRows = useMemo(() => {
 
                                                         {/* Delete — UI only */}
                                                         <button
-                                                            onClick={() => handleDeleteRow(row.id)}
+                                                            onClick={() => setDeleteRowId(row.id)}
                                                             className="w-7 h-7 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-all flex items-center justify-center">
                                                             <Trash className="w-3.5 h-3.5" />
                                                         </button>
@@ -758,14 +760,26 @@ const filteredRows = useMemo(() => {
             )}
 
             <WorkSpaceRowViewModal
-  open={viewRowOpen}
-  onClose={() => {
-    setViewRowOpen(false);
-    setViewRow(null);
-  }}
-  table={table!}
-  row={viewRow!}
-/>
-        </>
+              open={viewRowOpen}
+              onClose={() => {
+                setViewRowOpen(false);
+                setViewRow(null);
+              }}
+              table={table!}
+              row={viewRow!}
+            />
+
+            {deleteRowId && 
+                <DeleteConfirmModal
+                    open={deleteRowId ? true : false}
+                    onClose={() => setDeleteRowId(null)}
+                    onConfirm={async () => {
+                        await handleDeleteRow(deleteRowId!);
+                        setDeleteRowId(null);
+                    }}
+                    title="Delete Record"
+                    description="This action cannot be undone. The record will be permanently removed."
+                /> }
+                    </>
     );
 }
