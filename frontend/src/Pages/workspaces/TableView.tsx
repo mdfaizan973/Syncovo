@@ -33,6 +33,10 @@ export default function TableView() {
     const [viewRow, setViewRow] = useState<any>({});
     const [viewRowOpen, setViewRowOpen] = useState(false);
 
+    const [appliedFilters, setAppliedFilters] = useState
+        { id: number; field: string; operator: string; value: string }[]
+    >([]);
+
     // UI-only filter state
     const [filters, setFilters] = useState<
         { id: number; field: string; operator: string; value: string }[]
@@ -44,40 +48,47 @@ export default function TableView() {
         (item) => item.id === tableId
     );
 
-    // const filteredRows = useMemo(() => {
-
-    //     if (!tableRows) {
-    //         return [];
-    //     }
-
-    //     return tableRows?.filter((row: any) => {
-
-    //         return Object.values(row.row_data).some((value) =>
-    //             String(value)
-    //                 .toLowerCase()
-    //                 .includes(search.toLowerCase())
-    //         );
-
-    //     });
-
-    // }, [search, tableRows]);
-
-    const filteredRows = useMemo(() => {
+const filteredRows = useMemo(() => {
     if (!tableRows) return [];
 
-    if (!search.trim()) return tableRows;
+    let rows = tableRows;
 
-    const q = search.toLowerCase().trim();
-
-    return tableRows.filter((row: any) => {
-        if (!row?.row_data) return false;
-        return Object.values(row.row_data).some((value) => {
-            if (value === null || value === undefined) return false;
-            return String(value).toLowerCase().includes(q);
+    // global search
+    if (search.trim()) {
+        const q = search.toLowerCase().trim();
+        rows = rows.filter((row: any) => {
+            if (!row?.row_data) return false;
+            return Object.values(row.row_data).some((value) => {
+                if (value === null || value === undefined) return false;
+                return String(value).toLowerCase().includes(q);
+            });
         });
-    });
+    }
 
-}, [search, tableRows]);
+    // field-level filters (AND logic — all must pass)
+    if (appliedFilters.length > 0) {
+        rows = rows.filter((row: any) => {
+            return appliedFilters.every((filter) => {
+                const raw = row?.row_data?.[filter.field];
+                const val = raw === null || raw === undefined ? "" : String(raw).toLowerCase();
+                const filterVal = filter.value.toLowerCase();
+
+                switch (filter.operator) {
+                    case "is":               return val === filterVal;
+                    case "is not":           return val !== filterVal;
+                    case "contains":         return val.includes(filterVal);
+                    case "does not contain": return !val.includes(filterVal);
+                    case "is empty":         return val === "";
+                    case "is not empty":     return val !== "";
+                    default:                 return true;
+                }
+            });
+        });
+    }
+
+    return rows;
+
+}, [search, tableRows, appliedFilters]);
 
     const addFilter = () => {
         setFilters((prev) => [
@@ -361,7 +372,7 @@ export default function TableView() {
 
                                 {filters.length > 0 && (
                                     <button
-                                        onClick={() => setFilters([])}
+                                        onClick={() => { setFilters([]); setAppliedFilters([]); }}  // ← add setAppliedFilters([])
                                         className="text-xs text-gray-400 hover:text-red-500 transition-colors"
                                     >
                                         Clear all
@@ -481,12 +492,13 @@ export default function TableView() {
                                     Add filter
                                 </button>
 
-                                <button
+                                 <button
+                                    onClick={() => setAppliedFilters(filters)}   // ← add this
                                     className="h-8 px-3 cursor-pointer text-xs font-medium rounded-lg border border-green-200 bg-green-50 text-green-500 hover:bg-green-100 transition-all flex items-center gap-1.5"
                                 >
-                                    <Check className="w-3.5 h-3.5 text-green-500" />
-                                    Apply filters
-                                </button>
+                                <Check className="w-3.5 h-3.5 text-green-500" />
+                                Apply filters
+                            </button>
 
                             </div>
 
