@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useWorkspaces } from "../../hooks/useWorkspaces";
 import { useTables } from "../../hooks/useTables";
 import { isNonViewer } from "../../utils/commonUtils";
-import { Edit, FileSearch, Plus, Trash } from "lucide-react";
+import { Edit, FileSearch, Plus, Trash, Search } from "lucide-react";
 import { useState } from "react";
 import { getUsersByEmail } from "../../services/auth";
 import { toast } from "sonner";
@@ -159,7 +159,7 @@ export default function WorkspaceView() {
 
                                 {/* Search by table name */}
                                 <div className="relative">
-                                    <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
                                     <input
                                         type="text"
                                         placeholder="Search tables by name..."
