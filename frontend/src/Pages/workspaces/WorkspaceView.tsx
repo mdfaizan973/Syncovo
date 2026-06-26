@@ -142,19 +142,6 @@ export default function WorkspaceView() {
 
                             </div>
 
-                            /* {isNonViewer(workspace?.viewers || []) && tables?.length > 0 &&
-                                (<div className="flex items-center gap-2">
-
-                                    <button
-                                        onClick={() =>
-                                            navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
-                                        }
-                                        className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
-                                    >
-                                        Create Table
-                                    </button>
-
-                                </div>)} */
                             <div className="flex items-center gap-2 flex-wrap">
 
                                 {/* Search by table name */}
