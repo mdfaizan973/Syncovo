@@ -33,7 +33,7 @@ export default function TableView() {
     const [viewRow, setViewRow] = useState<any>({});
     const [viewRowOpen, setViewRowOpen] = useState(false);
 
-    const [appliedFilters, setAppliedFilters] = useState
+    const [appliedFilters, setAppliedFilters] = useState<
         { id: number; field: string; operator: string; value: string }[]
     >([]);
 
