@@ -44,23 +44,40 @@ export default function TableView() {
         (item) => item.id === tableId
     );
 
+    // const filteredRows = useMemo(() => {
+
+    //     if (!tableRows) {
+    //         return [];
+    //     }
+
+    //     return tableRows?.filter((row: any) => {
+
+    //         return Object.values(row.row_data).some((value) =>
+    //             String(value)
+    //                 .toLowerCase()
+    //                 .includes(search.toLowerCase())
+    //         );
+
+    //     });
+
+    // }, [search, tableRows]);
+
     const filteredRows = useMemo(() => {
+    if (!tableRows) return [];
 
-        if (!tableRows) {
-            return [];
-        }
+    if (!search.trim()) return tableRows;
 
-        return tableRows?.filter((row: any) => {
+    const q = search.toLowerCase().trim();
 
-            return Object.values(row.row_data).some((value) =>
-                String(value)
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-            );
-
+    return tableRows.filter((row: any) => {
+        if (!row?.row_data) return false;
+        return Object.values(row.row_data).some((value) => {
+            if (value === null || value === undefined) return false;
+            return String(value).toLowerCase().includes(q);
         });
+    });
 
-    }, [search, tableRows]);
+}, [search, tableRows]);
 
     const addFilter = () => {
         setFilters((prev) => [
