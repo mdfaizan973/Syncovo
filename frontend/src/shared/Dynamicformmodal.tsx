@@ -114,10 +114,26 @@ export default function DynamicFormModal({
         return Object.keys(errs).length === 0;
     };
 
+    // const handleSubmit = () => {
+    //     setSubmitted(true);
+    //     if (!validate(values)) return;
+    //     onSubmit?.(values);
+    //     onClose();
+    // };
+
     const handleSubmit = () => {
         setSubmitted(true);
         if (!validate(values)) return;
-        onSubmit?.(values);
+    
+        // normalize textarea values — replace literal \n string with actual newline
+        const normalized = { ...values };
+        fields.forEach((f) => {
+            if (f.type === "textarea" && typeof normalized[f.key] === "string") {
+                normalized[f.key] = normalized[f.key].replace(/\\n/g, "\n");
+            }
+        });
+    
+        onSubmit?.(normalized);   // ← send normalized instead of values
         onClose();
     };
 
@@ -226,7 +242,8 @@ export default function DynamicFormModal({
                                             disabled={field.disabled}
                                             helperText={err ?? field.helperText}
                                             state={err ? "error" : ""}
-                                            value={val}
+                                            {/* value={val} */}
+                                            value={typeof val === "string" ? val.replace(/\\n/g, "\n") : val}
                                             onChange={(e) => set(field.key, e.target.value)}
                                             rows={3}
                                         />
