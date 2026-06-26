@@ -242,7 +242,6 @@ export default function DynamicFormModal({
                                             disabled={field.disabled}
                                             helperText={err ?? field.helperText}
                                             state={err ? "error" : ""}
-                                            {/* value={val} */}
                                             value={typeof val === "string" ? val.replace(/\\n/g, "\n") : val}
                                             onChange={(e) => set(field.key, e.target.value)}
                                             rows={3}
