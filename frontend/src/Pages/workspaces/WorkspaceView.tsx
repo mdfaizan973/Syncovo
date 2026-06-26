@@ -21,7 +21,8 @@ export default function WorkspaceView() {
 
     const [open, setOpen] = useState(false);
     const [users, setUsers] = useState<any[]>([]);
-
+    const [tableSearch, setTableSearch] = useState("");
+    
     const workspace = workspaces?.find((item) => item.id === workspaceId) || null;
 
     const handleUpdateTable = async (table: any) => {
@@ -71,7 +72,10 @@ export default function WorkspaceView() {
             <Loader loading={workspaceLoading || tableLoading} />
         )
     }
-    
+
+    const filteredTables = tables?.filter((table: any) =>
+        table.name.toLowerCase().includes(tableSearch.toLowerCase().trim())
+    ) ?? [];
 
     if (!workspace) {
         return (
@@ -138,7 +142,7 @@ export default function WorkspaceView() {
 
                             </div>
 
-                            {isNonViewer(workspace?.viewers || []) && tables?.length > 0 &&
+                            /* {isNonViewer(workspace?.viewers || []) && tables?.length > 0 &&
                                 (<div className="flex items-center gap-2">
 
                                     <button
@@ -150,7 +154,33 @@ export default function WorkspaceView() {
                                         Create Table
                                     </button>
 
-                                </div>)}
+                                </div>)} */
+                            <div className="flex items-center gap-2 flex-wrap">
+
+                                {/* Search by table name */}
+                                <div className="relative">
+                                    <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search tables by name..."
+                                        value={tableSearch}
+                                        onChange={(e) => setTableSearch(e.target.value)}
+                                        className="h-9 pl-8 pr-3 text-sm rounded-lg border border-gray-200 bg-white outline-none focus:border-orange-400 transition-colors text-gray-700 placeholder:text-gray-300 w-48 sm:w-56"
+                                    />
+                                </div>
+                            
+                                {isNonViewer(workspace?.viewers || []) && tables?.length > 0 && (
+                                    <button
+                                        onClick={() =>
+                                            navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
+                                        }
+                                        className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
+                                    >
+                                        Create Table
+                                    </button>
+                                )}
+                            
+                            </div>
 
                         </div>
 
@@ -215,10 +245,10 @@ export default function WorkspaceView() {
 
                         </div>
 
-                        {tables?.length > 0 ? 
+                        {filteredTables?.length > 0 ? 
                         (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
-                            {tables?.map((table) => (
+                            {filteredTables?.map((table) => (
 
                                 <div
                                     key={table.id}
@@ -299,23 +329,29 @@ export default function WorkspaceView() {
                             ))}
 
                         </div>) : (
-                            <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
+                             <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
                                 <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center">
                                     <FileSearch className="w-6 h-6 text-orange-400" />
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
-                                    <p className="text-sm font-medium text-gray-700">No Tables found</p>
-                                    <p className="text-xs text-gray-400">Get started by creating your first table</p>
+                                    <p className="text-sm font-medium text-gray-700">
+                                        {tableSearch.trim() ? `No tables matching "${tableSearch}"` : "No Tables found"}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                        {tableSearch.trim() ? "Try searching a different name" : "Get started by creating your first table"}
+                                    </p>
                                 </div>
-                                <button
-                                    onClick={() =>
-                                        navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
-                                    }
-                                    className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-medium rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-all"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Create Table
-                                </button>
+                                {!tableSearch.trim() && (
+                                    <button
+                                        onClick={() =>
+                                            navigate(`/dashboard/form-builder`, { state: { workspaceId: workspace.id } })
+                                        }
+                                        className="h-9 px-4 flex items-center gap-2 cursor-pointer text-sm font-medium rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-all"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Create Table
+                                    </button>
+                                )}
                             </div>
                         )}
 
