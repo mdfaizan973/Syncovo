@@ -9,6 +9,7 @@ import { getUsersByEmail } from "../../services/auth";
 import { toast } from "sonner";
 import WorkSpaceFormModal from "../../shared/WorkSpaceFormModal";
 import Loader from "../../shared/Loader";
+import DeleteConfirmModal from "../../shared/DeleteConfirmModal";
 
 export default function WorkspaceView() {
 
@@ -22,7 +23,12 @@ export default function WorkspaceView() {
     const [open, setOpen] = useState(false);
     const [users, setUsers] = useState<any[]>([]);
     const [tableSearch, setTableSearch] = useState("");
-    
+    const [deleteModal, setDeleteModal] = useState<{
+        open: boolean;
+        title: string;
+        description: string;
+        onConfirm: () => Promise<void>;
+    } | null>(null);
     const workspace = workspaces?.find((item) => item.id === workspaceId) || null;
 
     const handleUpdateTable = async (table: any) => {
@@ -282,6 +288,19 @@ export default function WorkspaceView() {
                                                     className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
                                                     <Trash className="w-3.5 h-3.5" />
                                                 </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setDeleteModal({
+                                                            open: true,
+                                                            title: "Delete Table",
+                                                            description: `"${table.name}" and all its records will be permanently deleted. This action cannot be undone.`,
+                                                            onConfirm: async () => await deleteTable(table.id),
+                                                        });
+                                                    }}
+                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                    <Trash className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
                                         )}
 
@@ -348,13 +367,17 @@ export default function WorkspaceView() {
 
             </div>
 
-            {/* <WorkSpaceFormModal
-                open={open}
-                users={users}
-                onClose={() => setOpen(false)}
-                onSubmit={handleSubmit}
-                handleSearchUsers={handleSearchUsers}
-            /> */}
+            { deleteModal && 
+                <DeleteConfirmModal
+                open={deleteModal? true: false}
+                onClose={() => setDeleteModal(null)}
+                onConfirm={async () => {
+                    await deleteModal?.onConfirm();
+                    setDeleteModal(null);
+                }}
+                title={deleteModal?.title ?? ""}
+                description={deleteModal?.description ?? ""}
+            />}
         </>
     );
 }
