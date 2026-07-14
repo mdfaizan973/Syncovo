@@ -1,3 +1,6 @@
+<img width="1365" height="767" alt="image" src="https://github.com/user-attachments/assets/35aa6869-f144-4953-8d65-5e648019199b" />
+
+
 ## Syncovo
 
 Primary        → #f97316
