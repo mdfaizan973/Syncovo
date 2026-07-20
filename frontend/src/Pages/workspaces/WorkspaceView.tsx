@@ -141,7 +141,7 @@ export default function WorkspaceView() {
                                         {workspace.name}
                                     </h1>
 
-                                    <p className="text-xs text-gray-400 mt-0.5">
+                                    <p className="mt-0.5 text-xs text-gray-400 line-clamp-2 break-words">
                                         {workspace.description}
                                     </p>
                                 </div>
