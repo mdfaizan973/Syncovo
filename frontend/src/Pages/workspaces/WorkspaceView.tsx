@@ -257,15 +257,22 @@ export default function WorkspaceView() {
                                                 <span className="text-base">🗃️</span>
                                             </div>
 
-                                            <div className="min-w-0">
-                                                <h3 className="text-sm font-medium text-gray-800 truncate">
-                                                    {table.name}
-                                                </h3>
-
-                                                <p className="text-xs text-gray-400 truncate mt-0.5">
-                                                    {table.description}
-                                                </p>
-                                            </div>
+                                        <div className="min-w-0 flex-1">
+                                            <h1 className="text-lg font-bold tracking-tight text-gray-800 truncate">
+                                                {workspace.name}
+                                            </h1>
+                                        
+                                            <p
+                                                className="mt-0.5 text-xs text-gray-400 overflow-hidden break-words"
+                                                style={{
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: "vertical",
+                                                }}
+                                            >
+                                                {workspace.description}
+                                            </p>
+                                        </div>
                                         </div>
 
                                         {isNonViewer(table?.viewers || []) && (
