@@ -149,8 +149,8 @@ export default function WorkspacesDashboard() {
                                                     <h2 className="text-sm font-medium text-gray-800 truncate">
                                                         {workspace.name}
                                                     </h2>
-                                                    <p className="text-xs text-gray-400 truncate mt-0.5">
-                                                        {workspace.description}
+                                                    <p className="mt-0.5 text-xs text-gray-400 line-clamp-2 break-words">
+                                                     ! {workspace.description} 
                                                     </p>
                                                 </div>
                                             </div>
