@@ -238,8 +238,6 @@ export default function TableView() {
                             </div>
                         </div>
 
-divide this part properly so that the description will take eclipse and the other like input buttons  will be properly placed for long text its makingbad UI fix it 
-
                         {/* ── Collapsible stats ── */}
                         {statsOpen && (
                             <div className="mt-3 pt-3 border-t border-gray-100">
