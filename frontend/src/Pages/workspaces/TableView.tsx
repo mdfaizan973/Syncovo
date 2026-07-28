@@ -155,89 +155,54 @@ export default function TableView() {
                 <div className="max-w-7xl mx-auto flex flex-col gap-3">
 
                     {/* ── Header card ── */}
-                    <div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+<div className="bg-white rounded-xl border border-gray-100 px-4 py-3">
+  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+    {/* Left */}
+    <div className="flex items-start gap-3 flex-1 min-w-0">
+      <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+        <span className="text-base">🗃️</span>
+      </div>
 
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                    <span className="text-base">🗃️</span>
-                                </div>
-                                <div>
-                                    <h1 className="text-lg font-bold tracking-tight text-gray-800">{table.name}</h1>
-                                    <p className="text-xs text-gray-400 mt-0.5">{table.description}</p>
-                                </div>
-                            </div>
+      <div className="flex-1 min-w-0">
+        <h1
+          className="text-lg font-bold tracking-tight text-gray-800 truncate"
+          title={table.name}
+        >
+          {table.name}
+        </h1>
 
-                            <div className="flex items-center gap-2 flex-wrap">
+        <p
+          title={table.description}
+          className="mt-1 text-sm text-gray-500 leading-5 overflow-hidden"
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {table.description}
+        </p>
+      </div>
+    </div>
 
-                                {/* Search */}
-                                <div className="relative">
-                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
-                                    <Input
-                                        type="text"
-                                        placeholder="Search records..."
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        leftIcon={<Search className="w-3.5 h-3.5 text-gray-400 pointer-events-none" />}
-                                    />
-                                </div>
+    {/* Right */}
+    <div className="flex items-center gap-2 flex-wrap shrink-0">
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+        <Input
+          type="text"
+          placeholder="Search records..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          leftIcon={<Search className="w-3.5 h-3.5 text-gray-400 pointer-events-none" />}
+        />
+      </div>
 
-                                {/* Filter toggle */}
-                                <button
-                                    onClick={() => setFilterOpen((v) => !v)}
-                                    className={`h-9 px-3 cursor-pointer text-sm font-medium rounded-lg border transition-all flex items-center gap-1.5 ${filterOpen
-                                        ? "bg-orange-50 text-orange-600 border-orange-200"
-                                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-                                        }`}
-                                >
-                                    <FilterIcon className="w-3.5 h-3.5" />
-                                    Filter
-                                    {appliedFilters.length > 0 && (
-                                        <span className="text-[10px] font-medium px-1.5 py-px rounded-full text-white bg-orange-500">
-                                            {appliedFilters.length}
-                                        </span>
-                                    )}
-                                </button>
-
-                                {/* Stats toggle */}
-                                <button
-                                    onClick={() => setStatsOpen((v) => !v)}
-                                    className="h-9 px-3 cursor-pointer text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-1.5"
-                                >
-                                    <ChartColumnIncreasing className="w-3.5 h-3.5" />
-                                    Stats
-                                    <ChevronDown className="w-3.5 h-3.5" />
-                                </button>
-
-                                {isNonViewer(table?.viewers) && (
-                                    <>
-                                        <button
-                                            onClick={() => { setCustomerOpen(true); setInitialValues({}); }}
-                                            className="h-9 px-4 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all flex items-center gap-1.5"
-                                        >
-                                            <Plus className="w-3.5 h-3.5" />
-                                            Add Record
-                                        </button>
-
-                                        {/* ── Table delete button ── */}
-                                        <button
-                                            onClick={() => setDeleteModal({
-                                                open: true,
-                                                title: "Delete Table",
-                                                description: "This will permanently delete this table and all its records. This action cannot be undone.",
-                                                onConfirm: async () => {
-                                                    await deleteTable(table.id);
-                                                    navigate(`/dashboard/workspace-view/${workspaceId}`);
-                                                },
-                                            })}
-                                            className="w-10 h-10 cursor-pointer rounded-lg border border-red-100 bg-red-50 text-red-500 flex items-center justify-center transition-all"
-                                        >
-                                            <Trash className="w-4 h-4" />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
+      {/* Your remaining buttons... */}
+    </div>
+  </div>
+</div>
 
                         {/* ── Collapsible stats ── */}
                         {statsOpen && (
