@@ -159,7 +159,7 @@ export default function TableView() {
 
                             <div className="flex items-center gap-3">
                                 <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                    <span className="text-base">🗃️🗃️</span>
+                                    <span className="text-base">🗃️</span>
                                 </div>
                                 <div>
                                     <h1 className="text-lg font-bold tracking-tight text-gray-800">{table.name}</h1>
@@ -237,8 +237,6 @@ export default function TableView() {
                                 )}
                             </div>
                         </div>
-
-divide this part properly so that the description will take eclipse and the other like input buttons  will be properly placed for long text its makingbad UI fix it 
 
                         {/* ── Collapsible stats ── */}
                         {statsOpen && (
