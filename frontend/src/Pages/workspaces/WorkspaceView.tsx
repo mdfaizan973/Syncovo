@@ -262,7 +262,7 @@ export default function WorkspaceView() {
 
                                         <div className="min-w-0 flex-1">
                                             <h1 className="text-lg font-bold tracking-tight text-gray-800 truncate">
-                                                {workspace.name}
+                                                {table.name}
                                             </h1>
                                         
                                             <p
@@ -273,7 +273,7 @@ export default function WorkspaceView() {
                                                     WebkitBoxOrient: "vertical",
                                                 }}
                                             >
-                                                {workspace.description}
+                                                {table.description}
                                             </p>
                                         </div>
                                         </div>
