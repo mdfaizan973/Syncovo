@@ -104,8 +104,7 @@ export default function WorkspaceView() {
                         Create Workspace
                     </button>
                 </div>
-    
-                {/* ✅ Modal was missing here */}
+
                 <WorkSpaceFormModal
                     open={open}
                     users={users}
@@ -116,8 +115,6 @@ export default function WorkspaceView() {
             </>
         );
     }
-
-
 
     return (
         <>
@@ -136,16 +133,17 @@ export default function WorkspaceView() {
                                     <span className="text-base">📁</span>
                                 </div>
 
-<div className="min-w-0 flex-1">
-  <h1 className="text-lg font-bold tracking-tight text-gray-800 line-clamp-2 break-words">
-    {workspace.name}
-  </h1>
+                                <div className="min-w-0 flex-1">
+                                    <h1 className="text-lg font-bold tracking-tight text-gray-800 line-clamp-2 break-words">
+                                        {workspace.name}
+                                    </h1>
 
-  <p className="mt-0.5 text-xs text-gray-400 line-clamp-2 break-words">
-    {workspace.description}
-  </p>
-</div>
+                                    <p className="mt-0.5 text-xs text-gray-400 line-clamp-2 break-words">
+                                        {workspace.description}
+                                    </p>
+                                </div>
 
+                            </div>
 
                             <div className="flex items-center gap-2 flex-wrap">
 
@@ -160,7 +158,7 @@ export default function WorkspaceView() {
                                         className="h-9 pl-8 pr-3 text-sm rounded-lg border border-gray-200 bg-white outline-none focus:border-orange-400 transition-colors text-gray-700 placeholder:text-gray-300 w-48 sm:w-56"
                                     />
                                 </div>
-                            
+
                                 {isNonViewer(workspace?.viewers || []) && tables?.length > 0 && (
                                     <button
                                         onClick={() =>
@@ -171,7 +169,7 @@ export default function WorkspaceView() {
                                         Create Table
                                     </button>
                                 )}
-                            
+
                             </div>
 
                         </div>
@@ -189,7 +187,6 @@ export default function WorkspaceView() {
                                         {workspace.owner.name}
                                     </h3>
                                 </div>
-
 
                                 <div className="bg-gray-50 rounded-xl p-3">
                                     <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
@@ -237,118 +234,110 @@ export default function WorkspaceView() {
 
                         </div>
 
-                        {filteredTables?.length > 0 ? 
-                        (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                        {filteredTables?.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
 
-                            {filteredTables?.map((table) => (
+                                {filteredTables?.map((table) => (
 
-                                <div
-                                    key={table.id}
-                                    onClick={() =>
-                                        navigate(`/dashboard/table-view/${table.workspace_id}/${table.id}`)
-                                    }
-                                    className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
-                                >
+                                    <div
+                                        key={table.id}
+                                        onClick={() =>
+                                            navigate(`/dashboard/table-view/${table.workspace_id}/${table.id}`)
+                                        }
+                                        className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:border-orange-100 hover:shadow-sm hover:shadow-orange-50 transition-all duration-200"
+                                    >
 
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                                                <span className="text-base">🗃️</span>
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                                    <span className="text-base">🗃️</span>
+                                                </div>
+
+                                                <div className="min-w-0 flex-1">
+                                                    <h1
+                                                        className="text-lg font-bold tracking-tight text-gray-800 break-words overflow-hidden"
+                                                        style={{
+                                                            display: "-webkit-box",
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: "vertical",
+                                                        }}
+                                                    >
+                                                        {table.name}
+                                                    </h1>
+
+                                                    <p
+                                                        className="mt-0.5 text-xs text-gray-400 break-words overflow-hidden"
+                                                        style={{
+                                                            display: "-webkit-box",
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: "vertical",
+                                                        }}
+                                                    >
+                                                        {table.description}
+                                                    </p>
+                                                </div>
                                             </div>
 
-<div className="min-w-0 flex-1">
-  <h1
-    className="text-lg font-bold tracking-tight text-gray-800 break-words overflow-hidden"
-    style={{
-      display: "-webkit-box",
-      WebkitLineClamp: 2,
-      WebkitBoxOrient: "vertical",
-    }}
-  >
-    {table.name}
-  </h1>
+                                            {isNonViewer(table?.viewers || []) && (
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleUpdateTable(table);
+                                                        }}
+                                                        className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                        <Edit className="w-3.5 h-3.5" />
+                                                    </button>
 
-  <p
-    className="mt-0.5 text-xs text-gray-400 break-words overflow-hidden"
-    style={{
-      display: "-webkit-box",
-      WebkitLineClamp: 2,
-      WebkitBoxOrient: "vertical",
-    }}
-  >
-    {table.description}
-  </p>
-</div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setDeleteModal({
+                                                                open: true,
+                                                                title: "Delete Table",
+                                                                description: `"${table.name}" and all its records will be permanently deleted. This action cannot be undone.`,
+                                                                onConfirm: async () => await deleteTable(table.id),
+                                                            });
+                                                        }}
+                                                        className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
+                                                        <Trash className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            )}
+
                                         </div>
 
-                                        {isNonViewer(table?.viewers || []) && (
-                                            <div className="flex items-center gap-2">
-                                                <button
+                                        <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100">
 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleUpdateTable(table);
-                                                    }}
-                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
-                                                    <Edit className="w-3.5 h-3.5" />
-                                                </button>
-                                                <button
+                                            <div className="flex-1 bg-gray-50 rounded-xl p-2.5">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                                    Rows
+                                                </p>
 
-                                                    onClick={async (e) => {
-                                                        e.stopPropagation();
-                                                        await deleteTable(table.id);
-                                                    }}
-                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
-                                                    <Trash className="w-3.5 h-3.5" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setDeleteModal({
-                                                            open: true,
-                                                            title: "Delete Table",
-                                                            description: `"${table.name}" and all its records will be permanently deleted. This action cannot be undone.`,
-                                                            onConfirm: async () => await deleteTable(table.id),
-                                                        });
-                                                    }}
-                                                    className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 flex items-center justify-center transition-all">
-                                                    <Trash className="w-3.5 h-3.5" />
-                                                </button>
+                                                <p className="text-sm font-medium text-gray-800 mt-0.5">
+                                                    {table?.row_count || 0}
+                                                </p>
                                             </div>
-                                        )}
 
-                                    </div>
+                                            <div className="flex-1 bg-gray-50 rounded-xl p-2.5">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                                                    Fields
+                                                </p>
 
-                                    <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100">
+                                                <p className="text-sm font-medium text-gray-800 mt-0.5">
+                                                    {table?.schema?.length || 0}
+                                                </p>
+                                            </div>
 
-                                        <div className="flex-1 bg-gray-50 rounded-xl p-2.5">
-                                            <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
-                                                Rows
-                                            </p>
-
-                                            <p className="text-sm font-medium text-gray-800 mt-0.5">
-                                                {table?.row_count || 0}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex-1 bg-gray-50 rounded-xl p-2.5">
-                                            <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
-                                                Fields
-                                            </p>
-
-                                            <p className="text-sm font-medium text-gray-800 mt-0.5">
-                                                {table?.schema?.length || 0}
-                                            </p>
                                         </div>
 
                                     </div>
 
-                                </div>
+                                ))}
 
-                            ))}
-
-                        </div>) : (
-                             <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-full flex-col gap-3 py-16">
                                 <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center">
                                     <FileSearch className="w-6 h-6 text-orange-400" />
                                 </div>
@@ -380,17 +369,17 @@ export default function WorkspaceView() {
 
             </div>
 
-            { deleteModal && 
+            {deleteModal &&
                 <DeleteConfirmModal
-                open={deleteModal? true: false}
-                onClose={() => setDeleteModal(null)}
-                onConfirm={async () => {
-                    await deleteModal?.onConfirm();
-                    setDeleteModal(null);
-                }}
-                title={deleteModal?.title ?? ""}
-                description={deleteModal?.description ?? ""}
-            />}
+                    open={deleteModal ? true : false}
+                    onClose={() => setDeleteModal(null)}
+                    onConfirm={async () => {
+                        await deleteModal?.onConfirm();
+                        setDeleteModal(null);
+                    }}
+                    title={deleteModal?.title ?? ""}
+                    description={deleteModal?.description ?? ""}
+                />}
         </>
     );
 }
