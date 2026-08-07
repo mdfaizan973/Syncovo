@@ -51,6 +51,9 @@ function getDefaultValue(field: FormField): any {
     return "";
 }
 
+// Field types that support the "expand to full view" icon
+const EXPANDABLE_TYPES = ["text", "email", "password"];
+
 // ─────────────────────────────────────────────
 // MODAL
 // ─────────────────────────────────────────────
@@ -69,6 +72,7 @@ export default function DynamicFormModal({
     const [values, setValues] = useState<Record<string, any>>(initialValues || {});
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
+    const [expandedKey, setExpandedKey] = useState<string | null>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
 
     // Reset state when modal opens
@@ -79,17 +83,24 @@ export default function DynamicFormModal({
             setValues(initialValues || defaults);
             setErrors({});
             setSubmitted(false);
+            setExpandedKey(null);
         }
     }, [open, fields, initialValues]);
 
     // Close on Escape
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") {
+                if (expandedKey) {
+                    setExpandedKey(null);
+                } else {
+                    onClose();
+                }
+            }
         };
         if (open) document.addEventListener("keydown", handler);
         return () => document.removeEventListener("keydown", handler);
-    }, [open, onClose]);
+    }, [open, onClose, expandedKey]);
 
     const set = (key: string, val: any) => {
         setValues((prev) => ({ ...prev, [key]: val }));
@@ -114,17 +125,10 @@ export default function DynamicFormModal({
         return Object.keys(errs).length === 0;
     };
 
-    // const handleSubmit = () => {
-    //     setSubmitted(true);
-    //     if (!validate(values)) return;
-    //     onSubmit?.(values);
-    //     onClose();
-    // };
-
     const handleSubmit = () => {
         setSubmitted(true);
         if (!validate(values)) return;
-    
+
         // normalize textarea values — replace literal \n string with actual newline
         const normalized = { ...values };
         fields.forEach((f) => {
@@ -132,12 +136,14 @@ export default function DynamicFormModal({
                 normalized[f.key] = normalized[f.key].replace(/\\n/g, "\n");
             }
         });
-    
+
         onSubmit?.(normalized);   // ← send normalized instead of values
         onClose();
     };
 
     if (!open) return null;
+
+    const expandedField = expandedKey ? fields.find((f) => f.key === expandedKey) : null;
 
     return (
         <div
@@ -212,25 +218,46 @@ export default function DynamicFormModal({
 
                             const val = values[field.key];
                             const err = errors[field.key];
+                            const expandable = EXPANDABLE_TYPES.includes(field.type);
 
                             return (
                                 <div key={field.key}>
 
                                     {/* ── text / email / password ── */}
-                                    {(field.type === "text" ||
-                                        field.type === "email" ||
-                                        field.type === "password") && (
-                                        <Input
-                                            label={field.label}
-                                            type={field.type}
-                                            placeholder={field.placeholder ?? `Enter ${field.label}...`}
-                                            required={field.required}
-                                            disabled={field.disabled}
-                                            helperText={err ?? field.helperText}
-                                            state={err ? "error" : ""}
-                                            value={val}
-                                            onChange={(e) => set(field.key, e.target.value)}
-                                        />
+                                    {expandable && (
+                                        <div>
+                                            <div className="flex items-center justify-between mb-1">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    {field.label}
+                                                    {field.required && (
+                                                        <span className="text-orange-500 ml-0.5">*</span>
+                                                    )}
+                                                </label>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setExpandedKey(field.key)}
+                                                    disabled={field.disabled}
+                                                    title={`Expand ${field.label}`}
+                                                    className="w-6 h-6 cursor-pointer rounded-md border border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-300 transition-all shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                                                >
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <Input
+                                                type={field.type}
+                                                placeholder={field.placeholder ?? `Enter ${field.label}...`}
+                                                required={field.required}
+                                                disabled={field.disabled}
+                                                helperText={err ?? field.helperText}
+                                                state={err ? "error" : ""}
+                                                value={val}
+                                                onChange={(e) => set(field.key, e.target.value)}
+                                            />
+                                        </div>
                                     )}
 
                                     {/* ── textarea ── */}
@@ -452,6 +479,52 @@ export default function DynamicFormModal({
                 </div>
 
             </div>
+
+            {/* ── Expanded field overlay ── */}
+            {expandedField && (
+                <div
+                    className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-[2px] p-0 sm:p-4"
+                    onClick={(e) => { if (e.target === e.currentTarget) setExpandedKey(null); }}
+                >
+                    <div className="w-full sm:max-w-lg bg-white sm:rounded-xl rounded-t-xl border border-gray-100 shadow-xl shadow-gray-200/60 flex flex-col max-h-[80vh]">
+
+                        <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+                            <h3 className="text-sm font-semibold text-gray-800">
+                                {expandedField.label}
+                            </h3>
+                            <button
+                                onClick={() => setExpandedKey(null)}
+                                className="w-7 h-7 cursor-pointer rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-all"
+                            >
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="p-5 flex-1 min-h-0 overflow-y-auto">
+                            <textarea
+                                autoFocus
+                                rows={10}
+                                value={values[expandedField.key] ?? ""}
+                                onChange={(e) => set(expandedField.key, e.target.value)}
+                                placeholder={expandedField.placeholder ?? `Enter ${expandedField.label}...`}
+                                className="w-full resize-none text-sm text-gray-700 border border-gray-200 rounded-lg p-3 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
+                            />
+                        </div>
+
+                        <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0">
+                            <button
+                                onClick={() => setExpandedKey(null)}
+                                className="w-full h-9 cursor-pointer text-sm font-semibold rounded-lg border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 hover:border-orange-600 transition-all"
+                            >
+                                Done
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
 
         </div>
     );
