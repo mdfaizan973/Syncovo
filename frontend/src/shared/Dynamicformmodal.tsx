@@ -247,17 +247,6 @@ export default function DynamicFormModal({
                                                 </button>
                                             </div>
 
-                                            {/* <Input
-                                                type={field.type}
-                                                placeholder={field.placeholder ?? `Enter ${field.label}...`}
-                                                required={field.required}
-                                                disabled={field.disabled}
-                                                helperText={err ?? field.helperText}
-                                                state={err ? "error" : ""}
-                                                value={val}
-                                                onChange={(e) => set(field.key, e.target.value)}
-                                            /> */}
-
                                             {field.type === "text" ? (
                                                 <Input
                                                     type="text"
