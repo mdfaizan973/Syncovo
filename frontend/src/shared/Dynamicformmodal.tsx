@@ -247,7 +247,7 @@ export default function DynamicFormModal({
                                                 </button>
                                             </div>
 
-                                            <Input
+                                            {/* <Input
                                                 type={field.type}
                                                 placeholder={field.placeholder ?? `Enter ${field.label}...`}
                                                 required={field.required}
@@ -256,12 +256,36 @@ export default function DynamicFormModal({
                                                 state={err ? "error" : ""}
                                                 value={val}
                                                 onChange={(e) => set(field.key, e.target.value)}
-                                            />
+                                            /> */}
+
+                                            {field.type === "text" ? (
+    <Input
+        type="text"
+        placeholder={field.placeholder ?? `Enter ${field.label}...`}
+        required={field.required}
+        disabled={field.disabled}
+        helperText={err ?? field.helperText}
+        state={err ? "error" : ""}
+        value={val}
+        onChange={(e) => set(field.key, e.target.value)}
+    />
+) : (
+    <Textarea
+        placeholder={field.placeholder ?? `Enter ${field.label}...`}
+        required={field.required}
+        disabled={field.disabled}
+        helperText={err ?? field.helperText}
+        state={err ? "error" : ""}
+        value={typeof val === "string" ? val.replace(/\\n/g, "\n") : val}
+        onChange={(e) => set(field.key, e.target.value)}
+        rows={3}
+    />
+)}
                                         </div>
                                     )}
 
                                     {/* ── textarea ── */}
-                                    {field.type === "textarea" && (
+                                    /* {field.type === "textarea" && (
                                         <Textarea
                                             label={field.label}
                                             placeholder={field.placeholder ?? `Enter ${field.label}...`}
@@ -273,7 +297,7 @@ export default function DynamicFormModal({
                                             onChange={(e) => set(field.key, e.target.value)}
                                             rows={3}
                                         />
-                                    )}
+                                    )} */
 
                                     {/* ── number ── */}
                                     {field.type === "number" && (
