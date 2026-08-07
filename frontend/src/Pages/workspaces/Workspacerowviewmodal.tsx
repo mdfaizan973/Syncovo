@@ -1,63 +1,36 @@
-import { XIcon, Eye, Calendar, Hash, Type, AlignLeft, Mail, Lock, CheckSquare, Circle, ChevronDown, Clock } from "lucide-react";
-
-// ── Types ──────────────────────────────────────────────────────────────────────
-
-interface SchemaField {
-  key: string;
-  type:
-    | "text"
-    | "number"
-    | "email"
-    | "date"
-    | "textarea"
-    | "checkbox"
-    | "radio"
-    | "password"
-    | "select";
-  label: string;
-  required?: boolean;
-  options?: string[]; // for select / radio
-}
-
-interface TableData {
-  id: string;
-  name: string;
-  description?: string;
-  schema: SchemaField[];
-  owner?: { id: string; name: string; email: string };
-}
-
-interface RowData {
-  id: string;
-  table_id: string;
-  row_data: Record<string, any>;
-  created_by?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface WorkSpaceRowViewModalProps {
-  open: boolean;
-  onClose: () => void;
-  table: TableData;
-  row: RowData;
-}
+import React, { useState } from "react";
+import {
+  XIcon,
+  Eye,
+  Calendar,
+  Hash,
+  Type,
+  AlignLeft,
+  Mail,
+  Lock,
+  CheckSquare,
+  Circle,
+  ChevronDown,
+  Clock,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 
 // ── Field icon map ─────────────────────────────────────────────────────────────
 
-const FIELD_ICONS: Record<string, React.ReactNode> = {
-  text: <Type className="w-3.5 h-3.5" />,
-  number: <Hash className="w-3.5 h-3.5" />,
-  email: <Mail className="w-3.5 h-3.5" />,
-  date: <Calendar className="w-3.5 h-3.5" />,
-  textarea: <AlignLeft className="w-3.5 h-3.5" />,
-  checkbox: <CheckSquare className="w-3.5 h-3.5" />,
-  radio: <Circle className="w-3.5 h-3.5" />,
-  password: <Lock className="w-3.5 h-3.5" />,
-  select: <ChevronDown className="w-3.5 h-3.5" />,
+const FIELD_ICONS = {
+  text: <Type className="w-3 h-3" />,
+  number: <Hash className="w-3 h-3" />,
+  email: <Mail className="w-3 h-3" />,
+  date: <Calendar className="w-3 h-3" />,
+  textarea: <AlignLeft className="w-3 h-3" />,
+  checkbox: <CheckSquare className="w-3 h-3" />,
+  radio: <Circle className="w-3 h-3" />,
+  password: <Lock className="w-3 h-3" />,
+  select: <ChevronDown className="w-3 h-3" />,
 };
 
-const FIELD_BADGE_COLORS: Record<string, string> = {
+const FIELD_BADGE_COLORS = {
   text: "bg-blue-50 text-blue-500 border-blue-100",
   number: "bg-purple-50 text-purple-500 border-purple-100",
   email: "bg-teal-50 text-teal-500 border-teal-100",
@@ -71,13 +44,11 @@ const FIELD_BADGE_COLORS: Record<string, string> = {
 
 // ── Field value renderer ───────────────────────────────────────────────────────
 
-function FieldValue({ field, value }: { field: SchemaField; value: any }) {
+function FieldValue({ field, value, expanded }) {
   const isEmpty = value === undefined || value === null || value === "";
 
   if (isEmpty) {
-    return (
-      <span className="text-sm text-[#94a3b8] italic">No value provided</span>
-    );
+    return <span className="text-sm text-[#cbd5e1] italic">No value provided</span>;
   }
 
   switch (field.type) {
@@ -92,12 +63,10 @@ function FieldValue({ field, value }: { field: SchemaField; value: any }) {
             }`}
           >
             {(value === true || value === "true" || value === 1) && (
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
+              <CheckSquare className="w-3 h-3 text-white" strokeWidth={3} />
             )}
           </div>
-          <span className="text-sm font-medium text-[#0f172a]">
+          <span className="text-sm text-[#0f172a]">
             {value === true || value === "true" || value === 1 ? "Yes" : "No"}
           </span>
         </div>
@@ -115,7 +84,11 @@ function FieldValue({ field, value }: { field: SchemaField; value: any }) {
 
     case "textarea":
       return (
-        <p className="text-sm text-[#0f172a] leading-relaxed whitespace-pre-wrap break-words">
+        <p
+          className={`text-sm text-[#0f172a] leading-relaxed whitespace-pre-wrap break-words ${
+            expanded ? "" : "line-clamp-4"
+          }`}
+        >
           {String(value)}
         </p>
       );
@@ -168,17 +141,13 @@ function FieldValue({ field, value }: { field: SchemaField; value: any }) {
       );
 
     default:
-      return (
-        <span className="text-sm text-[#0f172a] break-words">
-          {String(value)}
-        </span>
-      );
+      return <span className="text-sm text-[#0f172a] break-words">{String(value)}</span>;
   }
 }
 
 // ── Format date helper ─────────────────────────────────────────────────────────
 
-function formatDateTime(iso?: string) {
+function formatDateTime(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleString("en-US", {
     year: "numeric",
@@ -191,29 +160,34 @@ function formatDateTime(iso?: string) {
 
 // ── Modal ──────────────────────────────────────────────────────────────────────
 
-export default function WorkSpaceRowViewModal({
-  open,
-  onClose,
-  table,
-  row,
-}: WorkSpaceRowViewModalProps) {
+export default function WorkSpaceRowViewModal({ open, onClose, table, row }) {
+  const [expandedField, setExpandedField] = useState(null);
+
   if (!open) return null;
 
   const filledCount = table.schema.filter(
-    (f) => row.row_data[f.key] !== undefined && row.row_data[f.key] !== null && row.row_data[f.key] !== ""
+    (f) =>
+      row.row_data[f.key] !== undefined &&
+      row.row_data[f.key] !== null &&
+      row.row_data[f.key] !== ""
   ).length;
+
+  const toggleExpand = (key) => {
+    setExpandedField((prev) => (prev === key ? null : key));
+  };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30 backdrop-blur-[2px] p-0 sm:p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full sm:max-w-2xl bg-white sm:rounded-2xl rounded-t-2xl border border-[#e2e8f0] shadow-2xl shadow-gray-300/40 flex flex-col max-h-[92vh] overflow-hidden">
-
+      <div
+        className="w-full sm:max-w-xl sm:rounded-2xl bg-white flex flex-col shadow-2xl overflow-hidden max-h-[92vh] sm:max-h-[85vh] rounded-t-2xl transition-all duration-200"
+        style={expandedField ? { maxHeight: "90vh" } : undefined}
+      >
         {/* ── Header ── */}
         <div className="px-5 pt-5 pb-4 border-b border-[#e2e8f0] flex-shrink-0 bg-white">
           <div className="flex items-start justify-between gap-3">
-
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[#fff7ed] border border-orange-100 flex items-center justify-center shrink-0">
                 <Eye className="w-4.5 h-4.5 text-[#f97316]" />
@@ -257,18 +231,24 @@ export default function WorkSpaceRowViewModal({
             const value = row.row_data[field.key];
             const isEmpty = value === undefined || value === null || value === "";
             const iconColor = FIELD_BADGE_COLORS[field.type] || FIELD_BADGE_COLORS.text;
+            const isTextarea = field.type === "textarea";
+            const isExpanded = expandedField === field.key;
+
+            // Hide other fields while one textarea is expanded, to give it room
+            if (expandedField && !isExpanded) return null;
 
             return (
               <div
                 key={field.key}
-                className={`rounded-xl border px-4 py-3 transition-all duration-150 ${
+                className={`rounded-xl border px-4 py-3 transition-all duration-150 flex flex-col ${
                   isEmpty
                     ? "border-[#e2e8f0] bg-[#f8fafc]"
                     : "border-[#e2e8f0] bg-white hover:border-orange-200 hover:shadow-sm hover:shadow-orange-50"
-                }`}
+                } ${isExpanded ? "flex-1 min-h-0" : ""}`}
+                style={isExpanded ? { height: "90vh", maxHeight: "90vh" } : undefined}
               >
                 {/* Field header */}
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex items-center gap-2 mb-1.5 shrink-0">
                   <span
                     className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${iconColor}`}
                   >
@@ -286,15 +266,35 @@ export default function WorkSpaceRowViewModal({
                   )}
 
                   <span
-                    className={`ml-auto text-[10px] px-1.5 py-px rounded-full border font-medium ${iconColor}`}
+                    className={`ml-2 text-[10px] px-1.5 py-px rounded-full border font-medium ${iconColor}`}
                   >
                     {field.type}
                   </span>
+
+                  {isTextarea && !isEmpty && (
+                    <button
+                      onClick={() => toggleExpand(field.key)}
+                      className="ml-auto cursor-pointer w-6 h-6 rounded-md border border-[#e2e8f0] flex items-center justify-center text-[#94a3b8] hover:text-[#f97316] hover:border-orange-200 transition-all shrink-0"
+                      title={isExpanded ? "Collapse" : "Expand"}
+                    >
+                      {isExpanded ? (
+                        <Minimize2 className="w-3 h-3" />
+                      ) : (
+                        <Maximize2 className="w-3 h-3" />
+                      )}
+                    </button>
+                  )}
                 </div>
 
                 {/* Value */}
-                <div className={field.type === "textarea" ? "mt-1" : ""}>
-                  <FieldValue field={field} value={value} />
+                <div
+                  className={
+                    isTextarea
+                      ? `mt-1 ${isExpanded ? "flex-1 min-h-0 overflow-y-auto pr-1" : ""}`
+                      : ""
+                  }
+                >
+                  <FieldValue field={field} value={value} expanded={isExpanded} />
                 </div>
               </div>
             );
@@ -302,34 +302,35 @@ export default function WorkSpaceRowViewModal({
         </div>
 
         {/* ── Footer metadata ── */}
-        <div className="px-5 py-3 border-t border-[#e2e8f0] bg-[#f8fafc] flex-shrink-0 rounded-b-2xl">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3 h-3 text-[#94a3b8]" />
-              <span className="text-[11px] text-[#94a3b8]">
-                Created{" "}
-                <span className="text-[#475569] font-medium">
-                  {formatDateTime(row.created_at)}
+        {!expandedField && (
+          <div className="px-5 py-3 border-t border-[#e2e8f0] bg-[#f8fafc] flex-shrink-0 rounded-b-2xl">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-[#94a3b8]" />
+                <span className="text-[11px] text-[#94a3b8]">
+                  Created{" "}
+                  <span className="text-[#475569] font-medium">
+                    {formatDateTime(row.created_at)}
+                  </span>
                 </span>
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3 h-3 text-[#94a3b8]" />
-              <span className="text-[11px] text-[#94a3b8]">
-                Updated{" "}
-                <span className="text-[#475569] font-medium">
-                  {formatDateTime(row.updated_at)}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-[#94a3b8]" />
+                <span className="text-[11px] text-[#94a3b8]">
+                  Updated{" "}
+                  <span className="text-[#475569] font-medium">
+                    {formatDateTime(row.updated_at)}
+                  </span>
                 </span>
-              </span>
-            </div>
-            <div className="ml-auto">
-              <span className="text-[11px] font-mono text-[#94a3b8]">
-                ID: {row.id.slice(0, 8)}…
-              </span>
+              </div>
+              <div className="ml-auto">
+                <span className="text-[11px] font-mono text-[#94a3b8]">
+                  ID: {row.id.slice(0, 8)}…
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-
+        )}
       </div>
     </div>
   );
