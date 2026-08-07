@@ -52,7 +52,7 @@ function getDefaultValue(field: FormField): any {
 }
 
 // Field types that support the "expand to full view" icon
-const EXPANDABLE_TYPES = ["text", "email", "password"];
+const EXPANDABLE_TYPES = ["text", "textarea"];
 
 // ─────────────────────────────────────────────
 // MODAL
