@@ -484,8 +484,7 @@ export default function DynamicFormModal({
                     className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-[2px] p-0 sm:p-4"
                     onClick={(e) => { if (e.target === e.currentTarget) setExpandedKey(null); }}
                 >
-                    <div className="w-full sm:max-w-lg bg-white sm:rounded-xl rounded-t-xl border border-gray-100 shadow-xl shadow-gray-200/60 flex flex-col max-h-[80vh]">
-
+  <div className="w-full sm:w-[90vw] sm:max-w-5xl h-[90vh] bg-white sm:rounded-xl rounded-t-xl border border-gray-100 shadow-xl shadow-gray-200/60 flex flex-col">
                         <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
                             <h3 className="text-sm font-semibold text-gray-800">
                                 {expandedField.label}
