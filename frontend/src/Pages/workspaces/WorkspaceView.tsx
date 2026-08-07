@@ -137,11 +137,11 @@ export default function WorkspaceView() {
                                 </div>
 
 <div className="min-w-0 flex-1">
-  <h1 className="text-lg font-bold tracking-tight text-gray-800 line-clamp-2">
+  <h1 className="text-lg font-bold tracking-tight text-gray-800 line-clamp-2 break-words">
     {table.name}
   </h1>
 
-  <p className="mt-0.5 text-xs text-gray-400 line-clamp-2">
+  <p className="mt-0.5 text-xs text-gray-400 line-clamp-2 break-words">
     {table.description}
   </p>
 </div>
