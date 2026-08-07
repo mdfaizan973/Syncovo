@@ -259,9 +259,6 @@ export default function DynamicFormModal({
                                                     onChange={(e) => set(field.key, e.target.value)}
                                                 />
                                             ) : (
-                                                                                        
-                                            
-                                                {/* ── textarea ── */}
                                                 <Textarea
                                                     placeholder={field.placeholder ?? `Enter ${field.label}...`}
                                                     required={field.required}
