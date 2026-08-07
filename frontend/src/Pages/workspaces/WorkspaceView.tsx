@@ -136,19 +136,15 @@ export default function WorkspaceView() {
                                     <span className="text-base">📁</span>
                                 </div>
 
-<div className="min-w-0">
-  <h1 className="text-lg font-bold tracking-tight text-gray-800">
-    {workspace.name}
+<div className="min-w-0 flex-1">
+  <h1 className="text-lg font-bold tracking-tight text-gray-800 line-clamp-2">
+    {table.name}
   </h1>
 
-  <p
-    title={workspace.description}
-    className="mt-1 text-sm text-gray-500 line-clamp-2"
-  >
-    {workspace.description}
+  <p className="mt-0.5 text-xs text-gray-400 line-clamp-2">
+    {table.description}
   </p>
 </div>
-
                             </div>
 
                             <div className="flex items-center gap-2 flex-wrap">
