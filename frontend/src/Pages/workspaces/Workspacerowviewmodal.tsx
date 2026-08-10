@@ -194,10 +194,9 @@ export default function WorkSpaceRowViewModal({ open, onClose, table, row }) {
               </div>
               <div>
                 <h3 className="text-base font-bold tracking-tight text-[#0f172a]">
-                  Record Details
+                  {table.name}
                 </h3>
                 <p className="text-xs text-[#94a3b8] mt-0.5">
-                  {table.name}
                   {table.description ? ` · ${table.description}` : ""}
                 </p>
               </div>
