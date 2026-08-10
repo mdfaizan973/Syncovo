@@ -254,7 +254,7 @@ export default function WorkspaceView() {
                                                 </div>
 
                                                 <div className="min-w-0 flex-1">
-                                                    <h1
+                                                    <h2
                                                         className="text-lg font-bold tracking-tight text-gray-800 break-words overflow-hidden"
                                                         style={{
                                                             display: "-webkit-box",
@@ -263,7 +263,7 @@ export default function WorkspaceView() {
                                                         }}
                                                     >
                                                         {table.name}
-                                                    </h1>
+                                                    </h2>
 
                                                     <p
                                                         className="mt-0.5 text-xs text-gray-400 break-words overflow-hidden"
